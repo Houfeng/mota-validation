@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "outDir": "./build/",
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "declaration": true,
+    "module": "commonjs",
+    "target": "es5",
+    "lib": [
+      "dom",
+      "es2018",
+      "es2018.promise"
+    ],
+    "jsx": "react",
+    "experimentalDecorators": true
+  },
+  "include": [
+    "./src/**/*"
+  ]
+}
