@@ -1,0 +1,34 @@
+import { IRule } from "./IRule";
+import { Result } from "./Result";
+import { IValidationPorps } from './IValidationPorps';
+import { IResultMap } from './IResultMap';
+import { Alert } from './Alert';
+export { IValidationPorps, Alert };
+declare const EventEmitter: any;
+export declare class Validation extends EventEmitter {
+    private __model;
+    private __rules;
+    private __results;
+    private __watchers;
+    private __testCount;
+    private __aliases;
+    private __alert;
+    private __status;
+    constructor(model: any);
+    readonly Alert: (props: IValidationPorps) => any;
+    readonly Status: (props: IValidationPorps) => any;
+    readonly tests: import("../../../../../../Users/Houfeng/my/dev/mota-validation/src/ITestMap").ITestMap;
+    private readonly rules;
+    private readonly aliases;
+    private readonly model;
+    readonly results: IResultMap;
+    readonly testCount: number;
+    setRule(bind: string, rule: IRule | Array<IRule>, alias?: string): void;
+    private testOne;
+    private testAll;
+    test: (bind?: string) => Promise<boolean>;
+    status: (bind?: string) => boolean;
+    result: (bind?: string) => Result;
+    startWatch: () => void;
+    stopWatch: () => void;
+}

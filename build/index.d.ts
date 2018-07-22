@@ -1,0 +1,11 @@
+import { Component } from 'react';
+import { Validation } from './Validation';
+import { builtIn } from './builtIn';
+import { IRule } from './IRule';
+import { IResultMap } from './IResultMap';
+import { Result } from './Result';
+import { Alert } from './Alert';
+import { IValidationPorps } from './IValidationPorps';
+import { IValidationOptions } from './IValidationOptions';
+export { Validation, IValidationOptions, IValidationPorps, builtIn, builtIn as tests, IRule, IResultMap, Result, Alert };
+export declare function validation(options?: IValidationOptions | typeof Component): any;
