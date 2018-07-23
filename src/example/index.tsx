@@ -55,7 +55,8 @@ class App extends React.Component {
   }
 
   hack = () => {
-    this.validation.setResult('params.email', { status: false, message: 'aaa' });
+    this.validation.setResult('params.email',
+      { status: false, message: 'aaa' });
   }
 
   submit = async () => {
