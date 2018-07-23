@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
-export declare class Result {
+import { IResult } from './IResult';
+export declare class Result implements IResult {
     status: boolean;
     bind?: string;
     message?: string | ReactElement<any>;

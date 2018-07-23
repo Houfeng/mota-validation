@@ -7,5 +7,4 @@ export interface IValidationPorps {
   rules: Array<IRule>;
   alias?: string;
   as?: string;
-  children?: Array<IRule>;
 }

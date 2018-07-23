@@ -62,13 +62,40 @@ var _a = require('ntils'), getByPath = _a.getByPath, isFunction = _a.isFunction,
 var EventEmitter = require('eify');
 var Validation = /** @class */ (function (_super) {
     __extends(Validation, _super);
-    function Validation(model) {
+    function Validation(component) {
         var _this = _super.call(this) || this;
         _this.__rules = {};
         _this.__results = {};
         _this.__watchers = [];
         _this.__testCount = 0;
         _this.__aliases = {};
+        _this.updateComponent = function (validation) {
+            if (!_this.component)
+                return;
+            validation = validation || _this.results;
+            _this.component.setState({ validation: validation });
+        };
+        _this.setRule = function (bind, rule, alias) {
+            var rules = Array.isArray(rule) ? rule : [rule];
+            if (rules)
+                _this.rules[bind] = rules;
+            if (alias)
+                _this.aliases[alias] = bind;
+        };
+        _this.setRules = function (map) {
+            each(map, function (bind, rules) {
+                return _this.setRule(bind, rules);
+            });
+        };
+        _this.setResult = function (bind, result, update) {
+            if (update === void 0) { update = true; }
+            _this.results[bind] = result;
+            if (update)
+                _this.updateComponent();
+        };
+        _this.setResults = function (map) {
+            each(map, function (bind, result) { return _this.setResult(bind, result); });
+        };
         _this.test = function (bind) { return __awaiter(_this, void 0, void 0, function () {
             var results, _a;
             var _this = this;
@@ -87,7 +114,8 @@ var Validation = /** @class */ (function (_super) {
                         _b.label = 4;
                     case 4:
                         results = _a;
-                        results.forEach(function (result) { return _this.results[result.bind] = result; });
+                        results.forEach(function (result) { return _this.setResult(result.bind, result, false); });
+                        this.updateComponent(this.results);
                         this.emit('test', this.results);
                         return [2 /*return*/, this.status(bind)];
                 }
@@ -119,14 +147,20 @@ var Validation = /** @class */ (function (_super) {
         _this.stopWatch = function () {
             _this.__watchers.forEach(function (watcher) { return _this.model._observer_.unWatch(watcher); });
         };
-        _this.__model = model;
+        _this.distory = function () {
+            _this.off('test', _this.updateComponent);
+        };
+        _this.__component = component;
+        _this.__model = component.model;
         return _this;
     }
     Object.defineProperty(Validation.prototype, "Alert", {
         get: function () {
             var validation = this;
             if (!this.__alert) {
-                this.__alert = function (props) { return Alert_1.Alert(__assign({}, props, { validation: validation })); };
+                this.__alert = function (props) {
+                    return Alert_1.Alert(__assign({}, props, { validation: validation }));
+                };
             }
             return this.__alert;
         },
@@ -174,6 +208,13 @@ var Validation = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Validation.prototype, "component", {
+        get: function () {
+            return this.__component;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Validation.prototype, "results", {
         get: function () {
             return this.__results;
@@ -188,13 +229,6 @@ var Validation = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Validation.prototype.setRule = function (bind, rule, alias) {
-        var rules = Array.isArray(rule) ? rule : [rule];
-        if (rules)
-            this.rules[bind] = rules;
-        if (alias)
-            this.aliases[alias] = bind;
-    };
     Validation.prototype.testOne = function (bind) {
         return __awaiter(this, void 0, void 0, function () {
             var rules, value, _i, rules_1, rule, test, status_1;

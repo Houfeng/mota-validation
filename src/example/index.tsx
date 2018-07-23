@@ -43,17 +43,24 @@ class App extends React.Component {
         ]}>
           <input data-bind="params.email" />
         </Status>
+        <Alert bind="params.email" />
       </div>
       <div className="row">
         提交:
         <button disabled={!this.validation.status()}
           onClick={this.submit}>立即提交</button>
+        <button onClick={this.hack}>手动更新状态</button>
       </div>
     </div>;
   }
 
-  submit = () => {
-    this.validation.test();
+  hack = () => {
+    this.validation.setResult('params.email', { status: false, message: 'aaa' });
+  }
+
+  submit = async () => {
+    const status = await this.validation.test();
+    if (!status) return;
     this.model.submit();
   }
 }

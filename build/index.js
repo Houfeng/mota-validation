@@ -16,8 +16,7 @@ function getValidation(com) {
     if (!com.model)
         return;
     if (!com.__validation) {
-        com.__validation = new Validation_1.Validation(com.model);
-        com.__validation.on('test', function (validation) { return com.setState({ validation: validation }); });
+        com.__validation = new Validation_1.Validation(com);
     }
     return com.__validation;
 }
@@ -39,6 +38,7 @@ function decorate(target, options) {
         if (!this.validation)
             return;
         this.validation.stopWatch();
+        this.validation.distory();
     });
 }
 function validation(options) {

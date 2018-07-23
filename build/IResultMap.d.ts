@@ -1,4 +1,4 @@
-import { Result } from "./Result";
+import { IResult } from "./IResult";
 export interface IResultMap {
-    [name: string]: Result;
+    [name: string]: IResult;
 }

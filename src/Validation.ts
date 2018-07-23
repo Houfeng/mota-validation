@@ -6,6 +6,8 @@ import { IValidationPorps } from './IValidationPorps';
 import { IResultMap } from './IResultMap';
 import { Alert } from './Alert';
 import { Status } from './Status';
+import { Component } from "react";
+import { IResult } from "./IResult";
 
 export { IValidationPorps, Alert };
 
@@ -14,6 +16,7 @@ const EventEmitter = require('eify');
 
 export class Validation extends EventEmitter {
 
+  private __component: Component;
   private __model: any;
   private __rules: IRuleMap = {};
   private __results: IResultMap = {};
@@ -24,15 +27,23 @@ export class Validation extends EventEmitter {
   private __alert: (props: IValidationPorps) => any;
   private __status: (props: IValidationPorps) => any;
 
-  constructor(model: any) {
+  constructor(component: any) {
     super();
-    this.__model = model;
+    this.__component = component;
+    this.__model = component.model;
+  }
+
+  private updateComponent = (validation?: IResultMap) => {
+    if (!this.component) return;
+    validation = validation || this.results;
+    this.component.setState({ validation });
   }
 
   public get Alert() {
     const validation = this;
     if (!this.__alert) {
-      this.__alert = (props: IValidationPorps) => Alert({ ...props, validation });
+      this.__alert = (props: IValidationPorps) =>
+        Alert({ ...props, validation });
     }
     return this.__alert;
   }
@@ -62,6 +73,10 @@ export class Validation extends EventEmitter {
     return this.__model;
   }
 
+  private get component() {
+    return this.__component;
+  }
+
   public get results() {
     return this.__results;
   }
@@ -70,10 +85,26 @@ export class Validation extends EventEmitter {
     return this.__testCount;
   }
 
-  public setRule(bind: string, rule: IRule | Array<IRule>, alias?: string) {
+  public setRule = (bind: string, rule: IRule | Array<IRule>,
+    alias?: string) => {
     const rules = Array.isArray(rule) ? rule : [rule];
     if (rules) this.rules[bind] = rules;
     if (alias) this.aliases[alias] = bind;
+  }
+
+  public setRules = (map: { [bind: string]: IRule | Array<IRule> }) => {
+    each(map, (bind: string, rules: IRule | Array<IRule>) =>
+      this.setRule(bind, rules));
+  }
+
+  public setResult = (bind: string, result: IResult,
+    update: boolean = true) => {
+    this.results[bind] = result;
+    if (update) this.updateComponent();
+  }
+
+  public setResults = (map: { [bind: string]: IResult }) => {
+    each(map, (bind: string, result: IResult) => this.setResult(bind, result));
   }
 
   private async testOne(bind: string) {
@@ -97,16 +128,17 @@ export class Validation extends EventEmitter {
     return Promise.all(binds.map(bind => this.testOne(bind)));
   }
 
-  test = async (bind?: string) => {
+  public test = async (bind?: string) => {
     this.__testCount++;
     const results = bind && isString(bind) ?
       [await this.testOne(bind)] : await this.testAll();
-    results.forEach(result => this.results[result.bind] = result);
+    results.forEach(result => this.setResult(result.bind, result, false));
+    this.updateComponent(this.results);
     this.emit('test', this.results);
     return this.status(bind);
   }
 
-  status = (bind?: string) => {
+  public status = (bind?: string) => {
     bind = this.aliases[bind] || bind;
     if (bind && isString(bind)) {
       const result = this.results[bind];
@@ -116,13 +148,13 @@ export class Validation extends EventEmitter {
     return !binds.some(bind => !this.results[bind].status);
   }
 
-  result = (bind?: string) => {
+  public result = (bind?: string) => {
     bind = this.aliases[bind] || bind;
     if (!bind) return new Result(true);
     return this.results[bind];
   }
 
-  startWatch = () => {
+  public startWatch = () => {
     each(this.rules, (bind: string, rule: IRule) => {
       const watcher = this.model._observer_
         .watch(() => getByPath(this.model, bind), () => this.test(bind));
@@ -131,8 +163,12 @@ export class Validation extends EventEmitter {
     });
   }
 
-  stopWatch = () => {
+  public stopWatch = () => {
     this.__watchers.forEach(watcher => this.model._observer_.unWatch(watcher));
+  }
+
+  public distory = () => {
+    this.off('test', this.updateComponent);
   }
 
 }

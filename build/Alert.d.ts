@@ -1,2 +1,6 @@
 import { IValidationPorps } from './IValidationPorps';
-export declare function Alert(props: IValidationPorps): any;
+import { IRule } from './IRule';
+export interface IStatusPorps extends IValidationPorps {
+    children?: Array<IRule>;
+}
+export declare function Alert(props: IStatusPorps): any;

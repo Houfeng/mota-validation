@@ -1,2 +1,5 @@
 import { IValidationPorps } from './IValidationPorps';
-export declare function Status(props: IValidationPorps): any;
+export interface IStatusPorps extends IValidationPorps {
+    children?: any;
+}
+export declare function Status(props: IStatusPorps): any;

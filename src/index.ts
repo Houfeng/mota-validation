@@ -20,8 +20,7 @@ const { registerMountHandler, registerUnmountHandler } = utils;
 function getValidation(com: any) {
   if (!com.model) return;
   if (!com.__validation) {
-    com.__validation = new Validation(com.model);
-    com.__validation.on('test', (validation) => com.setState({ validation }));
+    com.__validation = new Validation(com);
   }
   return com.__validation;
 }
@@ -40,6 +39,7 @@ function decorate(target: typeof Component,
   registerUnmountHandler(proto, function () {
     if (!this.validation) return;
     this.validation.stopWatch();
+    this.validation.distory();
   });
 }
 
