@@ -14,11 +14,11 @@ export declare class Validation extends EventEmitter {
     private __testCount;
     private __aliases;
     private __alert;
-    private __status;
+    private __field;
     constructor(component: any);
     private updateComponent;
     readonly Alert: (props: IValidationPorps) => any;
-    readonly Status: (props: IValidationPorps) => any;
+    readonly Field: (props: IValidationPorps) => any;
     readonly tests: import("../../../../../../Users/Houfeng/my/dev/mota-validation/src/ITestMap").ITestMap;
     private readonly rules;
     private readonly aliases;
@@ -36,8 +36,8 @@ export declare class Validation extends EventEmitter {
     }) => void;
     private testOne;
     private testAll;
-    test: (bind?: string) => Promise<boolean>;
-    status: (bind?: string) => boolean;
+    test: (bind?: string) => Promise<any>;
+    status: (bind?: string) => any;
     result: (bind?: string) => IResult;
     startWatch: () => void;
     stopWatch: () => void;

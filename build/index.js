@@ -10,6 +10,8 @@ var Result_1 = require("./Result");
 exports.Result = Result_1.Result;
 var Alert_1 = require("./Alert");
 exports.Alert = Alert_1.Alert;
+var Field_1 = require("./Field");
+exports.Field = Field_1.Field;
 var isFunction = require('ntils').isFunction;
 var registerMountHandler = mota_1.utils.registerMountHandler, registerUnmountHandler = mota_1.utils.registerUnmountHandler;
 function getValidation(com) {
@@ -51,4 +53,5 @@ function validation(options) {
 }
 exports.validation = validation;
 ;
+exports.default = validation;
 //# sourceMappingURL=index.js.map

@@ -28,7 +28,7 @@ export interface IStatusPorps extends IValidationPorps {
   children?: any;
 }
 
-export function Status(props: IStatusPorps): any {
+export function Field(props: IStatusPorps): any {
   const { validation, bind, rules, as, alias = as, children } = props;
   if (children && isArray(children) && children.length > 0) {
     throw Error(`The Status(${bind}) can only have a sub element`);

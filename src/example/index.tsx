@@ -17,17 +17,17 @@ class App extends React.Component {
   validation: Validation;
 
   render() {
-    const { Alert, Status, tests } = this.validation;
+    const { Alert, Field, tests } = this.validation;
     return <div>
       <div className="row">
         姓名:
-        <Status bind="params.name" rules={[{ test: 'required' }]}>
+        <Field bind="params.name" rules={[{ test: 'required' }]}>
           <input data-bind="params.name" />
-        </Status>
+        </Field>
       </div>
       <div className="row">
         年龄:
-        <Status bind="params.age"><input data-bind="params.age" /></Status>
+        <Field bind="params.age"><input data-bind="params.age" /></Field>
         <Alert bind="params.age">
           {[
             { test: 'required', message: '请输入年龄' },
@@ -38,11 +38,11 @@ class App extends React.Component {
       </div>
       <div className="row">
         邮箱:
-        <Status bind="params.email" rules={[
+        <Field bind="params.email" rules={[
           { test: 'required' }, { test: 'email' }
         ]}>
           <input data-bind="params.email" />
-        </Status>
+        </Field>
         <Alert bind="params.email" />
       </div>
       <div className="row">

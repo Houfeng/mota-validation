@@ -57,7 +57,7 @@ var Result_1 = require("./Result");
 var builtIn_1 = require("./builtIn");
 var Alert_1 = require("./Alert");
 exports.Alert = Alert_1.Alert;
-var Status_1 = require("./Status");
+var Field_1 = require("./Field");
 var _a = require('ntils'), getByPath = _a.getByPath, isFunction = _a.isFunction, isString = _a.isString, each = _a.each;
 var EventEmitter = require('eify');
 var Validation = /** @class */ (function (_super) {
@@ -116,7 +116,7 @@ var Validation = /** @class */ (function (_super) {
                         results = _a;
                         results.forEach(function (result) { return _this.setResult(result.bind, result, false); });
                         this.updateComponent(this.results);
-                        this.emit('test', this.results);
+                        this.emit('test', this);
                         return [2 /*return*/, this.status(bind)];
                 }
             });
@@ -128,7 +128,7 @@ var Validation = /** @class */ (function (_super) {
                 return result ? result.status : true;
             }
             var binds = Object.keys(_this.results);
-            return !binds.some(function (bind) { return !_this.results[bind].status; });
+            return !binds.some(function (bind) { return !_this.status(bind); });
         };
         _this.result = function (bind) {
             bind = _this.aliases[bind] || bind;
@@ -167,15 +167,15 @@ var Validation = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Validation.prototype, "Status", {
+    Object.defineProperty(Validation.prototype, "Field", {
         get: function () {
             var validation = this;
-            if (!this.__status) {
-                this.__status = function (props) {
-                    return Status_1.Status(__assign({}, props, { validation: validation }));
+            if (!this.__field) {
+                this.__field = function (props) {
+                    return Field_1.Field(__assign({}, props, { validation: validation }));
                 };
             }
-            return this.__status;
+            return this.__field;
         },
         enumerable: true,
         configurable: true

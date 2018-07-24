@@ -6,12 +6,13 @@ import { IRule } from './IRule';
 import { IResultMap } from './IResultMap';
 import { Result } from './Result';
 import { Alert } from './Alert';
+import { Field } from './Field';
 import { IValidationPorps } from './IValidationPorps';
 import { IValidationOptions } from './IValidationOptions';
 
 export {
   Validation, IValidationOptions, IValidationPorps,
-  builtIn, builtIn as tests, IRule, IResultMap, Result, Alert
+  builtIn, builtIn as tests, IRule, IResultMap, Result, Alert, Field
 };
 
 const { isFunction } = require('ntils');
@@ -49,3 +50,5 @@ export function validation(options: IValidationOptions |
   return (target: typeof Component) =>
     decorate(target, options as IValidationOptions);
 };
+
+export default validation;

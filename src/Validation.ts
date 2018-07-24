@@ -5,7 +5,7 @@ import { builtIn } from './builtIn';
 import { IValidationPorps } from './IValidationPorps';
 import { IResultMap } from './IResultMap';
 import { Alert } from './Alert';
-import { Status } from './Status';
+import { Field } from './Field';
 import { Component } from "react";
 import { IResult } from "./IResult";
 
@@ -25,7 +25,7 @@ export class Validation extends EventEmitter {
   private __aliases: any = {};
 
   private __alert: (props: IValidationPorps) => any;
-  private __status: (props: IValidationPorps) => any;
+  private __field: (props: IValidationPorps) => any;
 
   constructor(component: any) {
     super();
@@ -48,13 +48,13 @@ export class Validation extends EventEmitter {
     return this.__alert;
   }
 
-  public get Status() {
+  public get Field() {
     const validation = this;
-    if (!this.__status) {
-      this.__status = (props: IValidationPorps) =>
-        Status({ ...props, validation });
+    if (!this.__field) {
+      this.__field = (props: IValidationPorps) =>
+        Field({ ...props, validation });
     }
-    return this.__status;
+    return this.__field;
   }
 
   public get tests() {
@@ -134,7 +134,7 @@ export class Validation extends EventEmitter {
       [await this.testOne(bind)] : await this.testAll();
     results.forEach(result => this.setResult(result.bind, result, false));
     this.updateComponent(this.results);
-    this.emit('test', this.results);
+    this.emit('test', this);
     return this.status(bind);
   }
 
@@ -145,7 +145,7 @@ export class Validation extends EventEmitter {
       return result ? result.status : true;
     }
     const binds = Object.keys(this.results);
-    return !binds.some(bind => !this.results[bind].status);
+    return !binds.some(bind => !this.status(bind));
   }
 
   public result = (bind?: string) => {

@@ -24,7 +24,7 @@ function setStatus(ref, status) {
         return;
     element.setAttribute('data-validation-status', String(status));
 }
-function Status(props) {
+function Field(props) {
     var validation = props.validation, bind = props.bind, rules = props.rules, as = props.as, _a = props.alias, alias = _a === void 0 ? as : _a, children = props.children;
     if (children && isArray(children) && children.length > 0) {
         throw Error("The Status(" + bind + ") can only have a sub element");
@@ -36,5 +36,5 @@ function Status(props) {
     var status = validation.status(bind);
     return React.cloneElement(utils_1.toElement(children), { ref: function (ref) { return setStatus(ref, status); } });
 }
-exports.Status = Status;
-//# sourceMappingURL=Status.js.map
+exports.Field = Field;
+//# sourceMappingURL=Field.js.map

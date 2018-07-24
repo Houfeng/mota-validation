@@ -92,15 +92,15 @@ var App = /** @class */ (function (_super) {
         return _this;
     }
     App.prototype.render = function () {
-        var _a = this.validation, Alert = _a.Alert, Status = _a.Status, tests = _a.tests;
+        var _a = this.validation, Alert = _a.Alert, Field = _a.Field, tests = _a.tests;
         return React.createElement("div", null,
             React.createElement("div", { className: "row" },
                 "\u59D3\u540D:",
-                React.createElement(Status, { bind: "params.name", rules: [{ test: 'required' }] },
+                React.createElement(Field, { bind: "params.name", rules: [{ test: 'required' }] },
                     React.createElement("input", { "data-bind": "params.name" }))),
             React.createElement("div", { className: "row" },
                 "\u5E74\u9F84:",
-                React.createElement(Status, { bind: "params.age" },
+                React.createElement(Field, { bind: "params.age" },
                     React.createElement("input", { "data-bind": "params.age" })),
                 React.createElement(Alert, { bind: "params.age" }, [
                     { test: 'required', message: '请输入年龄' },
@@ -109,7 +109,7 @@ var App = /** @class */ (function (_super) {
                 ])),
             React.createElement("div", { className: "row" },
                 "\u90AE\u7BB1:",
-                React.createElement(Status, { bind: "params.email", rules: [
+                React.createElement(Field, { bind: "params.email", rules: [
                         { test: 'required' }, { test: 'email' }
                     ] },
                     React.createElement("input", { "data-bind": "params.email" })),
