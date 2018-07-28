@@ -1,21 +1,20 @@
+import * as React from 'react';
 import { TestItem } from './TestItem';
 import { IValidationPorps } from './IValidationPorps';
 import { IRule } from './IRule';
 import { toElement } from './utils';
 import { states } from './states';
 
-
-export interface IAlertPorps extends IValidationPorps {
-  children?: Array<IRule>;
+export interface IStateProps extends IValidationPorps {
+  when: states;
+  children?: any;
 }
 
-export function Alert(props: IAlertPorps): any {
-  const { validation, bind, alias, children, rules = children } = props;
+export function State(props: IStateProps) {
+  const { validation, bind, when, alias, children, rules } = props;
   if (!validation) return toElement();
   if (rules) validation.setRule(bind, rules, alias);
   const item: TestItem = validation.item(bind);
-  if (!item || item.state !== states.failed || !item.message) {
-    return toElement();
-  }
-  return toElement(item.message);
+  if (!item || item.state !== when) return toElement();
+  return toElement(children);
 }

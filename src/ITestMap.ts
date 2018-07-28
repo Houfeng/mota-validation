@@ -1,3 +1,3 @@
 export interface ITestMap {
-  [name: string]: Function;
+  [name: string]: Function
 }

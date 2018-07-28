@@ -1,13 +1,14 @@
-import { IRuleMap } from "./IRuleMap";
+import { ReactElement } from 'react'
 import { IRule } from "./IRule";
-import { Result } from "./Result";
+import { TestItem } from "./TestItem";
 import { builtIn } from './builtIn';
+import { ITestItemMap } from './ItestItemMap';
 import { IValidationPorps } from './IValidationPorps';
-import { IResultMap } from './IResultMap';
-import { Alert } from './Alert';
-import { Field } from './Field';
+import { Alert, IAlertPorps } from './Alert';
+import { Field, IFieldPorps } from './Field';
+import { State, IStateProps } from './State';
 import { Component } from "react";
-import { IResult } from "./IResult";
+import { states } from './states'
 
 export { IValidationPorps, Alert };
 
@@ -18,14 +19,14 @@ export class Validation extends EventEmitter {
 
   private __component: Component;
   private __model: any;
-  private __rules: IRuleMap = {};
-  private __results: IResultMap = {};
+  private __items: ITestItemMap = {};
   private __watchers: Array<any> = [];
-  private __testCount = 0;
   private __aliases: any = {};
+  private __testCount = 0;
 
-  private __alert: (props: IValidationPorps) => any;
-  private __field: (props: IValidationPorps) => any;
+  private __alert: (props: IAlertPorps) => any;
+  private __field: (props: IFieldPorps) => any;
+  private __state: (props: IStateProps) => any;
 
   constructor(component: any) {
     super();
@@ -33,36 +34,42 @@ export class Validation extends EventEmitter {
     this.__model = component.model;
   }
 
-  private updateComponent = (validation?: IResultMap) => {
+  private updateComponent = (validation?: ITestItemMap) => {
     if (!this.component) return;
-    validation = validation || this.results;
+    validation = validation || this.items;
     this.component.setState({ validation });
   }
 
   public get Alert() {
     const validation = this;
     if (!this.__alert) {
-      this.__alert = (props: IValidationPorps) =>
-        Alert({ ...props, validation });
+      this.__alert = (props: IAlertPorps) => Alert({ ...props, validation });
     }
     return this.__alert;
-  }
+  } 
 
   public get Field() {
     const validation = this;
     if (!this.__field) {
-      this.__field = (props: IValidationPorps) =>
-        Field({ ...props, validation });
+      this.__field = (props: IFieldPorps) => Field({ ...props, validation });
     }
     return this.__field;
+  }
+
+  public get State() {
+    const validation = this;
+    if (!this.__state) {
+      this.__state = (props: IStateProps) => State({ ...props, validation });
+    }
+    return this.__state;
   }
 
   public get tests() {
     return builtIn;
   }
 
-  private get rules() {
-    return this.__rules;
+  public get states() {
+    return states;
   }
 
   private get aliases() {
@@ -77,85 +84,86 @@ export class Validation extends EventEmitter {
     return this.__component;
   }
 
-  public get results() {
-    return this.__results;
+  public get items() {
+    return this.__items;
   }
 
   public get testCount() {
     return this.__testCount;
   }
 
-  public setRule = (bind: string, rule: IRule | Array<IRule>,
+  public item(bind: string) {
+    return this.items[bind];
+  }
+
+  public setRule = (bind: string, rules: IRule | Array<IRule>,
     alias?: string) => {
-    const rules = Array.isArray(rule) ? rule : [rule];
-    if (rules) this.rules[bind] = rules;
+    if (!this.items[bind]) this.items[bind] = new TestItem(bind);
+    if (rules) this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
     if (alias) this.aliases[alias] = bind;
   }
 
-  public setRules = (map: { [bind: string]: IRule | Array<IRule> }) => {
-    each(map, (bind: string, rules: IRule | Array<IRule>) =>
-      this.setRule(bind, rules));
-  }
-
-  public setResult = (bind: string, result: IResult,
-    update: boolean = true) => {
-    this.results[bind] = result;
+  public setState = (bind: string, state: states,
+    message: ReactElement<any> | string = '', update: boolean = true) => {
+    this.items[bind].state = state;
+    this.items[bind].message = message;
     if (update) this.updateComponent();
-  }
-
-  public setResults = (map: { [bind: string]: IResult }) => {
-    each(map, (bind: string, result: IResult) => this.setResult(bind, result));
   }
 
   private async testOne(bind: string) {
     bind = this.aliases[bind] || bind;
-    if (!this.model) return new Result(true, bind);
-    const rules = this.rules[bind];
-    if (!rules || rules.length < 1) return new Result(true, bind);
+    if (!this.model) return;
+    const item = this.item(bind);
+    if (!item || !item.rules || item.rules.length < 1) return;
     const value = getByPath(this.model, bind);
-    for (const rule of rules) {
+    this.setState(bind, states.testing);
+    let state: Boolean = true, message: ReactElement<any> | string = '';
+    for (const rule of item.rules) {
       const test: Function = isFunction(rule.test) ?
         <Function>rule.test : builtIn[<string>rule.test];
-      const status = await test(value);
-      if (!status) return new Result(status, bind, rule.message);
+      state = await test(value);
+      message = rule.message;
+      if (!state) break;
     }
-    return new Result(true, bind);
+    this.setState(bind, state ? states.succeed : states.failed, message);
   }
 
   private async testAll() {
     if (!this.model) return [];
-    const binds = Object.keys(this.rules);
-    return Promise.all(binds.map(bind => this.testOne(bind)));
+    const keys = Object.keys(this.items);
+    await Promise.all(keys.map(bind => this.testOne(bind)));
   }
 
   public test = async (bind?: string) => {
     this.__testCount++;
-    const results = bind && isString(bind) ?
-      [await this.testOne(bind)] : await this.testAll();
-    results.forEach(result => this.setResult(result.bind, result, false));
-    this.updateComponent(this.results);
+    if (bind && isString(bind)) {
+      await this.testOne(bind);
+    } else {
+      await this.testAll();
+    }
     this.emit('test', this);
-    return this.status(bind);
+    return this.state(bind);
   }
 
-  public status = (bind?: string) => {
+  public state = (bind?: string) => {
     bind = this.aliases[bind] || bind;
     if (bind && isString(bind)) {
-      const result = this.results[bind];
-      return result ? result.status : true;
+      const item = this.items[bind];
+      return item ? item.state : states.unknown;
     }
-    const binds = Object.keys(this.results);
-    return !binds.some(bind => !this.status(bind));
-  }
-
-  public result = (bind?: string) => {
-    bind = this.aliases[bind] || bind;
-    if (!bind) return new Result(true);
-    return this.results[bind];
+    const binds = Object.keys(this.items);
+    if (binds.length < 1) return states.unknown;
+    if (binds.some(bind => this.state(bind) === states.failed))
+      return states.failed;
+    if (binds.some(bind => this.state(bind) === states.testing))
+      return states.testing;
+    if (binds.some(bind => this.state(bind) === states.untested))
+      return states.untested;
+    return states.succeed;
   }
 
   public startWatch = () => {
-    each(this.rules, (bind: string, rule: IRule) => {
+    each(this.items, (bind: string, rule: IRule) => {
       const watcher = this.model._observer_
         .watch(() => getByPath(this.model, bind), () => this.test(bind));
       watcher.calc(false);

@@ -3,16 +3,17 @@ import { utils } from 'mota';
 import { Validation } from './Validation';
 import { builtIn } from './builtIn';
 import { IRule } from './IRule';
-import { IResultMap } from './IResultMap';
-import { Result } from './Result';
+import { ITestItemMap } from './ItestItemMap';
+import { TestItem } from './TestItem';
 import { Alert } from './Alert';
 import { Field } from './Field';
 import { IValidationPorps } from './IValidationPorps';
 import { IValidationOptions } from './IValidationOptions';
+import { states } from './states'
 
 export {
-  Validation, IValidationOptions, IValidationPorps,
-  builtIn, builtIn as tests, IRule, IResultMap, Result, Alert, Field
+  Validation, IValidationOptions, IValidationPorps, states,
+  builtIn, builtIn as tests, IRule, ITestItemMap, TestItem, Alert, Field
 };
 
 const { isFunction } = require('ntils');

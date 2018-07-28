@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { model, binding } from 'mota';
 import ViewModel from './ViewModel';
-import { validation, Validation } from '../';
+import { validation, Validation, states } from '../';
 
 import './index.less';
 
@@ -17,7 +17,7 @@ class App extends React.Component {
   validation: Validation;
 
   render() {
-    const { Alert, Field, tests } = this.validation;
+    const { Alert, Field, State, tests } = this.validation;
     return <div>
       <div className="row">
         姓名:
@@ -35,6 +35,9 @@ class App extends React.Component {
             { test: tests.range(18, 60), message: '年龄需在 18 ~ 60 之间' }
           ]}
         </Alert>
+        <State bind="params.age" when={states.succeed}>
+          验证通过
+        </State>
       </div>
       <div className="row">
         邮箱:
@@ -47,7 +50,7 @@ class App extends React.Component {
       </div>
       <div className="row">
         提交:
-        <button disabled={!this.validation.status()}
+        <button disabled={this.validation.state() !== states.succeed}
           onClick={this.submit}>立即提交</button>
         <button onClick={this.hack}>手动更新状态</button>
       </div>
@@ -55,13 +58,12 @@ class App extends React.Component {
   }
 
   hack = () => {
-    this.validation.setResult('params.email',
-      { status: false, message: 'aaa' });
+    this.validation.setState('params.email', states.failed, 'aaa');
   }
 
   submit = async () => {
-    const status = await this.validation.test();
-    if (!status) return;
+    const state = await this.validation.test();
+    if (state !== states.succeed) return;
     this.model.submit();
   }
 }
