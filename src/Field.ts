@@ -5,13 +5,14 @@ import { toElement } from './utils';
 import { states } from './states'
 
 const { isArray, isNull } = require('ntils');
+const attrKey = 'data-state';
 
 function createStyle() {
   const style = document.createElement('style');
-  style.innerHTML = `[data-validation-status]{
+  style.innerHTML = `[${attrKey}]{
     transition-duration:.2s;transition-property:box-shadow;
   }
-  [data-validation-status="0"]{
+  [${attrKey}="0"]{
     outline:none;box-shadow:0 0 2px 1px rgba(255,0,0,.8);
   }`;
   const container = document.head || document.body;
@@ -22,7 +23,7 @@ createStyle();
 function setState(ref, state: states) {
   const element = ReactDOM.findDOMNode(ref) as HTMLElement;
   if (!element) return;
-  element.setAttribute('data-validation-status', String(state));
+  element.setAttribute(attrKey, String(state));
 }
 
 export interface IFieldPorps extends IValidationPorps {

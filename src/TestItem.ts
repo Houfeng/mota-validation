@@ -8,6 +8,10 @@ export class TestItem implements ITestItem {
     public bind: string,
     public rules: Array<IRule> = [],
     public state: states = states.untested,
-    public message: string | ReactElement<any> = ''
+    public message: string | ReactElement<any> = '',
+    public pending: Promise<{
+      state: boolean,
+      message: string | ReactElement<any>
+    }> = null
   ) { }
 }

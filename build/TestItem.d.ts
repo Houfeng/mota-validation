@@ -7,5 +7,12 @@ export declare class TestItem implements ITestItem {
     rules: Array<IRule>;
     state: states;
     message: string | ReactElement<any>;
-    constructor(bind: string, rules?: Array<IRule>, state?: states, message?: string | ReactElement<any>);
+    pending: Promise<{
+        state: boolean;
+        message: string | ReactElement<any>;
+    }>;
+    constructor(bind: string, rules?: Array<IRule>, state?: states, message?: string | ReactElement<any>, pending?: Promise<{
+        state: boolean;
+        message: string | ReactElement<any>;
+    }>);
 }

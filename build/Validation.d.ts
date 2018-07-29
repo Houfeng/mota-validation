@@ -6,6 +6,7 @@ import { Alert, IAlertPorps } from './Alert';
 import { IFieldPorps } from './Field';
 import { IStateProps } from './State';
 import { states } from './states';
+import { ITestItem } from './ITestItem';
 export { IValidationPorps, Alert };
 declare const EventEmitter: any;
 export declare class Validation extends EventEmitter {
@@ -30,9 +31,10 @@ export declare class Validation extends EventEmitter {
     private readonly component;
     readonly items: ITestItemMap;
     readonly testCount: number;
-    item(bind: string): import("../../../../../../Users/Houfeng/my/dev/mota-validation/src/ITestItem").ITestItem;
+    item(bind: string): ITestItem;
     setRule: (bind: string, rules: IRule | IRule[], alias?: string) => void;
     setState: (bind: string, state: states, message?: string | ReactElement<any>, update?: boolean) => void;
+    private createTestPending;
     private testOne;
     private testAll;
     test: (bind?: string) => Promise<states>;

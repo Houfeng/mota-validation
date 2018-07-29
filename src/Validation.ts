@@ -1,4 +1,5 @@
-import { ReactElement } from 'react'
+import { ReactElement } from 'react';
+import { abortable } from 'promise-boost';
 import { IRule } from "./IRule";
 import { TestItem } from "./TestItem";
 import { builtIn } from './builtIn';
@@ -9,6 +10,7 @@ import { Field, IFieldPorps } from './Field';
 import { State, IStateProps } from './State';
 import { Component } from "react";
 import { states } from './states'
+import { ITestItem } from './ITestItem';
 
 export { IValidationPorps, Alert };
 
@@ -46,7 +48,7 @@ export class Validation extends EventEmitter {
       this.__alert = (props: IAlertPorps) => Alert({ ...props, validation });
     }
     return this.__alert;
-  } 
+  }
 
   public get Field() {
     const validation = this;
@@ -93,6 +95,7 @@ export class Validation extends EventEmitter {
   }
 
   public item(bind: string) {
+    bind = this.aliases[bind] || bind;
     return this.items[bind];
   }
 
@@ -110,13 +113,7 @@ export class Validation extends EventEmitter {
     if (update) this.updateComponent();
   }
 
-  private async testOne(bind: string) {
-    bind = this.aliases[bind] || bind;
-    if (!this.model) return;
-    const item = this.item(bind);
-    if (!item || !item.rules || item.rules.length < 1) return;
-    const value = getByPath(this.model, bind);
-    this.setState(bind, states.testing);
+  private async createTestPending(item: ITestItem, value: any) {
     let state: Boolean = true, message: ReactElement<any> | string = '';
     for (const rule of item.rules) {
       const test: Function = isFunction(rule.test) ?
@@ -125,6 +122,19 @@ export class Validation extends EventEmitter {
       message = rule.message;
       if (!state) break;
     }
+    return { state, message };
+  }
+
+  private async testOne(bind: string) {
+    bind = this.aliases[bind] || bind;
+    if (!this.model) return;
+    const item = this.item(bind);
+    if (!item || !item.rules || item.rules.length < 1) return;
+    if (item.pending) item.pending.abort();
+    const value = getByPath(this.model, bind);
+    this.setState(bind, states.testing);
+    item.pending = abortable(this.createTestPending(item, value));
+    const { state, message } = await item.pending;
     this.setState(bind, state ? states.succeed : states.failed, message);
   }
 

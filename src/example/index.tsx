@@ -8,6 +8,12 @@ import './index.less';
 
 const root = document.getElementById('root');
 
+async function remoteTest(value) {
+  return new Promise(resolve => {
+    setTimeout(() => resolve(true), 500);
+  });
+}
+
 @model(ViewModel)
 @binding
 @validation
@@ -21,9 +27,15 @@ class App extends React.Component {
     return <div>
       <div className="row">
         姓名:
-        <Field bind="params.name" rules={[{ test: 'required' }]}>
+        <Field bind="params.name" alias="name" rules={[
+          { test: 'required' },
+          { test: remoteTest }
+        ]}>
           <input data-bind="params.name" />
         </Field>
+        <State bind="name" when={states.testing}>
+          正在验证...
+        </State>
       </div>
       <div className="row">
         年龄:
