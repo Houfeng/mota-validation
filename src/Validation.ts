@@ -15,7 +15,7 @@ import { IValidationOptions } from './IValidationOptions';
 
 export { IValidationPorps, Alert };
 
-const { getByPath, isFunction, isString, each } = require('ntils');
+const { getByPath, isFunction, isString } = require('ntils');
 const EventEmitter = require('eify');
 
 export class Validation extends EventEmitter {
@@ -126,6 +126,9 @@ export class Validation extends EventEmitter {
     for (const rule of item.rules) {
       const test: Function = isFunction(rule.test) ?
         <Function>rule.test : builtIn[<string>rule.test];
+      if (!isFunction(test)) {
+        throw new Error(`Invalid test function: ${rule.test}`);
+      }
       state = await test(value);
       message = rule.message;
       if (!state) break;

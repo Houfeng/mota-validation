@@ -14179,7 +14179,7 @@ exports.builtIn = {
     /**
      * 非空白字符（可视字符）
      */
-    nonblank: function (value) { return /[\S]+/.test(value); },
+    nonblank: function (value) { return !/[\s]+/.test(value); },
     /**
      * 数值
      */
@@ -27144,7 +27144,7 @@ exports.Alert = Alert_1.Alert;
 var Field_1 = __webpack_require__(91);
 var State_1 = __webpack_require__(199);
 var states_1 = __webpack_require__(24);
-var _a = __webpack_require__(25), getByPath = _a.getByPath, isFunction = _a.isFunction, isString = _a.isString, each = _a.each;
+var _a = __webpack_require__(25), getByPath = _a.getByPath, isFunction = _a.isFunction, isString = _a.isString;
 var EventEmitter = __webpack_require__(200);
 var Validation = /** @class */ (function (_super) {
     __extends(Validation, _super);
@@ -27343,6 +27343,9 @@ var Validation = /** @class */ (function (_super) {
                         rule = _a[_i];
                         test = isFunction(rule.test) ?
                             rule.test : builtIn_1.builtIn[rule.test];
+                        if (!isFunction(test)) {
+                            throw new Error("Invalid test function: " + rule.test);
+                        }
                         return [4 /*yield*/, test(value)];
                     case 2:
                         state = _b.sent();

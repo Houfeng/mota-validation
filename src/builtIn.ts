@@ -15,7 +15,7 @@ export const builtIn: ITestMap = {
   /**
    * 非空白字符（可视字符）
    */
-  nonblank: (value: any) => /[\S]+/.test(value),
+  nonblank: (value: any) => !/[\s]+/.test(value),
 
   /**
    * 数值
