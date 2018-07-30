@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { IAbortablePromise } from 'promise-boost';
-import { states } from './states'
+import { states } from './states';
 import { IRule } from "./IRule";
 
 export interface ITestItem {

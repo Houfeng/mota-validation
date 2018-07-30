@@ -38,7 +38,7 @@ export function Field(props: IFieldPorps): any {
   if (!validation) return toElement(children);
   if (rules) validation.setRule(bind, rules, alias);
   let state = validation.state(bind)
-  if (isNull(state)) state = states.untested;
+  if (isNull(state)) state = states.unknown;
   return React.cloneElement(toElement(children), {
     ref: (ref) => setState(ref, state)
   });

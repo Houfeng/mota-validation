@@ -27,6 +27,7 @@ build:
       library: 'MotaValidation'
       libraryTarget: 'umd'
       umdNamedDefine: true
+    compress: false
     externals:
       react: 
         commonjs: react

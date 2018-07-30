@@ -9,8 +9,9 @@ import { Alert, IAlertPorps } from './Alert';
 import { Field, IFieldPorps } from './Field';
 import { State, IStateProps } from './State';
 import { Component } from "react";
-import { states } from './states'
+import { states } from './states';
 import { ITestItem } from './ITestItem';
+import { IValidationOptions } from './IValidationOptions';
 
 export { IValidationPorps, Alert };
 
@@ -20,9 +21,10 @@ const EventEmitter = require('eify');
 export class Validation extends EventEmitter {
 
   private __component: Component;
+  private __options: IValidationOptions;
   private __model: any;
   private __items: ITestItemMap = {};
-  private __watchers: Array<any> = [];
+  private __watchers: { [bind: string]: any } = {};
   private __aliases: any = {};
   private __testCount = 0;
 
@@ -30,8 +32,9 @@ export class Validation extends EventEmitter {
   private __field: (props: IFieldPorps) => any;
   private __state: (props: IStateProps) => any;
 
-  constructor(component: any) {
+  constructor(component: any, options: IValidationOptions) {
     super();
+    this.__options = options;
     this.__component = component;
     this.__model = component.model;
   }
@@ -40,6 +43,10 @@ export class Validation extends EventEmitter {
     if (!this.component) return;
     validation = validation || this.items;
     this.component.setState({ validation });
+  }
+
+  public get options() {
+    return this.__options;
   }
 
   public get Alert() {
@@ -104,6 +111,7 @@ export class Validation extends EventEmitter {
     if (!this.items[bind]) this.items[bind] = new TestItem(bind);
     if (rules) this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
     if (alias) this.aliases[alias] = bind;
+    if (this.options.auto !== false) this.startWatch(bind);
   }
 
   public setState = (bind: string, state: states,
@@ -172,21 +180,21 @@ export class Validation extends EventEmitter {
     return states.succeed;
   }
 
-  public startWatch = () => {
-    each(this.items, (bind: string, rule: IRule) => {
-      const watcher = this.model._observer_
-        .watch(() => getByPath(this.model, bind), () => this.test(bind));
-      watcher.calc(false);
-      this.__watchers.push(watcher);
-    });
-  }
-
-  public stopWatch = () => {
-    this.__watchers.forEach(watcher => this.model._observer_.unWatch(watcher));
+  private startWatch = (bind: string) => {
+    if (this.__watchers[bind]) return;
+    const watcher = this.model._observer_
+      .watch(() => getByPath(this.model, bind), () => this.test(bind));
+    watcher.calc(false);
+    this.__watchers[bind] = watcher;
   }
 
   public distory = () => {
     this.off('test', this.updateComponent);
+    const binds = Object.keys(this.items);
+    binds.forEach(bind => {
+      const watcher = this.__watchers[bind];
+      this.model._observer_.unWatch(watcher);
+    });
   }
 
 }

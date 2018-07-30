@@ -7,10 +7,12 @@ import { IFieldPorps } from './Field';
 import { IStateProps } from './State';
 import { states } from './states';
 import { ITestItem } from './ITestItem';
+import { IValidationOptions } from './IValidationOptions';
 export { IValidationPorps, Alert };
 declare const EventEmitter: any;
 export declare class Validation extends EventEmitter {
     private __component;
+    private __options;
     private __model;
     private __items;
     private __watchers;
@@ -19,8 +21,9 @@ export declare class Validation extends EventEmitter {
     private __alert;
     private __field;
     private __state;
-    constructor(component: any);
+    constructor(component: any, options: IValidationOptions);
     private updateComponent;
+    readonly options: IValidationOptions;
     readonly Alert: (props: IAlertPorps) => any;
     readonly Field: (props: IFieldPorps) => any;
     readonly State: (props: IStateProps) => any;
@@ -39,7 +42,6 @@ export declare class Validation extends EventEmitter {
     private testAll;
     test: (bind?: string) => Promise<states>;
     state: (bind?: string) => states;
-    startWatch: () => void;
-    stopWatch: () => void;
+    private startWatch;
     distory: () => void;
 }

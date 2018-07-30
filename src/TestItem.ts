@@ -1,6 +1,6 @@
-import { ReactElement } from 'react'
-import { ITestItem } from './ITestItem'
-import { states } from './states'
+import { ReactElement } from 'react';
+import { ITestItem } from './ITestItem';
+import { states } from './states';
 import { IRule } from './IRule';
 
 export class TestItem implements ITestItem {
