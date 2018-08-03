@@ -15,6 +15,7 @@ dev:
   - name: browser-sync
 
 build:
+  - name: clean
   - name: typescript
   - name: webpack
     common:

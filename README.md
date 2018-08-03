@@ -5,13 +5,13 @@ Mota 虽可以使用任意的表单组件（form）来完成表单应用，但 m
 
 ### 安装
 
-mota-validation 并不是 mota 的一部分，是一个独立发布的扩展包，需要单独安装
+mota-validation 并不是 mota 内建的一部分，是一个独立发布的扩展包，需要单独安装
 
 ```
 npm install mota-validation --save 
 ```
 
-### 基本使用
+### 示例
 
 mota-validation 提供了一个 `@validation` 装饰器，通过 `@model` 装饰的组件都可以同时使用 `@validation` 进行装饰
 
@@ -69,3 +69,4 @@ class App extends React.Component {
 
 ReactDOM.render(<App />, root);
 ```
+

@@ -27,7 +27,7 @@ export declare class Validation extends EventEmitter {
     readonly Alert: (props: IAlertPorps) => any;
     readonly Field: (props: IFieldPorps) => any;
     readonly State: (props: IStateProps) => any;
-    readonly tests: import("../../../../../../Users/Houfeng/my/dev/mota-validation/src/ITestMap").ITestMap;
+    readonly tests: import("./ITestMap").ITestMap;
     readonly states: typeof states;
     private readonly aliases;
     private readonly model;
