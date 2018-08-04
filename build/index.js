@@ -80,23 +80,6 @@ return /******/ (function(modules) { // webpackBootstrap
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var states;
-(function (states) {
-    states[states["unknown"] = -3] = "unknown";
-    states[states["untested"] = -2] = "untested";
-    states[states["testing"] = -1] = "testing";
-    states[states["failed"] = 0] = "failed";
-    states[states["succeed"] = 1] = "succeed";
-})(states = exports.states || (exports.states = {}));
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * 空函数
  */
@@ -909,6 +892,23 @@ exports.parseHTML = parseHTML;
 //# sourceMappingURL=index.js.map
 
 /***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var states;
+(function (states) {
+    states[states["unknown"] = -3] = "unknown";
+    states[states["untested"] = -2] = "untested";
+    states[states["testing"] = -1] = "testing";
+    states[states["failed"] = 0] = "failed";
+    states[states["succeed"] = 1] = "succeed";
+})(states = exports.states || (exports.states = {}));
+
+
+/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -916,7 +916,7 @@ exports.parseHTML = parseHTML;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(7);
-var isString = __webpack_require__(1).isString;
+var isString = __webpack_require__(0).isString;
 function toElement(content) {
     if (!content)
         content = '';
@@ -959,7 +959,7 @@ exports.abortable = abortable;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var states_1 = __webpack_require__(0);
+var states_1 = __webpack_require__(1);
 var TestItem = /** @class */ (function () {
     function TestItem(bind, rules, state, message, pending) {
         if (rules === void 0) { rules = []; }
@@ -1044,7 +1044,7 @@ exports.builtIn = {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(2);
-var states_1 = __webpack_require__(0);
+var states_1 = __webpack_require__(1);
 function Alert(props) {
     var validation = props.validation, bind = props.bind, alias = props.alias, children = props.children, _a = props.rules, rules = _a === void 0 ? children : _a;
     if (!validation)
@@ -1076,8 +1076,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(7);
 var ReactDOM = __webpack_require__(15);
 var utils_1 = __webpack_require__(2);
-var states_1 = __webpack_require__(0);
-var _a = __webpack_require__(1), isArray = _a.isArray, isNull = _a.isNull;
+var states_1 = __webpack_require__(1);
+var _a = __webpack_require__(0), isArray = _a.isArray, isNull = _a.isNull;
 var attrKey = 'data-state';
 function createStyle() {
     var style = document.createElement('style');
@@ -1137,9 +1137,9 @@ var Alert_1 = __webpack_require__(6);
 exports.Alert = Alert_1.Alert;
 var Field_1 = __webpack_require__(8);
 exports.Field = Field_1.Field;
-var states_1 = __webpack_require__(0);
+var states_1 = __webpack_require__(1);
 exports.states = states_1.states;
-var isFunction = __webpack_require__(1).isFunction;
+var isFunction = __webpack_require__(0).isFunction;
 var registerMountHandler = mota_1.utils.registerMountHandler, registerUnmountHandler = mota_1.utils.registerUnmountHandler;
 function getValidation(com, options) {
     if (options === void 0) { options = {}; }
@@ -1260,8 +1260,8 @@ var Alert_1 = __webpack_require__(6);
 exports.Alert = Alert_1.Alert;
 var Field_1 = __webpack_require__(8);
 var State_1 = __webpack_require__(16);
-var states_1 = __webpack_require__(0);
-var _a = __webpack_require__(1), getByPath = _a.getByPath, isFunction = _a.isFunction, isString = _a.isString;
+var states_1 = __webpack_require__(1);
+var _a = __webpack_require__(0), getByPath = _a.getByPath, isFunction = _a.isFunction, isString = _a.isString;
 var EventEmitter = __webpack_require__(17);
 var Validation = /** @class */ (function (_super) {
     __extends(Validation, _super);
@@ -1580,6 +1580,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_15__;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(2);
+var isArray = __webpack_require__(0).isArray;
 function State(props) {
     var validation = props.validation, bind = props.bind, when = props.when, alias = props.alias, children = props.children, rules = props.rules;
     if (!validation)
@@ -1587,7 +1588,11 @@ function State(props) {
     if (rules)
         validation.setRule(bind, rules, alias);
     var item = validation.item(bind);
-    if (!item || item.state !== when)
+    if (!item)
+        return utils_1.toElement();
+    var whenStates = isArray(when) ?
+        when : [when];
+    if (whenStates.indexOf(item.state) < 0)
         return utils_1.toElement();
     return utils_1.toElement(children);
 }
@@ -1598,7 +1603,7 @@ exports.State = State;
 /* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var _a = __webpack_require__(1), final = _a.final, isArray = _a.isArray, copy = _a.copy, each = _a.each;
+var _a = __webpack_require__(0), final = _a.final, isArray = _a.isArray, copy = _a.copy, each = _a.each;
 /**
  * 事件触发器基类
  */

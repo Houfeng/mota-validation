@@ -47,7 +47,7 @@ class App extends React.Component {
             { test: tests.range(18, 60), message: '年龄需在 18 ~ 60 之间' }
           ]}
         </Alert>
-        <State bind="params.age" when={states.succeed}>
+        <State bind="params.age" when={[states.succeed]}>
           验证通过
         </State>
       </div>
