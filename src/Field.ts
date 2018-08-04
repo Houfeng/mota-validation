@@ -30,6 +30,10 @@ export interface IFieldPorps extends IValidationPorps {
   children?: any;
 }
 
+/**
+ * 表单组件容器
+ * @param {IFieldPorps} props 属性
+ */
 export function Field(props: IFieldPorps): any {
   const { validation, bind, rules, alias, children } = props;
   if (children && isArray(children) && children.length > 0) {

@@ -898,12 +898,30 @@ exports.parseHTML = parseHTML;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * 验证状态
+ */
 var states;
 (function (states) {
+    /**
+     * 未知
+     */
     states[states["unknown"] = -3] = "unknown";
+    /**
+     * 未验证
+     */
     states[states["untested"] = -2] = "untested";
+    /**
+     * 验证中
+     */
     states[states["testing"] = -1] = "testing";
+    /**
+     * 失败
+     */
     states[states["failed"] = 0] = "failed";
+    /**
+     * 成功
+     */
     states[states["succeed"] = 1] = "succeed";
 })(states = exports.states || (exports.states = {}));
 
@@ -984,6 +1002,9 @@ exports.TestItem = TestItem;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * 内建验证函数集
+ */
 exports.builtIn = {
     /**
      * 任意值
@@ -1045,6 +1066,10 @@ exports.builtIn = {
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(2);
 var states_1 = __webpack_require__(1);
+/**
+ * 验证失败提示信息组件
+ * @param {IAlertPorps} props 属性
+ */
 function Alert(props) {
     var validation = props.validation, bind = props.bind, alias = props.alias, children = props.children, _a = props.rules, rules = _a === void 0 ? children : _a;
     if (!validation)
@@ -1092,6 +1117,10 @@ function setState(ref, state) {
         return;
     element.setAttribute(attrKey, String(state));
 }
+/**
+ * 表单组件容器
+ * @param {IFieldPorps} props 属性
+ */
 function Field(props) {
     var validation = props.validation, bind = props.bind, rules = props.rules, alias = props.alias, children = props.children;
     if (children && isArray(children) && children.length > 0) {
@@ -1277,6 +1306,12 @@ var Validation = /** @class */ (function (_super) {
             validation = validation || _this.items;
             _this.component.setState({ validation: validation });
         };
+        /**
+         * 设定验证规则
+         * @param {string} bind 要验证的数据
+         * @param {IRule | Array<IRule>} rules 规则
+         * @param {string} alias 别名
+         */
         _this.setRule = function (bind, rules, alias) {
             if (!_this.items[bind])
                 _this.items[bind] = new TestItem_1.TestItem(bind);
@@ -1287,6 +1322,13 @@ var Validation = /** @class */ (function (_super) {
             if (_this.options.auto !== false)
                 _this.startWatch(bind);
         };
+        /**
+         * 设定验证结果（一般无需主动干预结果）
+         * @param {string} bind 对应的数据项
+         * @param {states} state 要设定的状态
+         * @param {string} message 提示信息
+         * @param {boolean} update 是否立即更新组件
+         */
         _this.setState = function (bind, state, message, update) {
             if (message === void 0) { message = ''; }
             if (update === void 0) { update = true; }
@@ -1295,6 +1337,11 @@ var Validation = /** @class */ (function (_super) {
             if (update)
                 _this.updateComponent();
         };
+        /**
+         * 触发验证，传入 bind 时验证指定数据项，省略参数时验证整个表单
+         * @param {string} bind 要验证的数据
+         * @returns {Promise<states>} 验证结果
+         */
         _this.test = function (bind) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -1315,6 +1362,11 @@ var Validation = /** @class */ (function (_super) {
                 }
             });
         }); };
+        /**
+         * 查询验证结果，传入 bind 时查询指定数据项，省略参数时查询整个表单
+         * @param {string} bind 要验证的数据
+         * @returns {Promise<states>} 验证结果
+         */
         _this.state = function (bind) {
             bind = _this.aliases[bind] || bind;
             if (bind && isString(bind)) {
@@ -1340,6 +1392,9 @@ var Validation = /** @class */ (function (_super) {
             watcher.calc(false);
             _this.__watchers[bind] = watcher;
         };
+        /**
+         * 销毁
+         */
         _this.distory = function () {
             _this.off('test', _this.updateComponent);
             var binds = Object.keys(_this.items);
@@ -1354,6 +1409,9 @@ var Validation = /** @class */ (function (_super) {
         return _this;
     }
     Object.defineProperty(Validation.prototype, "options", {
+        /**
+         * 选项
+         */
         get: function () {
             return this.__options;
         },
@@ -1361,6 +1419,9 @@ var Validation = /** @class */ (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "Alert", {
+        /**
+         * 错误提示组件
+         */
         get: function () {
             var validation = this;
             if (!this.__alert) {
@@ -1372,6 +1433,9 @@ var Validation = /** @class */ (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "Field", {
+        /**
+         * 表单组件容器
+         */
         get: function () {
             var validation = this;
             if (!this.__field) {
@@ -1383,6 +1447,9 @@ var Validation = /** @class */ (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "State", {
+        /**
+         * 状态组件（状态符合时显示）
+         */
         get: function () {
             var validation = this;
             if (!this.__state) {
@@ -1394,6 +1461,9 @@ var Validation = /** @class */ (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "tests", {
+        /**
+         * 所有内建验证函数
+         */
         get: function () {
             return builtIn_1.builtIn;
         },
@@ -1401,6 +1471,9 @@ var Validation = /** @class */ (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "states", {
+        /**
+         * 验证状态枚举
+         */
         get: function () {
             return states_1.states;
         },
@@ -1429,6 +1502,9 @@ var Validation = /** @class */ (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "items", {
+        /**
+         * 所有验证项
+         */
         get: function () {
             return this.__items;
         },
@@ -1436,12 +1512,20 @@ var Validation = /** @class */ (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "testCount", {
+        /**
+         * 验证次数
+         */
         get: function () {
             return this.__testCount;
         },
         enumerable: true,
         configurable: true
     });
+    /**
+     * 获取验证项
+     * @param bind 指定的数据
+     * @returns {ITestItem}
+     */
     Validation.prototype.item = function (bind) {
         bind = this.aliases[bind] || bind;
         return this.items[bind];
@@ -1581,6 +1665,10 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_15__;
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(2);
 var isArray = __webpack_require__(0).isArray;
+/**
+ * 状态组件（状态符合时显示）
+ * @param {IStateProps} props 属性
+ */
 function State(props) {
     var validation = props.validation, bind = props.bind, when = props.when, alias = props.alias, children = props.children, rules = props.rules;
     if (!validation)

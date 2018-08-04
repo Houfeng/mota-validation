@@ -1,5 +1,8 @@
 import { ITestMap } from './ITestMap'
 
+/**
+ * 内建验证函数集
+ */
 export const builtIn: ITestMap = {
 
   /**

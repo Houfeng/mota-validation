@@ -45,10 +45,16 @@ export class Validation extends EventEmitter {
     this.component.setState({ validation });
   }
 
+  /**
+   * 选项
+   */
   public get options() {
     return this.__options;
   }
 
+  /**
+   * 错误提示组件
+   */
   public get Alert() {
     const validation = this;
     if (!this.__alert) {
@@ -57,6 +63,9 @@ export class Validation extends EventEmitter {
     return this.__alert;
   }
 
+  /**
+   * 表单组件容器
+   */
   public get Field() {
     const validation = this;
     if (!this.__field) {
@@ -65,6 +74,9 @@ export class Validation extends EventEmitter {
     return this.__field;
   }
 
+  /**
+   * 状态组件（状态符合时显示）
+   */
   public get State() {
     const validation = this;
     if (!this.__state) {
@@ -73,10 +85,16 @@ export class Validation extends EventEmitter {
     return this.__state;
   }
 
+  /**
+   * 所有内建验证函数
+   */
   public get tests() {
     return builtIn;
   }
 
+  /**
+   * 验证状态枚举
+   */
   public get states() {
     return states;
   }
@@ -93,19 +111,36 @@ export class Validation extends EventEmitter {
     return this.__component;
   }
 
+  /**
+   * 所有验证项
+   */
   public get items() {
     return this.__items;
   }
 
+  /**
+   * 验证次数
+   */
   public get testCount() {
     return this.__testCount;
   }
 
+  /**
+   * 获取验证项
+   * @param bind 指定的数据
+   * @returns {ITestItem} 
+   */
   public item(bind: string) {
     bind = this.aliases[bind] || bind;
     return this.items[bind];
   }
 
+  /**
+   * 设定验证规则
+   * @param {string} bind 要验证的数据
+   * @param {IRule | Array<IRule>} rules 规则
+   * @param {string} alias 别名
+   */
   public setRule = (bind: string, rules: IRule | Array<IRule>,
     alias?: string) => {
     if (!this.items[bind]) this.items[bind] = new TestItem(bind);
@@ -114,6 +149,13 @@ export class Validation extends EventEmitter {
     if (this.options.auto !== false) this.startWatch(bind);
   }
 
+  /**
+   * 设定验证结果（一般无需主动干预结果）
+   * @param {string} bind 对应的数据项
+   * @param {states} state 要设定的状态
+   * @param {string} message 提示信息
+   * @param {boolean} update 是否立即更新组件
+   */
   public setState = (bind: string, state: states,
     message: ReactElement<any> | string = '', update: boolean = true) => {
     this.items[bind].state = state;
@@ -155,6 +197,11 @@ export class Validation extends EventEmitter {
     await Promise.all(keys.map(bind => this.testOne(bind)));
   }
 
+  /**
+   * 触发验证，传入 bind 时验证指定数据项，省略参数时验证整个表单
+   * @param {string} bind 要验证的数据
+   * @returns {Promise<states>} 验证结果
+   */
   public test = async (bind?: string) => {
     this.__testCount++;
     if (bind && isString(bind)) {
@@ -166,6 +213,11 @@ export class Validation extends EventEmitter {
     return this.state(bind);
   }
 
+  /**
+   * 查询验证结果，传入 bind 时查询指定数据项，省略参数时查询整个表单
+   * @param {string} bind 要验证的数据
+   * @returns {Promise<states>} 验证结果
+   */
   public state = (bind?: string) => {
     bind = this.aliases[bind] || bind;
     if (bind && isString(bind)) {
@@ -191,6 +243,9 @@ export class Validation extends EventEmitter {
     this.__watchers[bind] = watcher;
   }
 
+  /**
+   * 销毁
+   */
   public distory = () => {
     this.off('test', this.updateComponent);
     const binds = Object.keys(this.items);

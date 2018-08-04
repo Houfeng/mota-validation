@@ -1,3 +1,30 @@
+/**
+ * 验证状态
+ */
 export enum states {
-  unknown = -3, untested = -2, testing = -1, failed = 0, succeed = 1,
+
+  /**
+   * 未知
+   */
+  unknown = -3,
+
+  /**
+   * 未验证
+   */
+  untested = -2,
+
+  /**
+   * 验证中
+   */
+  testing = -1,
+
+  /**
+   * 失败
+   */
+  failed = 0,
+
+  /**
+   * 成功
+   */
+  succeed = 1,
 }
