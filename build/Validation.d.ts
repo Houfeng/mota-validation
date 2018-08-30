@@ -95,6 +95,7 @@ export declare class Validation extends EventEmitter {
      */
     state: (bind?: string) => states;
     private startWatch;
+    reset: () => void;
     /**
      * 销毁
      */

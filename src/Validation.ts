@@ -272,6 +272,13 @@ export class Validation extends EventEmitter {
     this.__watchers[bind] = watcher;
   };
 
+  public reset = () => {
+    Object.keys(this.items).forEach((bind: string) => {
+      this.setState(bind, states.unknown, '', false);
+    });
+    this.updateComponent();
+  }
+
   /**
    * 销毁
    */

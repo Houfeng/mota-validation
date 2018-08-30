@@ -1412,6 +1412,12 @@ var Validation = /** @class */ (function (_super) {
             watcher.calc(false);
             _this.__watchers[bind] = watcher;
         };
+        _this.reset = function () {
+            Object.keys(_this.items).forEach(function (bind) {
+                _this.setState(bind, states_1.states.unknown, '', false);
+            });
+            _this.updateComponent();
+        };
         /**
          * 销毁
          */
