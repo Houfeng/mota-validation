@@ -53,7 +53,8 @@ add:
   - name: react-component-creator
 
 test:
-  - name: lint
+  - name: clean
+  - name: tslint
   - name: unit
 
 publish:

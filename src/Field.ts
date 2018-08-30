@@ -1,14 +1,14 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import { IValidationPorps } from './IValidationPorps';
-import { toElement } from './utils';
-import { states } from './states'
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import { IValidationPorps } from "./IValidationPorps";
+import { toElement } from "./utils";
+import { states } from "./states";
 
-const { isArray, isNull } = require('ntils');
-const attrKey = 'data-state';
+const { isArray, isNull } = require("ntils");
+const attrKey = "data-state";
 
 function createStyle() {
-  const style = document.createElement('style');
+  const style = document.createElement("style");
   style.innerHTML = `[${attrKey}]{
     transition-duration:.2s;transition-property:box-shadow;
   }
@@ -20,7 +20,7 @@ function createStyle() {
 }
 createStyle();
 
-function setState(ref, state: states) {
+function setState(ref: any, state: states) {
   const element = ReactDOM.findDOMNode(ref) as HTMLElement;
   if (!element) return;
   element.setAttribute(attrKey, String(state));
@@ -41,9 +41,9 @@ export function Field(props: IFieldPorps): any {
   }
   if (!validation) return toElement(children);
   if (rules) validation.setRule(bind, rules, alias);
-  let state = validation.state(bind)
+  let state = validation.state(bind);
   if (isNull(state)) state = states.unknown;
   return React.cloneElement(toElement(children), {
-    ref: (ref) => setState(ref, state)
+    ref: (ref: any) => setState(ref, state)
   });
 }

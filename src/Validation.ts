@@ -1,25 +1,24 @@
-import { ReactElement } from 'react';
-import { abortable } from 'promise-boost';
+import { ReactElement, Component } from "react";
+import { abortable } from "promise-boost";
 import { IRule } from "./IRule";
 import { TestItem } from "./TestItem";
-import { builtIn } from './builtIn';
-import { ITestItemMap } from './ItestItemMap';
-import { IValidationPorps } from './IValidationPorps';
-import { Alert, IAlertPorps } from './Alert';
-import { Field, IFieldPorps } from './Field';
-import { State, IStateProps } from './State';
-import { Component } from "react";
-import { states } from './states';
-import { ITestItem } from './ITestItem';
-import { IValidationOptions } from './IValidationOptions';
+import { builtIn } from "./builtIn";
+import { ITestItemMap } from "./ItestItemMap";
+import { IValidationPorps } from "./IValidationPorps";
+import { Alert, IAlertPorps } from "./Alert";
+import { Field, IFieldPorps } from "./Field";
+import { State, IStateProps } from "./State";
+import { states } from "./states";
+import { ITestItem } from "./ITestItem";
+import { IValidationOptions } from "./IValidationOptions";
+import { ITestResult } from "./ITestResult";
 
 export { IValidationPorps, Alert };
 
-const { getByPath, isFunction, isString } = require('ntils');
-const EventEmitter = require('eify');
+const { getByPath, isFunction, isString } = require("ntils");
+const EventEmitter = require("eify");
 
 export class Validation extends EventEmitter {
-
   private __component: Component;
   private __options: IValidationOptions;
   private __model: any;
@@ -43,7 +42,7 @@ export class Validation extends EventEmitter {
     if (!this.component) return;
     validation = validation || this.items;
     this.component.setState({ validation });
-  }
+  };
 
   /**
    * 选项
@@ -56,9 +55,12 @@ export class Validation extends EventEmitter {
    * 错误提示组件
    */
   public get Alert() {
-    const validation = this;
     if (!this.__alert) {
-      this.__alert = (props: IAlertPorps) => Alert({ ...props, validation });
+      this.__alert = (props: IAlertPorps) =>
+        Alert({
+          ...props,
+          validation: this
+        });
     }
     return this.__alert;
   }
@@ -67,9 +69,12 @@ export class Validation extends EventEmitter {
    * 表单组件容器
    */
   public get Field() {
-    const validation = this;
     if (!this.__field) {
-      this.__field = (props: IFieldPorps) => Field({ ...props, validation });
+      this.__field = (props: IFieldPorps) =>
+        Field({
+          ...props,
+          validation: this
+        });
     }
     return this.__field;
   }
@@ -78,9 +83,12 @@ export class Validation extends EventEmitter {
    * 状态组件（状态符合时显示）
    */
   public get State() {
-    const validation = this;
     if (!this.__state) {
-      this.__state = (props: IStateProps) => State({ ...props, validation });
+      this.__state = (props: IStateProps) =>
+        State({
+          ...props,
+          validation: this
+        });
     }
     return this.__state;
   }
@@ -128,7 +136,7 @@ export class Validation extends EventEmitter {
   /**
    * 获取验证项
    * @param bind 指定的数据
-   * @returns {ITestItem} 
+   * @returns {ITestItem}
    */
   public item(bind: string) {
     bind = this.aliases[bind] || bind;
@@ -141,13 +149,12 @@ export class Validation extends EventEmitter {
    * @param {IRule | Array<IRule>} rules 规则
    * @param {string} alias 别名
    */
-  public setRule = (bind: string, rules: IRule | Array<IRule>,
-    alias?: string) => {
+  public setRule = (bind: string, rules: IRule | IRule[], alias?: string) => {
     if (!this.items[bind]) this.items[bind] = new TestItem(bind);
     if (rules) this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
     if (alias) this.aliases[alias] = bind;
     if (this.options.auto !== false) this.startWatch(bind);
-  }
+  };
 
   /**
    * 设定验证结果（一般无需主动干预结果）
@@ -156,18 +163,27 @@ export class Validation extends EventEmitter {
    * @param {string} message 提示信息
    * @param {boolean} update 是否立即更新组件
    */
-  public setState = (bind: string, state: states,
-    message: ReactElement<any> | string = '', update: boolean = true) => {
+  public setState = (
+    bind: string,
+    state: states,
+    message: ReactElement<any> | string = "",
+    update = true
+  ) => {
     this.items[bind].state = state;
     this.items[bind].message = message;
     if (update) this.updateComponent();
-  }
+  };
 
-  private async createTestPending(item: ITestItem, value: any) {
-    let state: Boolean = true, message: ReactElement<any> | string = '';
+  private async createTestPending(
+    item: ITestItem,
+    value: any
+  ): Promise<ITestResult> {
+    let state = true,
+      message: ReactElement<any> | string = "";
     for (const rule of item.rules) {
-      const test: Function = isFunction(rule.test) ?
-        <Function>rule.test : builtIn[<string>rule.test];
+      const test: Function = isFunction(rule.test)
+        ? <Function>rule.test
+        : builtIn[<string>rule.test];
       if (!isFunction(test)) {
         throw new Error(`Invalid test function: ${rule.test}`);
       }
@@ -192,7 +208,7 @@ export class Validation extends EventEmitter {
   }
 
   private async testAll() {
-    if (!this.model) return [];
+    if (!this.model) return;
     const keys = Object.keys(this.items);
     await Promise.all(keys.map(bind => this.testOne(bind)));
   }
@@ -209,9 +225,9 @@ export class Validation extends EventEmitter {
     } else {
       await this.testAll();
     }
-    this.emit('test', this);
+    this.emit("test", this);
     return this.state(bind);
-  }
+  };
 
   /**
    * 查询验证结果，传入 bind 时查询指定数据项，省略参数时查询整个表单
@@ -226,33 +242,37 @@ export class Validation extends EventEmitter {
     }
     const binds = Object.keys(this.items);
     if (binds.length < 1) return states.unknown;
-    if (binds.some(bind => this.state(bind) === states.failed))
+    if (binds.some(bind => this.state(bind) === states.failed)) {
       return states.failed;
-    if (binds.some(bind => this.state(bind) === states.testing))
+    }
+    if (binds.some(bind => this.state(bind) === states.testing)) {
       return states.testing;
-    if (binds.some(bind => this.state(bind) === states.untested))
+    }
+    if (binds.some(bind => this.state(bind) === states.untested)) {
       return states.untested;
+    }
     return states.succeed;
-  }
+  };
 
   private startWatch = (bind: string) => {
     if (this.__watchers[bind]) return;
-    const watcher = this.model._observer_
-      .watch(() => getByPath(this.model, bind), () => this.test(bind));
+    const watcher = this.model._observer_.watch(
+      () => getByPath(this.model, bind),
+      () => this.test(bind)
+    );
     watcher.calc(false);
     this.__watchers[bind] = watcher;
-  }
+  };
 
   /**
    * 销毁
    */
   public distory = () => {
-    this.off('test', this.updateComponent);
+    this.off("test", this.updateComponent);
     const binds = Object.keys(this.items);
     binds.forEach(bind => {
       const watcher = this.__watchers[bind];
       this.model._observer_.unWatch(watcher);
     });
-  }
-
+  };
 }

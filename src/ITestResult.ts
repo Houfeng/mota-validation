@@ -1,6 +1,6 @@
 import { ReactElement } from "react";
 
-export interface IRule {
+export interface ITestResult {
+  state: boolean;
   message: string | ReactElement<any>;
-  test: ((value: any) => boolean) | string | Function;
 }

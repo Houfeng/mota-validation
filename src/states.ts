@@ -2,7 +2,6 @@
  * 验证状态
  */
 export enum states {
-
   /**
    * 未知
    */
@@ -27,4 +26,9 @@ export enum states {
    * 成功
    */
   succeed = 1,
+
+  /**
+   * 成功
+   */
+  success = 1
 }

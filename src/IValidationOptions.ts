@@ -1,5 +1,4 @@
 export interface IValidationOptions {
-
   /**
    * 是否自动进行一次初始校验，默认为 false
    */
@@ -9,5 +8,4 @@ export interface IValidationOptions {
    * 模型数发生变化时是自动定校验，默认为 true
    */
   auto?: boolean;
-
 }

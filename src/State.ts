@@ -1,14 +1,12 @@
-import * as React from 'react';
-import { ITestItem } from './ITestItem';
-import { IValidationPorps } from './IValidationPorps';
-import { IRule } from './IRule';
-import { toElement } from './utils';
-import { states } from './states';
+import { ITestItem } from "./ITestItem";
+import { IValidationPorps } from "./IValidationPorps";
+import { toElement } from "./utils";
+import { states } from "./states";
 
-const { isArray } = require('ntils');
+const { isArray } = require("ntils");
 
 export interface IStateProps extends IValidationPorps {
-  when?: states | Array<states>;
+  when?: states | states[];
   children?: any;
 }
 
@@ -22,8 +20,7 @@ export function State(props: IStateProps) {
   if (rules) validation.setRule(bind, rules, alias);
   const item: ITestItem = validation.item(bind);
   if (!item) return toElement();
-  const whenStates: Array<states> = isArray(when) ?
-    <Array<states>>when : [<states>when];
+  const whenStates: states[] = isArray(when) ? <states[]>when : [<states>when];
   if (whenStates.indexOf(item.state) < 0) return toElement();
   return toElement(children);
 }

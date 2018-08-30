@@ -1,14 +1,14 @@
-import { ITestMap } from './ITestMap'
+import { ITestMap } from "./ITestMap";
 
 /**
  * 内建验证函数集
  */
 export const builtIn: ITestMap = {
-
   /**
    * 任意值
    */
-  any: (value: any) => true,
+  // tslint-disable-next-line
+  any: () => true,
 
   /**
    * 非空值（包括空字符串）
@@ -28,19 +28,19 @@ export const builtIn: ITestMap = {
   /**
    * 数值区间
    */
-  range: (min: number, max: number) =>
-    (value: number) => !value || value >= min && value <= max,
+  range: (min: number, max: number) => (value: number) =>
+    !value || (value >= min && value <= max),
 
   /**
    * 字符串长度
    */
-  len: (min: number, max: number) =>
-    (value: string) => value.length >= min && value.length <= max,
+  len: (min: number, max: number) => (value: string) =>
+    value.length >= min && value.length <= max,
 
   /**
    * 邮箱
    */
-  email: (value: string) => !value || /[\S]+\@[\S]+/ig.test(value),
+  email: (value: string) => !value || /[\S]+\@[\S]+/gi.test(value),
 
   /**
    * 中文
@@ -60,6 +60,5 @@ export const builtIn: ITestMap = {
   /**
    * URL
    */
-  url: (value: string) => !value || /^[\S]+\:\/\//.test(value),
-
+  url: (value: string) => !value || /^[\S]+\:\/\//.test(value)
 };
