@@ -274,7 +274,7 @@ export class Validation extends EventEmitter {
 
   public reset = () => {
     Object.keys(this.items).forEach((bind: string) => {
-      this.setState(bind, states.unknown, '', false);
+      this.setState(bind, states.untested, null, false);
     });
     this.updateComponent();
   }

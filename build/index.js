@@ -1414,7 +1414,7 @@ var Validation = /** @class */ (function (_super) {
         };
         _this.reset = function () {
             Object.keys(_this.items).forEach(function (bind) {
-                _this.setState(bind, states_1.states.unknown, '', false);
+                _this.setState(bind, states_1.states.untested, null, false);
             });
             _this.updateComponent();
         };
