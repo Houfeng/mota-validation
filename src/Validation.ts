@@ -12,11 +12,11 @@ import { states } from "./states";
 import { ITestItem } from "./ITestItem";
 import { IValidationOptions } from "./IValidationOptions";
 import { ITestResult } from "./ITestResult";
+import { EventEmitter } from "./EventEmitter";
 
 export { IValidationPorps, Alert };
 
 const { getByPath, isFunction, isString } = require("ntils");
-const EventEmitter = require("eify");
 
 export class Validation extends EventEmitter {
   private __component: Component;
@@ -26,6 +26,7 @@ export class Validation extends EventEmitter {
   private __watchers: { [bind: string]: any } = {};
   private __aliases: any = {};
   private __testCount = 0;
+  private __watchPaused = false;
 
   private __alert: (props: IAlertPorps) => any;
   private __field: (props: IFieldPorps) => any;
@@ -36,6 +37,7 @@ export class Validation extends EventEmitter {
     this.__options = options;
     this.__component = component;
     this.__model = component.model;
+    this.__watchPaused = false;
   }
 
   private updateComponent = (validation?: ITestItemMap) => {
@@ -153,7 +155,7 @@ export class Validation extends EventEmitter {
     if (!this.items[bind]) this.items[bind] = new TestItem(bind);
     if (rules) this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
     if (alias) this.aliases[alias] = bind;
-    if (this.options.auto !== false) this.startWatch(bind);
+    if (this.options.auto !== false) this.watch(bind);
   };
 
   /**
@@ -254,12 +256,21 @@ export class Validation extends EventEmitter {
     return states.succeed;
   };
 
-  private startWatch = (bind: string) => {
+  public pauseWatch = () => {
+    this.__watchPaused = true;
+  };
+
+  public resumeWatch = () => {
+    this.__watchPaused = false;
+  };
+
+  private watch = (bind: string) => {
     if (this.__watchers[bind]) return;
     let watchTimer: any = null;
     const watcher = this.model._observer_.watch(
-      () => getByPath(this.model, bind),
+      () => !this.__watchPaused && getByPath(this.model, bind),
       () => {
+        if (this.__watchPaused) return;
         if (watchTimer) clearTimeout(watchTimer);
         watchTimer = setTimeout(() => {
           if (!watchTimer) return;
@@ -272,22 +283,36 @@ export class Validation extends EventEmitter {
     this.__watchers[bind] = watcher;
   };
 
+  private unWatch(bind: string) {
+    const watcher = this.__watchers[bind];
+    if (!watcher) return;
+    this.model._observer_.unWatch(watcher);
+  }
+
+  public sartWatch = () => {
+    const binds = Object.keys(this.items);
+    binds.forEach(bind => this.watch(bind));
+    this.resumeWatch();
+  };
+
+  public stopWatch = () => {
+    this.pauseWatch();
+    const binds = Object.keys(this.items);
+    binds.forEach(bind => this.unWatch(bind));
+  };
+
   public reset = () => {
     Object.keys(this.items).forEach((bind: string) => {
       this.setState(bind, states.untested, null, false);
     });
     this.updateComponent();
-  }
+  };
 
   /**
    * 销毁
    */
   public distory = () => {
     this.off("test", this.updateComponent);
-    const binds = Object.keys(this.items);
-    binds.forEach(bind => {
-      const watcher = this.__watchers[bind];
-      this.model._observer_.unWatch(watcher);
-    });
+    this.stopWatch();
   };
 }

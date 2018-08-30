@@ -1298,8 +1298,8 @@ exports.Alert = Alert_1.Alert;
 var Field_1 = __webpack_require__(8);
 var State_1 = __webpack_require__(16);
 var states_1 = __webpack_require__(1);
+var EventEmitter_1 = __webpack_require__(17);
 var _a = __webpack_require__(0), getByPath = _a.getByPath, isFunction = _a.isFunction, isString = _a.isString;
-var EventEmitter = __webpack_require__(17);
 var Validation = /** @class */ (function (_super) {
     __extends(Validation, _super);
     function Validation(component, options) {
@@ -1308,6 +1308,7 @@ var Validation = /** @class */ (function (_super) {
         _this.__watchers = {};
         _this.__aliases = {};
         _this.__testCount = 0;
+        _this.__watchPaused = false;
         _this.updateComponent = function (validation) {
             if (!_this.component)
                 return;
@@ -1328,7 +1329,7 @@ var Validation = /** @class */ (function (_super) {
             if (alias)
                 _this.aliases[alias] = bind;
             if (_this.options.auto !== false)
-                _this.startWatch(bind);
+                _this.watch(bind);
         };
         /**
          * 设定验证结果（一般无需主动干预结果）
@@ -1395,11 +1396,19 @@ var Validation = /** @class */ (function (_super) {
             }
             return states_1.states.succeed;
         };
-        _this.startWatch = function (bind) {
+        _this.pauseWatch = function () {
+            _this.__watchPaused = true;
+        };
+        _this.resumeWatch = function () {
+            _this.__watchPaused = false;
+        };
+        _this.watch = function (bind) {
             if (_this.__watchers[bind])
                 return;
             var watchTimer = null;
-            var watcher = _this.model._observer_.watch(function () { return getByPath(_this.model, bind); }, function () {
+            var watcher = _this.model._observer_.watch(function () { return !_this.__watchPaused && getByPath(_this.model, bind); }, function () {
+                if (_this.__watchPaused)
+                    return;
                 if (watchTimer)
                     clearTimeout(watchTimer);
                 watchTimer = setTimeout(function () {
@@ -1412,6 +1421,16 @@ var Validation = /** @class */ (function (_super) {
             watcher.calc(false);
             _this.__watchers[bind] = watcher;
         };
+        _this.sartWatch = function () {
+            var binds = Object.keys(_this.items);
+            binds.forEach(function (bind) { return _this.watch(bind); });
+            _this.resumeWatch();
+        };
+        _this.stopWatch = function () {
+            _this.pauseWatch();
+            var binds = Object.keys(_this.items);
+            binds.forEach(function (bind) { return _this.unWatch(bind); });
+        };
         _this.reset = function () {
             Object.keys(_this.items).forEach(function (bind) {
                 _this.setState(bind, states_1.states.untested, null, false);
@@ -1423,15 +1442,12 @@ var Validation = /** @class */ (function (_super) {
          */
         _this.distory = function () {
             _this.off("test", _this.updateComponent);
-            var binds = Object.keys(_this.items);
-            binds.forEach(function (bind) {
-                var watcher = _this.__watchers[bind];
-                _this.model._observer_.unWatch(watcher);
-            });
+            _this.stopWatch();
         };
         _this.__options = options;
         _this.__component = component;
         _this.__model = component.model;
+        _this.__watchPaused = false;
         return _this;
     }
     Object.defineProperty(Validation.prototype, "options", {
@@ -1639,8 +1655,14 @@ var Validation = /** @class */ (function (_super) {
             });
         });
     };
+    Validation.prototype.unWatch = function (bind) {
+        var watcher = this.__watchers[bind];
+        if (!watcher)
+            return;
+        this.model._observer_.unWatch(watcher);
+    };
     return Validation;
-}(EventEmitter));
+}(EventEmitter_1.EventEmitter));
 exports.Validation = Validation;
 
 
@@ -1721,6 +1743,16 @@ exports.State = State;
 
 /***/ }),
 /* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EventEmitter = __webpack_require__(18);
+
+
+/***/ }),
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _a = __webpack_require__(0), final = _a.final, isArray = _a.isArray, copy = _a.copy, each = _a.each;

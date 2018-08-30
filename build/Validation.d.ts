@@ -8,8 +8,8 @@ import { IStateProps } from "./State";
 import { states } from "./states";
 import { ITestItem } from "./ITestItem";
 import { IValidationOptions } from "./IValidationOptions";
+import { EventEmitter } from "./EventEmitter";
 export { IValidationPorps, Alert };
-declare const EventEmitter: any;
 export declare class Validation extends EventEmitter {
     private __component;
     private __options;
@@ -18,6 +18,7 @@ export declare class Validation extends EventEmitter {
     private __watchers;
     private __aliases;
     private __testCount;
+    private __watchPaused;
     private __alert;
     private __field;
     private __state;
@@ -94,7 +95,12 @@ export declare class Validation extends EventEmitter {
      * @returns {Promise<states>} 验证结果
      */
     state: (bind?: string) => states;
-    private startWatch;
+    pauseWatch: () => void;
+    resumeWatch: () => void;
+    private watch;
+    private unWatch;
+    sartWatch: () => void;
+    stopWatch: () => void;
     reset: () => void;
     /**
      * 销毁
