@@ -1398,7 +1398,17 @@ var Validation = /** @class */ (function (_super) {
         _this.startWatch = function (bind) {
             if (_this.__watchers[bind])
                 return;
-            var watcher = _this.model._observer_.watch(function () { return getByPath(_this.model, bind); }, function () { return _this.test(bind); });
+            var watchTimer = null;
+            var watcher = _this.model._observer_.watch(function () { return getByPath(_this.model, bind); }, function () {
+                if (watchTimer)
+                    clearTimeout(watchTimer);
+                watchTimer = setTimeout(function () {
+                    if (!watchTimer)
+                        return;
+                    _this.test(bind);
+                    watchTimer = null;
+                }, _this.options.debounce || 300);
+            });
             watcher.calc(false);
             _this.__watchers[bind] = watcher;
         };

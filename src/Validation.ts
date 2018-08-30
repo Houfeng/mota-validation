@@ -256,9 +256,17 @@ export class Validation extends EventEmitter {
 
   private startWatch = (bind: string) => {
     if (this.__watchers[bind]) return;
+    let watchTimer: any = null;
     const watcher = this.model._observer_.watch(
       () => getByPath(this.model, bind),
-      () => this.test(bind)
+      () => {
+        if (watchTimer) clearTimeout(watchTimer);
+        watchTimer = setTimeout(() => {
+          if (!watchTimer) return;
+          this.test(bind);
+          watchTimer = null;
+        }, this.options.debounce || 300);
+      }
     );
     watcher.calc(false);
     this.__watchers[bind] = watcher;

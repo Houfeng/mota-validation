@@ -8,4 +8,9 @@ export interface IValidationOptions {
    * 模型数发生变化时是自动定校验，默认为 true
    */
   auto?: boolean;
+
+  /**
+   * 去抖时间阈值
+   */
+  debounce?: number;
 }
