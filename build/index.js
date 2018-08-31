@@ -1406,7 +1406,7 @@ var Validation = /** @class */ (function (_super) {
             if (_this.__watchers[bind])
                 return;
             var watchTimer = null;
-            var watcher = _this.model._observer_.watch(function () { return !_this.__watchPaused && getByPath(_this.model, bind); }, function () {
+            var watcher = _this.model._observer_.watch(function () { return getByPath(_this.model, bind); }, function () {
                 if (_this.__watchPaused)
                     return;
                 if (watchTimer)
@@ -1660,6 +1660,7 @@ var Validation = /** @class */ (function (_super) {
         if (!watcher)
             return;
         this.model._observer_.unWatch(watcher);
+        this.__watchers[bind] = null;
     };
     return Validation;
 }(EventEmitter_1.EventEmitter));

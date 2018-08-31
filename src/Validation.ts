@@ -268,7 +268,7 @@ export class Validation extends EventEmitter {
     if (this.__watchers[bind]) return;
     let watchTimer: any = null;
     const watcher = this.model._observer_.watch(
-      () => !this.__watchPaused && getByPath(this.model, bind),
+      () => getByPath(this.model, bind),
       () => {
         if (this.__watchPaused) return;
         if (watchTimer) clearTimeout(watchTimer);
@@ -287,6 +287,7 @@ export class Validation extends EventEmitter {
     const watcher = this.__watchers[bind];
     if (!watcher) return;
     this.model._observer_.unWatch(watcher);
+    this.__watchers[bind] = null;
   }
 
   public sartWatch = () => {

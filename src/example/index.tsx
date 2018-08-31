@@ -21,6 +21,10 @@ class App extends React.Component {
   model: ViewModel;
   validation: Validation;
 
+  componentDidMount() {
+    (window as any).example = this;
+  }
+
   render() {
     const { Alert, Field, State, tests } = this.validation;
     return (
