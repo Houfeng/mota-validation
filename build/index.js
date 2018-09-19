@@ -1322,6 +1322,8 @@ var Validation = /** @class */ (function (_super) {
          * @param {string} alias 别名
          */
         _this.setRule = function (bind, rules, alias) {
+            if (!bind)
+                return;
             if (!_this.items[bind])
                 _this.items[bind] = new TestItem_1.TestItem(bind);
             if (rules)
@@ -1341,6 +1343,8 @@ var Validation = /** @class */ (function (_super) {
         _this.setState = function (bind, state, message, update) {
             if (message === void 0) { message = ""; }
             if (update === void 0) { update = true; }
+            if (!bind)
+                return;
             _this.items[bind].state = state;
             _this.items[bind].message = message;
             if (update)
@@ -1576,7 +1580,29 @@ var Validation = /** @class */ (function (_super) {
      */
     Validation.prototype.item = function (bind) {
         bind = this.aliases[bind] || bind;
+        if (!bind)
+            return;
         return this.items[bind];
+    };
+    /**
+     * 移除验证规则
+     * @param bind 绑定的数据
+     */
+    Validation.prototype.removeRule = function (bind) {
+        bind = this.aliases[bind] || bind;
+        if (!bind)
+            return;
+        this.items[bind] = null;
+        delete this.items[bind];
+    };
+    /**
+     * 清理规测
+     */
+    Validation.prototype.clearRules = function () {
+        var _this = this;
+        Object.keys(this.items).forEach(function (bind) {
+            _this.removeRule(bind);
+        });
     };
     Validation.prototype.createTestPending = function (item, value) {
         return __awaiter(this, void 0, void 0, function () {
@@ -1618,7 +1644,7 @@ var Validation = /** @class */ (function (_super) {
                 switch (_b.label) {
                     case 0:
                         bind = this.aliases[bind] || bind;
-                        if (!this.model)
+                        if (!bind || !this.model)
                             return [2 /*return*/];
                         item = this.item(bind);
                         if (!item || !item.rules || item.rules.length < 1)

@@ -73,6 +73,15 @@ export declare class Validation extends EventEmitter {
      */
     setRule: (bind: string, rules: IRule | IRule[], alias?: string) => void;
     /**
+     * 移除验证规则
+     * @param bind 绑定的数据
+     */
+    removeRule(bind: string): void;
+    /**
+     * 清理规测
+     */
+    clearRules(): void;
+    /**
      * 设定验证结果（一般无需主动干预结果）
      * @param {string} bind 对应的数据项
      * @param {states} state 要设定的状态

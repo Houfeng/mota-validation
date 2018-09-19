@@ -142,6 +142,7 @@ export class Validation extends EventEmitter {
    */
   public item(bind: string) {
     bind = this.aliases[bind] || bind;
+    if (!bind) return;
     return this.items[bind];
   }
 
@@ -152,11 +153,32 @@ export class Validation extends EventEmitter {
    * @param {string} alias 别名
    */
   public setRule = (bind: string, rules: IRule | IRule[], alias?: string) => {
+    if (!bind) return;
     if (!this.items[bind]) this.items[bind] = new TestItem(bind);
     if (rules) this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
     if (alias) this.aliases[alias] = bind;
     if (this.options.auto !== false) this.watch(bind);
   };
+
+  /**
+   * 移除验证规则
+   * @param bind 绑定的数据
+   */
+  public removeRule(bind: string) {
+    bind = this.aliases[bind] || bind;
+    if (!bind) return;
+    this.items[bind] = null;
+    delete this.items[bind];
+  }
+
+  /**
+   * 清理规测
+   */
+  public clearRules() {
+    Object.keys(this.items).forEach((bind: string) => {
+      this.removeRule(bind);
+    });
+  }
 
   /**
    * 设定验证结果（一般无需主动干预结果）
@@ -171,6 +193,7 @@ export class Validation extends EventEmitter {
     message: ReactElement<any> | string = "",
     update = true
   ) => {
+    if (!bind) return;
     this.items[bind].state = state;
     this.items[bind].message = message;
     if (update) this.updateComponent();
@@ -198,7 +221,7 @@ export class Validation extends EventEmitter {
 
   private async testOne(bind: string) {
     bind = this.aliases[bind] || bind;
-    if (!this.model) return;
+    if (!bind || !this.model) return;
     const item = this.item(bind);
     if (!item || !item.rules || item.rules.length < 1) return;
     if (item.pending) item.pending.abort();
