@@ -46,19 +46,17 @@ function decorate(
       return getValidation(this, options);
     }
   });
-  registerMountHandler(proto, function() {
+  registerMountHandler(proto, function () {
     if (!this.validation) return;
     if (options.initial === true) this.validation.test();
   });
-  registerUnmountHandler(proto, function() {
+  registerUnmountHandler(proto, function () {
     if (!this.validation) return;
     this.validation.distory();
   });
 }
 
-export function validation(
-  options: IValidationOptions | typeof Component = {}
-): any {
+export function validation(options: IValidationOptions | any): any {
   if (isFunction(options)) return decorate(options as typeof Component);
   return (target: typeof Component) =>
     decorate(target, options as IValidationOptions);

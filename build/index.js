@@ -1207,7 +1207,6 @@ function decorate(target, options) {
     });
 }
 function validation(options) {
-    if (options === void 0) { options = {}; }
     if (isFunction(options))
         return decorate(options);
     return function (target) {

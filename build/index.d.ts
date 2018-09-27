@@ -1,4 +1,3 @@
-import { Component } from "react";
 import { Validation } from "./Validation";
 import { builtIn } from "./builtIn";
 import { IRule } from "./IRule";
@@ -10,5 +9,5 @@ import { IValidationPorps } from "./IValidationPorps";
 import { IValidationOptions } from "./IValidationOptions";
 import { states } from "./states";
 export { Validation, IValidationOptions, IValidationPorps, states, builtIn, builtIn as tests, IRule, ITestItemMap, TestItem, Alert, Field };
-export declare function validation(options?: IValidationOptions | typeof Component): any;
+export declare function validation(options: IValidationOptions | any): any;
 export default validation;
