@@ -7,7 +7,7 @@
 		exports["MotaValidation"] = factory(require("mota"), require("react"), require("react-dom"));
 	else
 		root["MotaValidation"] = factory(root["mota"], root["React"], root["ReactDOM"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_11__, __WEBPACK_EXTERNAL_MODULE_7__, __WEBPACK_EXTERNAL_MODULE_15__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_11__, __WEBPACK_EXTERNAL_MODULE_7__, __WEBPACK_EXTERNAL_MODULE_16__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -1103,15 +1103,17 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_7__;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(global) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(7);
-var ReactDOM = __webpack_require__(15);
+var ReactDOM = __webpack_require__(16);
 var utils_1 = __webpack_require__(2);
 var states_1 = __webpack_require__(1);
 var _a = __webpack_require__(0), isArray = _a.isArray, isNull = _a.isNull;
 var attrKey = "data-state";
 function createStyle() {
+    if (!global.document)
+        return;
     var style = document.createElement("style");
     style.innerHTML = "[" + attrKey + "]{\n    transition-duration:.2s;transition-property:box-shadow;\n  }\n  [" + attrKey + "=\"0\"]{\n    outline:none;box-shadow:0 0 2px 1px rgba(255,0,0,.8);\n  }";
     var container = document.head || document.body;
@@ -1146,6 +1148,7 @@ function Field(props) {
 }
 exports.Field = Field;
 
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)))
 
 /***/ }),
 /* 9 */
@@ -1295,9 +1298,9 @@ var builtIn_1 = __webpack_require__(5);
 var Alert_1 = __webpack_require__(6);
 exports.Alert = Alert_1.Alert;
 var Field_1 = __webpack_require__(8);
-var State_1 = __webpack_require__(16);
+var State_1 = __webpack_require__(17);
 var states_1 = __webpack_require__(1);
-var EventEmitter_1 = __webpack_require__(17);
+var EventEmitter_1 = __webpack_require__(18);
 var _a = __webpack_require__(0), getByPath = _a.getByPath, isFunction = _a.isFunction, isString = _a.isString;
 var Validation = /** @class */ (function (_super) {
     __extends(Validation, _super);
@@ -1735,10 +1738,37 @@ exports.Defer = Defer;
 /* 15 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_15__;
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || Function("return this")() || (1,eval)("this");
+} catch(e) {
+	// This works if the window reference is available
+	if(typeof window === "object")
+		g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
 
 /***/ }),
 /* 16 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_16__;
+
+/***/ }),
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1768,17 +1798,17 @@ exports.State = State;
 
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EventEmitter = __webpack_require__(18);
+exports.EventEmitter = __webpack_require__(19);
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _a = __webpack_require__(0), final = _a.final, isArray = _a.isArray, copy = _a.copy, each = _a.each;

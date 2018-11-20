@@ -8,6 +8,7 @@ const { isArray, isNull } = require("ntils");
 const attrKey = "data-state";
 
 function createStyle() {
+  if (!(global as any).document) return;
   const style = document.createElement("style");
   style.innerHTML = `[${attrKey}]{
     transition-duration:.2s;transition-property:box-shadow;

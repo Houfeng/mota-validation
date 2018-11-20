@@ -1,6 +1,6 @@
 {
   "name": "mota-validation",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "",
   "main": "./build/index.js",
   "typings": "./build/index.d.ts",
@@ -20,10 +20,10 @@
     "@types/react": "^16.0.6",
     "@types/react-dom": "^16.0.6",
     "eify": "^1.0.3",
-    "mota": "^0.7.5",
+    "mota": "^0.11.2",
     "ntils": "^4.0.4",
     "promise-boost": "^1.0.2",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1"
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3"
   }
 }
