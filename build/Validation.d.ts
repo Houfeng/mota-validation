@@ -103,7 +103,7 @@ export declare class Validation extends EventEmitter {
      * @param {string} bind 要验证的数据
      * @returns {Promise<states>} 验证结果
      */
-    state: (bind?: string) => states;
+    state: (bind?: string) => states.unknown | states.unknown | states.untested | states.untested | states | states.succeed;
     pauseWatch: () => void;
     resumeWatch: () => void;
     private watch;

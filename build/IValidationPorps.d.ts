@@ -3,6 +3,6 @@ import { Validation } from "./Validation";
 export interface IValidationPorps {
     validation?: Validation;
     bind: string;
-    rules: IRule[];
+    rules?: IRule[];
     alias?: string;
 }
