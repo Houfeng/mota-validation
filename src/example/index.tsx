@@ -27,6 +27,7 @@ class App extends React.Component {
 
   render() {
     const { Alert, Field, State, tests } = this.validation;
+    (window as any).T = this;
     return (
       <div>
         <div className="row">
@@ -71,12 +72,13 @@ class App extends React.Component {
         <div className="row">
           提交:
           <button
-            disabled={this.validation.state() !== states.succeed}
+            disabled={this.model.results.state !== states.succeed}
             onClick={this.submit}
           >
             立即提交
           </button>
           <button onClick={this.hack}>手动更新状态</button>
+          <div>{JSON.stringify(this.model.results)}</div>
         </div>
       </div>
     );

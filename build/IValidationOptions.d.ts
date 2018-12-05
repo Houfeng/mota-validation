@@ -11,4 +11,8 @@ export interface IValidationOptions {
      * 去抖时间阈值
      */
     debounce?: number;
+    /**
+     * 验证结果在 model 中的字段名称，默认为 results
+     */
+    stateKey?: string;
 }

@@ -1,6 +1,4 @@
-import { ReactElement } from "react";
-
 export interface IRule {
-  message?: string | ReactElement<any>;
+  message?: string;
   test: ((value: any) => boolean) | string | Function;
 }

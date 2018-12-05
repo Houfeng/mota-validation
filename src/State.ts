@@ -1,4 +1,3 @@
-import { ITestItem } from "./ITestItem";
 import { IValidationPorps } from "./IValidationPorps";
 import { toElement } from "./utils";
 import { states } from "./states";
@@ -15,12 +14,13 @@ export interface IStateProps extends IValidationPorps {
  * @param {IStateProps} props 属性
  */
 export function State(props: IStateProps) {
-  const { validation, bind, when, alias, children, rules } = props;
+  const { validation, results, bind, when, alias, children, rules } = props;
   if (!validation) return toElement();
   if (rules) validation.setRule(bind, rules, alias);
-  const item: ITestItem = validation.item(bind);
-  if (!item) return toElement();
+  const result = results.items[bind];
+  if (!result) return toElement();
+  const { state } = result;
   const whenStates: states[] = isArray(when) ? <states[]>when : [<states>when];
-  if (whenStates.indexOf(item.state) < 0) return toElement();
+  if (whenStates.indexOf(state) < 0) return toElement();
   return toElement(children);
 }

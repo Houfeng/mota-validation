@@ -28,10 +28,11 @@ export {
 const { isFunction } = require("ntils");
 const { registerMountHandler, registerUnmountHandler } = utils;
 
-function getValidation(com: any, options: IValidationOptions = {}) {
-  if (!com.model) return;
+function createValidation(com: any, options: IValidationOptions = {}) {
+  if (!com || !com.model) return;
   if (!com.__validation) {
-    com.__validation = new Validation(com, options);
+    const validation = new Validation(com.model, options);
+    com.__validation = validation;
   }
   return com.__validation;
 }
@@ -43,14 +44,14 @@ function decorate(
   const proto = target.prototype;
   Object.defineProperty(proto, "validation", {
     get() {
-      return getValidation(this, options);
+      return createValidation(this, options);
     }
   });
-  registerMountHandler(proto, function() {
+  registerMountHandler(proto, function () {
     if (!this.validation) return;
     if (options.initial === true) this.validation.test();
   });
-  registerUnmountHandler(proto, function() {
+  registerUnmountHandler(proto, function () {
     if (!this.validation) return;
     this.validation.distory();
   });

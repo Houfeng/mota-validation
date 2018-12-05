@@ -1,4 +1,3 @@
-import { ReactElement, Component } from "react";
 import { abortable } from "promise-boost";
 import { IRule } from "./IRule";
 import { TestItem } from "./TestItem";
@@ -13,38 +12,49 @@ import { ITestItem } from "./ITestItem";
 import { IValidationOptions } from "./IValidationOptions";
 import { ITestResult } from "./ITestResult";
 import { EventEmitter } from "./EventEmitter";
+import { IResults } from "./IResults";
 
 export { IValidationPorps, Alert };
 
 const { getByPath, isFunction, isString } = require("ntils");
 
 export class Validation extends EventEmitter {
-  private __component: Component;
   private __options: IValidationOptions;
   private __model: any;
   private __items: ITestItemMap = {};
   private __watchers: { [bind: string]: any } = {};
   private __aliases: any = {};
-  private __testCount = 0;
+  private __time = 0;
   private __watchPaused = false;
 
   private __alert: (props: IAlertPorps) => any;
   private __field: (props: IFieldPorps) => any;
   private __state: (props: IStateProps) => any;
 
-  constructor(component: any, options: IValidationOptions) {
+  constructor(model: any, options: IValidationOptions) {
     super();
+    options = Object.assign({ stateKey: 'results', debounce: 300 }, options);
     this.__options = options;
-    this.__component = component;
-    this.__model = component.model;
+    this.__model = model;
     this.__watchPaused = false;
+    this.initResults();
   }
 
-  private updateComponent = (validation?: ITestItemMap) => {
-    if (!this.component) return;
-    validation = validation || this.items;
-    this.component.setState({ validation });
-  };
+  private initResults() {
+    const { stateKey } = this.options;
+    const items: any = {}, time = 0, state = states.unknown;
+    this.__model._observer_.set(stateKey, { state, time, items });
+  }
+
+  public get results() {
+    const { stateKey } = this.options;
+    return this.model[stateKey] as IResults;
+  }
+
+  public set results(value) {
+    const { stateKey } = this.options;
+    this.model[stateKey] = value;
+  }
 
   /**
    * 选项
@@ -57,12 +67,10 @@ export class Validation extends EventEmitter {
    * 错误提示组件
    */
   public get Alert() {
+    const validation = this, results = this.results;
     if (!this.__alert) {
       this.__alert = (props: IAlertPorps) =>
-        Alert({
-          ...props,
-          validation: this
-        });
+        Alert({ ...props, results, validation });
     }
     return this.__alert;
   }
@@ -71,12 +79,10 @@ export class Validation extends EventEmitter {
    * 表单组件容器
    */
   public get Field() {
+    const validation = this, results = this.results;
     if (!this.__field) {
       this.__field = (props: IFieldPorps) =>
-        Field({
-          ...props,
-          validation: this
-        });
+        Field({ ...props, results, validation });
     }
     return this.__field;
   }
@@ -85,12 +91,10 @@ export class Validation extends EventEmitter {
    * 状态组件（状态符合时显示）
    */
   public get State() {
+    const validation = this, results = this.results;
     if (!this.__state) {
       this.__state = (props: IStateProps) =>
-        State({
-          ...props,
-          validation: this
-        });
+        State({ ...props, results, validation });
     }
     return this.__state;
   }
@@ -117,10 +121,6 @@ export class Validation extends EventEmitter {
     return this.__model;
   }
 
-  private get component() {
-    return this.__component;
-  }
-
   /**
    * 所有验证项
    */
@@ -129,10 +129,18 @@ export class Validation extends EventEmitter {
   }
 
   /**
-   * 验证次数
+   * 验证次数（将要废弃，请使用 time 属性替代）
+   * @deprecated
    */
   public get testCount() {
-    return this.__testCount;
+    return this.__time;
+  }
+
+  /**
+   * 验证次数
+   */
+  public get time() {
+    return this.__time;
   }
 
   /**
@@ -157,6 +165,9 @@ export class Validation extends EventEmitter {
     if (!this.items[bind]) this.items[bind] = new TestItem(bind);
     if (rules) this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
     if (alias) this.aliases[alias] = bind;
+    if (!this.results.items[bind]) {
+      this.results.items[bind] = { state: states.untested, message: '' };
+    }
     if (this.options.auto !== false) this.watch(bind);
   };
 
@@ -169,6 +180,7 @@ export class Validation extends EventEmitter {
     if (!bind) return;
     this.items[bind] = null;
     delete this.items[bind];
+    delete this.results.items[bind];
   }
 
   /**
@@ -187,24 +199,21 @@ export class Validation extends EventEmitter {
    * @param {string} message 提示信息
    * @param {boolean} update 是否立即更新组件
    */
-  public setState = (
-    bind: string,
-    state: states,
-    message: ReactElement<any> | string = "",
-    update = true
-  ) => {
+  public setState = (bind: string, state: states, message: string = '') => {
     if (!bind) return;
     this.items[bind].state = state;
     this.items[bind].message = message;
-    if (update) this.updateComponent();
+    this.results.items[bind].state = state;
+    this.results.items[bind].message = message;
+    this.results = Object.assign({}, this.results, {
+      time: this.time,
+      state: this.state(),
+    });
   };
 
-  private async createTestPending(
-    item: ITestItem,
-    value: any
-  ): Promise<ITestResult> {
-    let state = true,
-      message: ReactElement<any> | string = "";
+  private async createTestPending(item: ITestItem, value: any):
+    Promise<ITestResult> {
+    let state = true, message: string = "";
     for (const rule of item.rules) {
       const test: Function = isFunction(rule.test)
         ? <Function>rule.test
@@ -213,7 +222,7 @@ export class Validation extends EventEmitter {
         throw new Error(`Invalid test function: ${rule.test}`);
       }
       state = await test(value);
-      message = rule.message;
+      message = state ? '' : rule.message;
       if (!state) break;
     }
     return { state, message };
@@ -226,7 +235,7 @@ export class Validation extends EventEmitter {
     if (!item || !item.rules || item.rules.length < 1) return;
     if (item.pending) item.pending.abort();
     const value = getByPath(this.model, bind);
-    this.setState(bind, states.testing);
+    this.setState(bind, states.testing, '');
     item.pending = abortable(this.createTestPending(item, value));
     const { state, message } = await item.pending;
     this.setState(bind, state ? states.succeed : states.failed, message);
@@ -244,7 +253,7 @@ export class Validation extends EventEmitter {
    * @returns {Promise<states>} 验证结果
    */
   public test = async (bind?: string) => {
-    this.__testCount++;
+    this.__time++;
     if (bind && isString(bind)) {
       await this.testOne(bind);
     } else {
@@ -299,7 +308,7 @@ export class Validation extends EventEmitter {
           if (!watchTimer) return;
           this.test(bind);
           watchTimer = null;
-        }, this.options.debounce || 300);
+        }, this.options.debounce);
       }
     );
     watcher.calc(false);
@@ -327,16 +336,14 @@ export class Validation extends EventEmitter {
 
   public reset = () => {
     Object.keys(this.items).forEach((bind: string) => {
-      this.setState(bind, states.untested, null, false);
+      this.setState(bind, states.untested, '');
     });
-    this.updateComponent();
   };
 
   /**
    * 销毁
    */
   public distory = () => {
-    this.off("test", this.updateComponent);
     this.stopWatch();
   };
 }

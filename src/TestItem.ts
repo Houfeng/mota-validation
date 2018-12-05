@@ -1,4 +1,3 @@
-import { ReactElement } from "react";
 import { ITestItem } from "./ITestItem";
 import { states } from "./states";
 import { IRule } from "./IRule";
@@ -9,7 +8,7 @@ export class TestItem implements ITestItem {
     public bind: string,
     public rules: IRule[] = [],
     public state: states = states.untested,
-    public message: string | ReactElement<any> = "",
+    public message: string = "",
     public pending: Promise<ITestResult> = null
-  ) {}
+  ) { }
 }

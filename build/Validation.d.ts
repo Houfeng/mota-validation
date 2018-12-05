@@ -1,4 +1,3 @@
-import { ReactElement } from "react";
 import { IRule } from "./IRule";
 import { ITestItemMap } from "./ItestItemMap";
 import { IValidationPorps } from "./IValidationPorps";
@@ -9,21 +8,22 @@ import { states } from "./states";
 import { ITestItem } from "./ITestItem";
 import { IValidationOptions } from "./IValidationOptions";
 import { EventEmitter } from "./EventEmitter";
+import { IResults } from "./IResults";
 export { IValidationPorps, Alert };
 export declare class Validation extends EventEmitter {
-    private __component;
     private __options;
     private __model;
     private __items;
     private __watchers;
     private __aliases;
-    private __testCount;
+    private __time;
     private __watchPaused;
     private __alert;
     private __field;
     private __state;
-    constructor(component: any, options: IValidationOptions);
-    private updateComponent;
+    constructor(model: any, options: IValidationOptions);
+    private initResults;
+    results: IResults;
     /**
      * 选项
      */
@@ -50,15 +50,19 @@ export declare class Validation extends EventEmitter {
     readonly states: typeof states;
     private readonly aliases;
     private readonly model;
-    private readonly component;
     /**
      * 所有验证项
      */
     readonly items: ITestItemMap;
     /**
-     * 验证次数
+     * 验证次数（将要废弃，请使用 time 属性替代）
+     * @deprecated
      */
     readonly testCount: number;
+    /**
+     * 验证次数
+     */
+    readonly time: number;
     /**
      * 获取验证项
      * @param bind 指定的数据
@@ -88,7 +92,7 @@ export declare class Validation extends EventEmitter {
      * @param {string} message 提示信息
      * @param {boolean} update 是否立即更新组件
      */
-    setState: (bind: string, state: states, message?: string | ReactElement<any>, update?: boolean) => void;
+    setState: (bind: string, state: states, message?: string) => void;
     private createTestPending;
     private testOne;
     private testAll;

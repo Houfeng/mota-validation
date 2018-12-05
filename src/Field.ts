@@ -4,27 +4,28 @@ import { IValidationPorps } from "./IValidationPorps";
 import { toElement } from "./utils";
 import { states } from "./states";
 
+const ATTR_KEY = "data-state";
+const STYLE_ID = 'mota-validation';
 const { isArray, isNull } = require("ntils");
-const attrKey = "data-state";
 
-function createStyle() {
-  if (!(global as any).document) return;
+function createStyle(global: any) {
+  const { document } = global;
+
+  if (!document || document.getElementById(STYLE_ID)) return;
   const style = document.createElement("style");
-  style.innerHTML = `[${attrKey}]{
-    transition-duration:.2s;transition-property:box-shadow;
-  }
-  [${attrKey}="0"]{
-    outline:none;box-shadow:0 0 2px 1px rgba(255,0,0,.8);
-  }`;
+  style.id = STYLE_ID;
+  style.innerHTML = `
+  [${ATTR_KEY}]{transition-duration:.2s;transition-property:box-shadow;}
+  [${ATTR_KEY}="0"]{ outline:none;box-shadow:0 0 2px 1px rgba(255,0,0,.8);}`;
   const container = document.head || document.body;
   container.appendChild(style);
 }
-createStyle();
+createStyle(global as any);
 
 function setState(ref: any, state: states) {
   const element = ReactDOM.findDOMNode(ref) as HTMLElement;
   if (!element) return;
-  element.setAttribute(attrKey, String(state));
+  element.setAttribute(ATTR_KEY, String(state));
 }
 
 export interface IFieldPorps extends IValidationPorps {
@@ -36,13 +37,15 @@ export interface IFieldPorps extends IValidationPorps {
  * @param {IFieldPorps} props 属性
  */
 export function Field(props: IFieldPorps): any {
-  const { validation, bind, rules, alias, children } = props;
+  const { validation, results, bind, rules, alias, children } = props;
   if (children && isArray(children) && children.length > 0) {
     throw Error(`The State(${bind}) can only have a sub element`);
   }
   if (!validation) return toElement(children);
   if (rules) validation.setRule(bind, rules, alias);
-  let state = validation.state(bind);
+  const result = results.items[bind] || {};
+  if (!result) return toElement(children);
+  let { state } = result;
   if (isNull(state)) state = states.unknown;
   return React.cloneElement(toElement(children), {
     ref: (ref: any) => setState(ref, state)

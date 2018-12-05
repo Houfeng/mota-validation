@@ -1078,16 +1078,18 @@ var states_1 = __webpack_require__(1);
  * @param {IAlertPorps} props 属性
  */
 function Alert(props) {
-    var validation = props.validation, bind = props.bind, alias = props.alias, children = props.children, _a = props.rules, rules = _a === void 0 ? children : _a;
+    var validation = props.validation, results = props.results, bind = props.bind, alias = props.alias, children = props.children, _a = props.rules, rules = _a === void 0 ? children : _a;
     if (!validation)
         return utils_1.toElement();
     if (rules)
         validation.setRule(bind, rules, alias);
-    var item = validation.item(bind);
-    if (!item || item.state !== states_1.states.failed || !item.message) {
+    var result = results.items[bind];
+    if (!result)
         return utils_1.toElement();
-    }
-    return utils_1.toElement(item.message);
+    var state = result.state, message = result.message;
+    if (state !== states_1.states.failed || !message)
+        return utils_1.toElement();
+    return utils_1.toElement(message);
 }
 exports.Alert = Alert;
 
@@ -1109,29 +1111,32 @@ var React = __webpack_require__(7);
 var ReactDOM = __webpack_require__(16);
 var utils_1 = __webpack_require__(2);
 var states_1 = __webpack_require__(1);
+var ATTR_KEY = "data-state";
+var STYLE_ID = 'mota-validation';
 var _a = __webpack_require__(0), isArray = _a.isArray, isNull = _a.isNull;
-var attrKey = "data-state";
-function createStyle() {
-    if (!global.document)
+function createStyle(global) {
+    var document = global.document;
+    if (!document || document.getElementById(STYLE_ID))
         return;
     var style = document.createElement("style");
-    style.innerHTML = "[" + attrKey + "]{\n    transition-duration:.2s;transition-property:box-shadow;\n  }\n  [" + attrKey + "=\"0\"]{\n    outline:none;box-shadow:0 0 2px 1px rgba(255,0,0,.8);\n  }";
+    style.id = STYLE_ID;
+    style.innerHTML = "\n  [" + ATTR_KEY + "]{transition-duration:.2s;transition-property:box-shadow;}\n  [" + ATTR_KEY + "=\"0\"]{ outline:none;box-shadow:0 0 2px 1px rgba(255,0,0,.8);}";
     var container = document.head || document.body;
     container.appendChild(style);
 }
-createStyle();
+createStyle(global);
 function setState(ref, state) {
     var element = ReactDOM.findDOMNode(ref);
     if (!element)
         return;
-    element.setAttribute(attrKey, String(state));
+    element.setAttribute(ATTR_KEY, String(state));
 }
 /**
  * 表单组件容器
  * @param {IFieldPorps} props 属性
  */
 function Field(props) {
-    var validation = props.validation, bind = props.bind, rules = props.rules, alias = props.alias, children = props.children;
+    var validation = props.validation, results = props.results, bind = props.bind, rules = props.rules, alias = props.alias, children = props.children;
     if (children && isArray(children) && children.length > 0) {
         throw Error("The State(" + bind + ") can only have a sub element");
     }
@@ -1139,7 +1144,10 @@ function Field(props) {
         return utils_1.toElement(children);
     if (rules)
         validation.setRule(bind, rules, alias);
-    var state = validation.state(bind);
+    var result = results.items[bind] || {};
+    if (!result)
+        return utils_1.toElement(children);
+    var state = result.state;
     if (isNull(state))
         state = states_1.states.unknown;
     return React.cloneElement(utils_1.toElement(children), {
@@ -1180,12 +1188,13 @@ var states_1 = __webpack_require__(1);
 exports.states = states_1.states;
 var isFunction = __webpack_require__(0).isFunction;
 var registerMountHandler = mota_1.utils.registerMountHandler, registerUnmountHandler = mota_1.utils.registerUnmountHandler;
-function getValidation(com, options) {
+function createValidation(com, options) {
     if (options === void 0) { options = {}; }
-    if (!com.model)
+    if (!com || !com.model)
         return;
     if (!com.__validation) {
-        com.__validation = new Validation_1.Validation(com, options);
+        var validation_1 = new Validation_1.Validation(com.model, options);
+        com.__validation = validation_1;
     }
     return com.__validation;
 }
@@ -1194,7 +1203,7 @@ function decorate(target, options) {
     var proto = target.prototype;
     Object.defineProperty(proto, "validation", {
         get: function () {
-            return getValidation(this, options);
+            return createValidation(this, options);
         }
     });
     registerMountHandler(proto, function () {
@@ -1304,19 +1313,13 @@ var EventEmitter_1 = __webpack_require__(18);
 var _a = __webpack_require__(0), getByPath = _a.getByPath, isFunction = _a.isFunction, isString = _a.isString;
 var Validation = /** @class */ (function (_super) {
     __extends(Validation, _super);
-    function Validation(component, options) {
+    function Validation(model, options) {
         var _this = _super.call(this) || this;
         _this.__items = {};
         _this.__watchers = {};
         _this.__aliases = {};
-        _this.__testCount = 0;
+        _this.__time = 0;
         _this.__watchPaused = false;
-        _this.updateComponent = function (validation) {
-            if (!_this.component)
-                return;
-            validation = validation || _this.items;
-            _this.component.setState({ validation: validation });
-        };
         /**
          * 设定验证规则
          * @param {string} bind 要验证的数据
@@ -1332,6 +1335,9 @@ var Validation = /** @class */ (function (_super) {
                 _this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
             if (alias)
                 _this.aliases[alias] = bind;
+            if (!_this.results.items[bind]) {
+                _this.results.items[bind] = { state: states_1.states.untested, message: '' };
+            }
             if (_this.options.auto !== false)
                 _this.watch(bind);
         };
@@ -1342,15 +1348,18 @@ var Validation = /** @class */ (function (_super) {
          * @param {string} message 提示信息
          * @param {boolean} update 是否立即更新组件
          */
-        _this.setState = function (bind, state, message, update) {
-            if (message === void 0) { message = ""; }
-            if (update === void 0) { update = true; }
+        _this.setState = function (bind, state, message) {
+            if (message === void 0) { message = ''; }
             if (!bind)
                 return;
             _this.items[bind].state = state;
             _this.items[bind].message = message;
-            if (update)
-                _this.updateComponent();
+            _this.results.items[bind].state = state;
+            _this.results.items[bind].message = message;
+            _this.results = Object.assign({}, _this.results, {
+                time: _this.time,
+                state: _this.state(),
+            });
         };
         /**
          * 触发验证，传入 bind 时验证指定数据项，省略参数时验证整个表单
@@ -1361,7 +1370,7 @@ var Validation = /** @class */ (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        this.__testCount++;
+                        this.__time++;
                         if (!(bind && isString(bind))) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.testOne(bind)];
                     case 1:
@@ -1422,7 +1431,7 @@ var Validation = /** @class */ (function (_super) {
                         return;
                     _this.test(bind);
                     watchTimer = null;
-                }, _this.options.debounce || 300);
+                }, _this.options.debounce);
             });
             watcher.calc(false);
             _this.__watchers[bind] = watcher;
@@ -1439,23 +1448,39 @@ var Validation = /** @class */ (function (_super) {
         };
         _this.reset = function () {
             Object.keys(_this.items).forEach(function (bind) {
-                _this.setState(bind, states_1.states.untested, null, false);
+                _this.setState(bind, states_1.states.untested, '');
             });
-            _this.updateComponent();
         };
         /**
          * 销毁
          */
         _this.distory = function () {
-            _this.off("test", _this.updateComponent);
             _this.stopWatch();
         };
+        options = Object.assign({ stateKey: 'results', debounce: 300 }, options);
         _this.__options = options;
-        _this.__component = component;
-        _this.__model = component.model;
+        _this.__model = model;
         _this.__watchPaused = false;
+        _this.initResults();
         return _this;
     }
+    Validation.prototype.initResults = function () {
+        var stateKey = this.options.stateKey;
+        var items = {}, time = 0, state = states_1.states.unknown;
+        this.__model._observer_.set(stateKey, { state: state, time: time, items: items });
+    };
+    Object.defineProperty(Validation.prototype, "results", {
+        get: function () {
+            var stateKey = this.options.stateKey;
+            return this.model[stateKey];
+        },
+        set: function (value) {
+            var stateKey = this.options.stateKey;
+            this.model[stateKey] = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Validation.prototype, "options", {
         /**
          * 选项
@@ -1471,10 +1496,10 @@ var Validation = /** @class */ (function (_super) {
          * 错误提示组件
          */
         get: function () {
-            var _this = this;
+            var validation = this, results = this.results;
             if (!this.__alert) {
                 this.__alert = function (props) {
-                    return Alert_1.Alert(__assign({}, props, { validation: _this }));
+                    return Alert_1.Alert(__assign({}, props, { results: results, validation: validation }));
                 };
             }
             return this.__alert;
@@ -1487,10 +1512,10 @@ var Validation = /** @class */ (function (_super) {
          * 表单组件容器
          */
         get: function () {
-            var _this = this;
+            var validation = this, results = this.results;
             if (!this.__field) {
                 this.__field = function (props) {
-                    return Field_1.Field(__assign({}, props, { validation: _this }));
+                    return Field_1.Field(__assign({}, props, { results: results, validation: validation }));
                 };
             }
             return this.__field;
@@ -1503,10 +1528,10 @@ var Validation = /** @class */ (function (_super) {
          * 状态组件（状态符合时显示）
          */
         get: function () {
-            var _this = this;
+            var validation = this, results = this.results;
             if (!this.__state) {
                 this.__state = function (props) {
-                    return State_1.State(__assign({}, props, { validation: _this }));
+                    return State_1.State(__assign({}, props, { results: results, validation: validation }));
                 };
             }
             return this.__state;
@@ -1548,13 +1573,6 @@ var Validation = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Validation.prototype, "component", {
-        get: function () {
-            return this.__component;
-        },
-        enumerable: true,
-        configurable: true
-    });
     Object.defineProperty(Validation.prototype, "items", {
         /**
          * 所有验证项
@@ -1567,10 +1585,21 @@ var Validation = /** @class */ (function (_super) {
     });
     Object.defineProperty(Validation.prototype, "testCount", {
         /**
+         * 验证次数（将要废弃，请使用 time 属性替代）
+         * @deprecated
+         */
+        get: function () {
+            return this.__time;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Validation.prototype, "time", {
+        /**
          * 验证次数
          */
         get: function () {
-            return this.__testCount;
+            return this.__time;
         },
         enumerable: true,
         configurable: true
@@ -1596,6 +1625,7 @@ var Validation = /** @class */ (function (_super) {
             return;
         this.items[bind] = null;
         delete this.items[bind];
+        delete this.results.items[bind];
     };
     /**
      * 清理规测
@@ -1627,7 +1657,7 @@ var Validation = /** @class */ (function (_super) {
                         return [4 /*yield*/, test(value)];
                     case 2:
                         state = _b.sent();
-                        message = rule.message;
+                        message = state ? '' : rule.message;
                         if (!state)
                             return [3 /*break*/, 4];
                         _b.label = 3;
@@ -1654,7 +1684,7 @@ var Validation = /** @class */ (function (_super) {
                         if (item.pending)
                             item.pending.abort();
                         value = getByPath(this.model, bind);
-                        this.setState(bind, states_1.states.testing);
+                        this.setState(bind, states_1.states.testing, '');
                         item.pending = promise_boost_1.abortable(this.createTestPending(item, value));
                         return [4 /*yield*/, item.pending];
                     case 1:
@@ -1781,16 +1811,17 @@ var isArray = __webpack_require__(0).isArray;
  * @param {IStateProps} props 属性
  */
 function State(props) {
-    var validation = props.validation, bind = props.bind, when = props.when, alias = props.alias, children = props.children, rules = props.rules;
+    var validation = props.validation, results = props.results, bind = props.bind, when = props.when, alias = props.alias, children = props.children, rules = props.rules;
     if (!validation)
         return utils_1.toElement();
     if (rules)
         validation.setRule(bind, rules, alias);
-    var item = validation.item(bind);
-    if (!item)
+    var result = results.items[bind];
+    if (!result)
         return utils_1.toElement();
+    var state = result.state;
     var whenStates = isArray(when) ? when : [when];
-    if (whenStates.indexOf(item.state) < 0)
+    if (whenStates.indexOf(state) < 0)
         return utils_1.toElement();
     return utils_1.toElement(children);
 }
