@@ -9,8 +9,8 @@ import "./index.less";
 const root = document.getElementById("root");
 
 async function remoteTest() {
-  return new Promise(resolve => {
-    setTimeout(() => resolve(true), 500);
+  return new Promise<boolean>(resolve => {
+    setTimeout(() => resolve(true), 3000);
   });
 }
 
@@ -35,11 +35,15 @@ class App extends React.Component {
           <Field
             bind="params.name"
             alias="name"
-            rules={[{ test: "required" }, { test: remoteTest }]}
+            rules={[
+              { test: "required" },
+              { test: "len(2,4)" },
+              { test: remoteTest }
+            ]}
           >
             <input data-bind="params.name" />
           </Field>
-          <State bind="name" when={states.testing}>
+          <State bind="params.name" when={states.testing}>
             正在验证...
           </State>
         </div>

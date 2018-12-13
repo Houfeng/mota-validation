@@ -8,7 +8,7 @@ export class TestItem implements ITestItem {
     public bind: string,
     public rules: IRule[] = [],
     public state: states = states.untested,
-    public message: string = "",
+    public message = "",
     public pending: Promise<ITestResult> = null
-  ) { }
+  ) {}
 }

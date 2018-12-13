@@ -13,7 +13,12 @@ export interface IAlertPorps extends IValidationPorps {
  */
 export function Alert(props: IAlertPorps): any {
   const {
-    validation, results, bind, alias, children, rules = children
+    validation,
+    results,
+    bind,
+    alias,
+    children,
+    rules = children
   } = props;
   if (!validation) return toElement();
   if (rules) validation.setRule(bind, rules, alias);

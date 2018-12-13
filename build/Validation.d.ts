@@ -93,6 +93,8 @@ export declare class Validation extends EventEmitter {
      * @param {boolean} update 是否立即更新组件
      */
     setState: (bind: string, state: states, message?: string) => void;
+    private getTestFuncForString;
+    private getTestFunc;
     private createTestPending;
     private testOne;
     private testAll;

@@ -47,11 +47,11 @@ function decorate(
       return createValidation(this, options);
     }
   });
-  registerMountHandler(proto, function () {
+  registerMountHandler(proto, function() {
     if (!this.validation) return;
     if (options.initial === true) this.validation.test();
   });
-  registerUnmountHandler(proto, function () {
+  registerUnmountHandler(proto, function() {
     if (!this.validation) return;
     this.validation.distory();
   });

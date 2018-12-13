@@ -13,10 +13,12 @@ import { IValidationOptions } from "./IValidationOptions";
 import { ITestResult } from "./ITestResult";
 import { EventEmitter } from "./EventEmitter";
 import { IResults } from "./IResults";
+import { ITestFunction } from "./ITestFunction";
 
 export { IValidationPorps, Alert };
 
 const { getByPath, isFunction, isString } = require("ntils");
+const DY_TEST_FUNC_CACHE: { [name: string]: ITestFunction } = {};
 
 export class Validation extends EventEmitter {
   private __options: IValidationOptions;
@@ -33,7 +35,7 @@ export class Validation extends EventEmitter {
 
   constructor(model: any, options: IValidationOptions) {
     super();
-    options = Object.assign({ stateKey: 'results', debounce: 300 }, options);
+    options = { stateKey: "results", debounce: 300, ...options };
     this.__options = options;
     this.__model = model;
     this.__watchPaused = false;
@@ -42,7 +44,9 @@ export class Validation extends EventEmitter {
 
   private initResults() {
     const { stateKey } = this.options;
-    const items: any = {}, time = 0, state = states.unknown;
+    const items: any = {},
+      time = 0,
+      state = states.unknown;
     this.__model._observer_.set(stateKey, { state, time, items });
   }
 
@@ -67,10 +71,9 @@ export class Validation extends EventEmitter {
    * 错误提示组件
    */
   public get Alert() {
-    const validation = this, results = this.results;
     if (!this.__alert) {
       this.__alert = (props: IAlertPorps) =>
-        Alert({ ...props, results, validation });
+        Alert({ ...props, results: this.results, validation: this });
     }
     return this.__alert;
   }
@@ -79,10 +82,9 @@ export class Validation extends EventEmitter {
    * 表单组件容器
    */
   public get Field() {
-    const validation = this, results = this.results;
     if (!this.__field) {
       this.__field = (props: IFieldPorps) =>
-        Field({ ...props, results, validation });
+        Field({ ...props, results: this.results, validation: this });
     }
     return this.__field;
   }
@@ -91,10 +93,9 @@ export class Validation extends EventEmitter {
    * 状态组件（状态符合时显示）
    */
   public get State() {
-    const validation = this, results = this.results;
     if (!this.__state) {
       this.__state = (props: IStateProps) =>
-        State({ ...props, results, validation });
+        State({ ...props, results: this.results, validation: this });
     }
     return this.__state;
   }
@@ -166,7 +167,7 @@ export class Validation extends EventEmitter {
     if (rules) this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
     if (alias) this.aliases[alias] = bind;
     if (!this.results.items[bind]) {
-      this.results.items[bind] = { state: states.untested, message: '' };
+      this.results.items[bind] = { state: states.untested, message: "" };
     }
     if (this.options.auto !== false) this.watch(bind);
   };
@@ -199,30 +200,44 @@ export class Validation extends EventEmitter {
    * @param {string} message 提示信息
    * @param {boolean} update 是否立即更新组件
    */
-  public setState = (bind: string, state: states, message: string = '') => {
+  public setState = (bind: string, state: states, message = "") => {
     if (!bind) return;
     this.items[bind].state = state;
     this.items[bind].message = message;
     this.results.items[bind].state = state;
     this.results.items[bind].message = message;
-    this.results = Object.assign({}, this.results, {
-      time: this.time,
-      state: this.state(),
-    });
+    this.results = { ...this.results, time: this.time, state: this.state() };
   };
 
-  private async createTestPending(item: ITestItem, value: any):
-    Promise<ITestResult> {
-    let state = true, message: string = "";
+  private getTestFuncForString(test: string): ITestFunction {
+    if (builtIn[test]) return builtIn[test] as ITestFunction;
+    if (DY_TEST_FUNC_CACHE[test]) return DY_TEST_FUNC_CACHE[test];
+    try {
+      const func = new Function("$", `return $.${test}`)(builtIn);
+      DY_TEST_FUNC_CACHE[test] = func;
+      return func;
+    } catch {
+      throw new Error(`Invalid test: ${test}`);
+    }
+  }
+
+  private getTestFunc(test: ITestFunction | string | RegExp): ITestFunction {
+    if (isFunction(test)) return test as ITestFunction;
+    if (test instanceof RegExp) return value => test.test(value);
+    if (isString(test)) return this.getTestFuncForString(<string>test);
+    throw new Error(`Invalid test: ${test}`);
+  }
+
+  private async createTestPending(
+    item: ITestItem,
+    value: any
+  ): Promise<ITestResult> {
+    let state = true, message = "";
     for (const rule of item.rules) {
-      const test: Function = isFunction(rule.test)
-        ? <Function>rule.test
-        : builtIn[<string>rule.test];
-      if (!isFunction(test)) {
-        throw new Error(`Invalid test function: ${rule.test}`);
-      }
+      const test: ITestFunction = this.getTestFunc(rule.test);
+      if (!isFunction(test)) throw new Error(`Invalid test: ${test}`);
       state = await test(value);
-      message = state ? '' : rule.message;
+      message = state ? "" : rule.message;
       if (!state) break;
     }
     return { state, message };
@@ -235,7 +250,7 @@ export class Validation extends EventEmitter {
     if (!item || !item.rules || item.rules.length < 1) return;
     if (item.pending) item.pending.abort();
     const value = getByPath(this.model, bind);
-    this.setState(bind, states.testing, '');
+    this.setState(bind, states.testing, "");
     item.pending = abortable(this.createTestPending(item, value));
     const { state, message } = await item.pending;
     this.setState(bind, state ? states.succeed : states.failed, message);
@@ -336,7 +351,7 @@ export class Validation extends EventEmitter {
 
   public reset = () => {
     Object.keys(this.items).forEach((bind: string) => {
-      this.setState(bind, states.untested, '');
+      this.setState(bind, states.untested, "");
     });
   };
 

@@ -3,7 +3,7 @@ import { Validation } from "./Validation";
 
 export interface IValidationPorps {
   validation?: Validation;
-  results?: any,
+  results?: any;
   bind: string;
   rules?: IRule[];
   alias?: string;

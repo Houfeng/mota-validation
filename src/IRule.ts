@@ -1,4 +1,6 @@
+import { ITestFunction } from "./ITestFunction";
+
 export interface IRule {
   message?: string;
-  test: ((value: any) => boolean) | string | Function;
+  test: ITestFunction | RegExp | string;
 }

@@ -5,7 +5,7 @@ import { toElement } from "./utils";
 import { states } from "./states";
 
 const ATTR_KEY = "data-state";
-const STYLE_ID = 'mota-validation';
+const STYLE_ID = "mota-validation";
 const { isArray, isNull } = require("ntils");
 
 function createStyle(global: any) {

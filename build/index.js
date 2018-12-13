@@ -1112,7 +1112,7 @@ var ReactDOM = __webpack_require__(16);
 var utils_1 = __webpack_require__(2);
 var states_1 = __webpack_require__(1);
 var ATTR_KEY = "data-state";
-var STYLE_ID = 'mota-validation';
+var STYLE_ID = "mota-validation";
 var _a = __webpack_require__(0), isArray = _a.isArray, isNull = _a.isNull;
 function createStyle(global) {
     var document = global.document;
@@ -1311,6 +1311,7 @@ var State_1 = __webpack_require__(17);
 var states_1 = __webpack_require__(1);
 var EventEmitter_1 = __webpack_require__(18);
 var _a = __webpack_require__(0), getByPath = _a.getByPath, isFunction = _a.isFunction, isString = _a.isString;
+var DY_TEST_FUNC_CACHE = {};
 var Validation = /** @class */ (function (_super) {
     __extends(Validation, _super);
     function Validation(model, options) {
@@ -1336,7 +1337,7 @@ var Validation = /** @class */ (function (_super) {
             if (alias)
                 _this.aliases[alias] = bind;
             if (!_this.results.items[bind]) {
-                _this.results.items[bind] = { state: states_1.states.untested, message: '' };
+                _this.results.items[bind] = { state: states_1.states.untested, message: "" };
             }
             if (_this.options.auto !== false)
                 _this.watch(bind);
@@ -1349,17 +1350,14 @@ var Validation = /** @class */ (function (_super) {
          * @param {boolean} update 是否立即更新组件
          */
         _this.setState = function (bind, state, message) {
-            if (message === void 0) { message = ''; }
+            if (message === void 0) { message = ""; }
             if (!bind)
                 return;
             _this.items[bind].state = state;
             _this.items[bind].message = message;
             _this.results.items[bind].state = state;
             _this.results.items[bind].message = message;
-            _this.results = Object.assign({}, _this.results, {
-                time: _this.time,
-                state: _this.state(),
-            });
+            _this.results = __assign({}, _this.results, { time: _this.time, state: _this.state() });
         };
         /**
          * 触发验证，传入 bind 时验证指定数据项，省略参数时验证整个表单
@@ -1448,7 +1446,7 @@ var Validation = /** @class */ (function (_super) {
         };
         _this.reset = function () {
             Object.keys(_this.items).forEach(function (bind) {
-                _this.setState(bind, states_1.states.untested, '');
+                _this.setState(bind, states_1.states.untested, "");
             });
         };
         /**
@@ -1457,7 +1455,7 @@ var Validation = /** @class */ (function (_super) {
         _this.distory = function () {
             _this.stopWatch();
         };
-        options = Object.assign({ stateKey: 'results', debounce: 300 }, options);
+        options = __assign({ stateKey: "results", debounce: 300 }, options);
         _this.__options = options;
         _this.__model = model;
         _this.__watchPaused = false;
@@ -1496,10 +1494,10 @@ var Validation = /** @class */ (function (_super) {
          * 错误提示组件
          */
         get: function () {
-            var validation = this, results = this.results;
+            var _this = this;
             if (!this.__alert) {
                 this.__alert = function (props) {
-                    return Alert_1.Alert(__assign({}, props, { results: results, validation: validation }));
+                    return Alert_1.Alert(__assign({}, props, { results: _this.results, validation: _this }));
                 };
             }
             return this.__alert;
@@ -1512,10 +1510,10 @@ var Validation = /** @class */ (function (_super) {
          * 表单组件容器
          */
         get: function () {
-            var validation = this, results = this.results;
+            var _this = this;
             if (!this.__field) {
                 this.__field = function (props) {
-                    return Field_1.Field(__assign({}, props, { results: results, validation: validation }));
+                    return Field_1.Field(__assign({}, props, { results: _this.results, validation: _this }));
                 };
             }
             return this.__field;
@@ -1528,10 +1526,10 @@ var Validation = /** @class */ (function (_super) {
          * 状态组件（状态符合时显示）
          */
         get: function () {
-            var validation = this, results = this.results;
+            var _this = this;
             if (!this.__state) {
                 this.__state = function (props) {
-                    return State_1.State(__assign({}, props, { results: results, validation: validation }));
+                    return State_1.State(__assign({}, props, { results: _this.results, validation: _this }));
                 };
             }
             return this.__state;
@@ -1636,6 +1634,29 @@ var Validation = /** @class */ (function (_super) {
             _this.removeRule(bind);
         });
     };
+    Validation.prototype.getTestFuncForString = function (test) {
+        if (builtIn_1.builtIn[test])
+            return builtIn_1.builtIn[test];
+        if (DY_TEST_FUNC_CACHE[test])
+            return DY_TEST_FUNC_CACHE[test];
+        try {
+            var func = new Function("$", "return $." + test)(builtIn_1.builtIn);
+            DY_TEST_FUNC_CACHE[test] = func;
+            return func;
+        }
+        catch (_a) {
+            throw new Error("Invalid test: " + test);
+        }
+    };
+    Validation.prototype.getTestFunc = function (test) {
+        if (isFunction(test))
+            return test;
+        if (test instanceof RegExp)
+            return function (value) { return test.test(value); };
+        if (isString(test))
+            return this.getTestFuncForString(test);
+        throw new Error("Invalid test: " + test);
+    };
     Validation.prototype.createTestPending = function (item, value) {
         return __awaiter(this, void 0, void 0, function () {
             var state, message, _i, _a, rule, test;
@@ -1648,16 +1669,13 @@ var Validation = /** @class */ (function (_super) {
                     case 1:
                         if (!(_i < _a.length)) return [3 /*break*/, 4];
                         rule = _a[_i];
-                        test = isFunction(rule.test)
-                            ? rule.test
-                            : builtIn_1.builtIn[rule.test];
-                        if (!isFunction(test)) {
-                            throw new Error("Invalid test function: " + rule.test);
-                        }
+                        test = this.getTestFunc(rule.test);
+                        if (!isFunction(test))
+                            throw new Error("Invalid test: " + test);
                         return [4 /*yield*/, test(value)];
                     case 2:
                         state = _b.sent();
-                        message = state ? '' : rule.message;
+                        message = state ? "" : rule.message;
                         if (!state)
                             return [3 /*break*/, 4];
                         _b.label = 3;
@@ -1684,7 +1702,7 @@ var Validation = /** @class */ (function (_super) {
                         if (item.pending)
                             item.pending.abort();
                         value = getByPath(this.model, bind);
-                        this.setState(bind, states_1.states.testing, '');
+                        this.setState(bind, states_1.states.testing, "");
                         item.pending = promise_boost_1.abortable(this.createTestPending(item, value));
                         return [4 /*yield*/, item.pending];
                     case 1:
