@@ -1038,7 +1038,9 @@ exports.builtIn = {
     /**
      * 字符串长度
      */
-    len: function (min, max) { return function (value) {
+    len: function (min, max, trim) { return function (value) {
+        if (trim)
+            value = value.trim();
         return value.length >= min && value.length <= max;
     }; },
     /**

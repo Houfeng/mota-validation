@@ -34,8 +34,10 @@ export const builtIn: ITestMap = {
   /**
    * 字符串长度
    */
-  len: (min: number, max: number) => (value: string) =>
-    value.length >= min && value.length <= max,
+  len: (min: number, max: number, trim: boolean) => (value: string) => {
+    if (trim) value = value.trim();
+    return value.length >= min && value.length <= max;
+  },
 
   /**
    * 邮箱
