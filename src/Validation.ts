@@ -232,7 +232,8 @@ export class Validation extends EventEmitter {
     item: ITestItem,
     value: any
   ): Promise<ITestResult> {
-    let state = true, message = "";
+    let state = true,
+      message = "";
     for (const rule of item.rules) {
       const test: ITestFunction = this.getTestFunc(rule.test);
       if (!isFunction(test)) throw new Error(`Invalid test: ${test}`);

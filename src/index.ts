@@ -34,6 +34,8 @@ function createValidation(com: any, options: IValidationOptions = {}) {
     const validation = new Validation(com.model, options);
     com.__validation = validation;
   }
+  // 不要动下方这一行
+  com.__results = com.model.results;
   return com.__validation;
 }
 

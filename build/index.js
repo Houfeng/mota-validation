@@ -1198,6 +1198,8 @@ function createValidation(com, options) {
         var validation_1 = new Validation_1.Validation(com.model, options);
         com.__validation = validation_1;
     }
+    // 不要动下方这一行
+    com.__results = com.model.results;
     return com.__validation;
 }
 function decorate(target, options) {
@@ -1661,7 +1663,7 @@ var Validation = /** @class */ (function (_super) {
     };
     Validation.prototype.createTestPending = function (item, value) {
         return __awaiter(this, void 0, void 0, function () {
-            var state, message, _i, _a, rule, test;
+            var state, message, _i, _a, rule, test_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -1671,10 +1673,10 @@ var Validation = /** @class */ (function (_super) {
                     case 1:
                         if (!(_i < _a.length)) return [3 /*break*/, 4];
                         rule = _a[_i];
-                        test = this.getTestFunc(rule.test);
-                        if (!isFunction(test))
-                            throw new Error("Invalid test: " + test);
-                        return [4 /*yield*/, test(value)];
+                        test_1 = this.getTestFunc(rule.test);
+                        if (!isFunction(test_1))
+                            throw new Error("Invalid test: " + test_1);
+                        return [4 /*yield*/, test_1(value)];
                     case 2:
                         state = _b.sent();
                         message = state ? "" : rule.message;

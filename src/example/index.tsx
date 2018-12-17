@@ -10,7 +10,7 @@ const root = document.getElementById("root");
 
 async function remoteTest() {
   return new Promise<boolean>(resolve => {
-    setTimeout(() => resolve(true), 3000);
+    setTimeout(() => resolve(true), 600);
   });
 }
 
@@ -82,7 +82,6 @@ class App extends React.Component {
             立即提交
           </button>
           <button onClick={this.hack}>手动更新状态</button>
-          <div>{JSON.stringify(this.model.results)}</div>
         </div>
       </div>
     );
