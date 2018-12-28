@@ -1189,7 +1189,6 @@ exports.Field = Field_1.Field;
 var states_1 = __webpack_require__(1);
 exports.states = states_1.states;
 var isFunction = __webpack_require__(0).isFunction;
-var registerMountHandler = mota_1.utils.registerMountHandler, registerUnmountHandler = mota_1.utils.registerUnmountHandler;
 function createValidation(com, options) {
     if (options === void 0) { options = {}; }
     if (!com || !com.model)
@@ -1210,13 +1209,13 @@ function decorate(target, options) {
             return createValidation(this, options);
         }
     });
-    registerMountHandler(proto, function () {
+    mota_1.lifecycle.didMount.add(proto, function () {
         if (!this.validation)
             return;
         if (options.initial === true)
             this.validation.test();
     });
-    registerUnmountHandler(proto, function () {
+    mota_1.lifecycle.unmount.add(proto, function () {
         if (!this.validation)
             return;
         this.validation.distory();
@@ -1644,6 +1643,7 @@ var Validation = /** @class */ (function (_super) {
         if (DY_TEST_FUNC_CACHE[test])
             return DY_TEST_FUNC_CACHE[test];
         try {
+            // tslint:disable-next-line
             var func = new Function("$", "return $." + test)(builtIn_1.builtIn);
             DY_TEST_FUNC_CACHE[test] = func;
             return func;

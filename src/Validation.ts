@@ -213,6 +213,7 @@ export class Validation extends EventEmitter {
     if (builtIn[test]) return builtIn[test] as ITestFunction;
     if (DY_TEST_FUNC_CACHE[test]) return DY_TEST_FUNC_CACHE[test];
     try {
+      // tslint:disable-next-line
       const func = new Function("$", `return $.${test}`)(builtIn);
       DY_TEST_FUNC_CACHE[test] = func;
       return func;

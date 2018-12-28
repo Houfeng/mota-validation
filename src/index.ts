@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { utils } from "mota";
+import { lifecycle } from "mota";
 import { Validation } from "./Validation";
 import { builtIn } from "./builtIn";
 import { IRule } from "./IRule";
@@ -26,7 +26,6 @@ export {
 };
 
 const { isFunction } = require("ntils");
-const { registerMountHandler, registerUnmountHandler } = utils;
 
 function createValidation(com: any, options: IValidationOptions = {}) {
   if (!com || !com.model) return;
@@ -49,11 +48,11 @@ function decorate(
       return createValidation(this, options);
     }
   });
-  registerMountHandler(proto, function() {
+  lifecycle.didMount.add(proto, function() {
     if (!this.validation) return;
     if (options.initial === true) this.validation.test();
   });
-  registerUnmountHandler(proto, function() {
+  lifecycle.unmount.add(proto, function() {
     if (!this.validation) return;
     this.validation.distory();
   });
