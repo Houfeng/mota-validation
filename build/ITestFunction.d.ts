@@ -1,1 +1,1 @@
-export declare type ITestFunction = ((value: any) => boolean | Promise<boolean>);
+export declare type ITestFunction = ((value: any, model?: any) => boolean | Promise<boolean>);

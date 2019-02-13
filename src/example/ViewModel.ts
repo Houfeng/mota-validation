@@ -12,4 +12,9 @@ export default class ViewModel {
   submit = () => {
     console.log(this.params);
   };
+
+  required(value: any, model: any) {
+    console.log(value, model, this);
+    return false;
+  }
 }

@@ -213,10 +213,13 @@ export class Validation extends EventEmitter {
     if (builtIn[test]) return builtIn[test] as ITestFunction;
     if (DY_TEST_FUNC_CACHE[test]) return DY_TEST_FUNC_CACHE[test];
     try {
-      // tslint:disable-next-line
-      const func = new Function("$", `return $.${test}`)(builtIn);
+      // tslint:disable
+      const func = /^\./.test(test)
+        ? new Function("$", `return $${test}`)(this.model)
+        : new Function("$", `return $.${test}`)(builtIn);
+      // tslint:enable
       DY_TEST_FUNC_CACHE[test] = func;
-      return func;
+      return DY_TEST_FUNC_CACHE[test];
     } catch {
       throw new Error(`Invalid test: ${test}`);
     }
@@ -238,7 +241,7 @@ export class Validation extends EventEmitter {
     for (const rule of item.rules) {
       const test: ITestFunction = this.getTestFunc(rule.test);
       if (!isFunction(test)) throw new Error(`Invalid test: ${test}`);
-      state = await test(value);
+      state = await test(value, this.model);
       message = state ? "" : rule.message;
       if (!state) break;
     }

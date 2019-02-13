@@ -36,7 +36,7 @@ class App extends React.Component {
             bind="params.name"
             alias="name"
             rules={[
-              { test: "required" },
+              { test: ".required" },
               { test: "len(2,4)" },
               { test: remoteTest }
             ]}

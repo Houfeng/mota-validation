@@ -7,4 +7,5 @@ export default class ViewModel {
         email: string;
     };
     submit: () => void;
+    required(value: any, model: any): boolean;
 }

@@ -1643,10 +1643,13 @@ var Validation = /** @class */ (function (_super) {
         if (DY_TEST_FUNC_CACHE[test])
             return DY_TEST_FUNC_CACHE[test];
         try {
-            // tslint:disable-next-line
-            var func = new Function("$", "return $." + test)(builtIn_1.builtIn);
+            // tslint:disable
+            var func = /^\./.test(test)
+                ? new Function("$", "return $" + test)(this.model)
+                : new Function("$", "return $." + test)(builtIn_1.builtIn);
+            // tslint:enable
             DY_TEST_FUNC_CACHE[test] = func;
-            return func;
+            return DY_TEST_FUNC_CACHE[test];
         }
         catch (_a) {
             throw new Error("Invalid test: " + test);
@@ -1676,7 +1679,7 @@ var Validation = /** @class */ (function (_super) {
                         test_1 = this.getTestFunc(rule.test);
                         if (!isFunction(test_1))
                             throw new Error("Invalid test: " + test_1);
-                        return [4 /*yield*/, test_1(value)];
+                        return [4 /*yield*/, test_1(value, this.model)];
                     case 2:
                         state = _b.sent();
                         message = state ? "" : rule.message;
