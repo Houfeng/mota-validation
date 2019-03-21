@@ -7,7 +7,7 @@
 		exports["MotaValidation"] = factory(require("react"), require("mota"), require("react-dom"));
 	else
 		root["MotaValidation"] = factory(root["React"], root["mota"], root["ReactDOM"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_17__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_17__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -970,12 +970,18 @@ var states;
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(3);
+var React = __webpack_require__(4);
 var isString = __webpack_require__(0).isString;
 function toElement(content) {
     if (!content)
@@ -988,12 +994,6 @@ function toElement(content) {
 }
 exports.toElement = toElement;
 
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
 /***/ }),
 /* 4 */
@@ -1076,6 +1076,7 @@ var Field_1 = __webpack_require__(10);
 var State_1 = __webpack_require__(18);
 var states_1 = __webpack_require__(1);
 var EventEmitter_1 = __webpack_require__(19);
+var mota_1 = __webpack_require__(2);
 var _a = __webpack_require__(0), getByPath = _a.getByPath, isFunction = _a.isFunction, isString = _a.isString;
 var DY_TEST_FUNC_CACHE = {};
 var Validation = /** @class */ (function (_super) {
@@ -1265,6 +1266,7 @@ var Validation = /** @class */ (function (_super) {
                 this.__alert = function (props) {
                     return Alert_1.Alert(__assign({}, props, { results: _this.results, validation: _this }));
                 };
+                mota_1.utils.defineGetter(this.__alert, "name", "Alert");
             }
             return this.__alert;
         },
@@ -1281,6 +1283,7 @@ var Validation = /** @class */ (function (_super) {
                 this.__field = function (props) {
                     return Field_1.Field(__assign({}, props, { results: _this.results, validation: _this }));
                 };
+                mota_1.utils.defineGetter(this.__field, "name", "Field");
             }
             return this.__field;
         },
@@ -1297,6 +1300,7 @@ var Validation = /** @class */ (function (_super) {
                 this.__state = function (props) {
                     return State_1.State(__assign({}, props, { results: _this.results, validation: _this }));
                 };
+                mota_1.utils.defineGetter(this.__state, "name", "State");
             }
             return this.__state;
         },
@@ -1592,6 +1596,10 @@ exports.builtIn = {
      */
     number: function (value) { return !value || !isNaN(value); },
     /**
+     * 非数值
+     */
+    nan: function (value) { return !value || isNaN(value); },
+    /**
      * 数值区间
      */
     range: function (min, max) { return function (value) {
@@ -1635,7 +1643,7 @@ exports.builtIn = {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = __webpack_require__(2);
+var utils_1 = __webpack_require__(3);
 var states_1 = __webpack_require__(1);
 /**
  * 验证失败提示信息组件
@@ -1665,9 +1673,9 @@ exports.Alert = Alert;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(3);
+var React = __webpack_require__(4);
 var ReactDOM = __webpack_require__(17);
-var utils_1 = __webpack_require__(2);
+var utils_1 = __webpack_require__(3);
 var states_1 = __webpack_require__(1);
 var ATTR_KEY = "data-state";
 var STYLE_ID = "mota-validation";
@@ -1755,7 +1763,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var mota_1 = __webpack_require__(4);
+var mota_1 = __webpack_require__(2);
 var Validation_1 = __webpack_require__(5);
 exports.Validation = Validation_1.Validation;
 var builtIn_1 = __webpack_require__(8);
@@ -1891,7 +1899,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_17__;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = __webpack_require__(2);
+var utils_1 = __webpack_require__(3);
 var isArray = __webpack_require__(0).isArray;
 /**
  * 状态组件（状态符合时显示）
@@ -2121,8 +2129,8 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = __webpack_require__(3);
-var mota_1 = __webpack_require__(4);
+var react_1 = __webpack_require__(4);
+var mota_1 = __webpack_require__(2);
 var Validation_1 = __webpack_require__(5);
 function useValidation(model, options) {
     var owner = react_1.useState({})[0];

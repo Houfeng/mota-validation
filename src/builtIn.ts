@@ -26,6 +26,11 @@ export const builtIn: ITestMap = {
   number: (value: any) => !value || !isNaN(value),
 
   /**
+   * 非数值
+   */
+  nan: (value: any) => !value || isNaN(value),
+
+  /**
    * 数值区间
    */
   range: (min: number, max: number) => (value: number) =>

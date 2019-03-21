@@ -14,6 +14,7 @@ import { ITestResult } from "./ITestResult";
 import { EventEmitter } from "./EventEmitter";
 import { IResults } from "./IResults";
 import { ITestFunction } from "./ITestFunction";
+import { utils } from "mota";
 
 export { IValidationPorps, Alert };
 
@@ -74,6 +75,7 @@ export class Validation extends EventEmitter {
     if (!this.__alert) {
       this.__alert = (props: IAlertPorps) =>
         Alert({ ...props, results: this.results, validation: this });
+      utils.defineGetter(this.__alert, "name", "Alert");
     }
     return this.__alert;
   }
@@ -85,6 +87,7 @@ export class Validation extends EventEmitter {
     if (!this.__field) {
       this.__field = (props: IFieldPorps) =>
         Field({ ...props, results: this.results, validation: this });
+      utils.defineGetter(this.__field, "name", "Field");
     }
     return this.__field;
   }
@@ -96,6 +99,7 @@ export class Validation extends EventEmitter {
     if (!this.__state) {
       this.__state = (props: IStateProps) =>
         State({ ...props, results: this.results, validation: this });
+      utils.defineGetter(this.__state, "name", "State");
     }
     return this.__state;
   }
