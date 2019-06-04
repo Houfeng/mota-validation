@@ -7,6 +7,7 @@ const { isArray } = require("ntils");
 export interface IStateProps extends IValidationPorps {
   when?: states | states[];
   children?: any;
+  type?: string;
 }
 
 /**
@@ -14,7 +15,17 @@ export interface IStateProps extends IValidationPorps {
  * @param {IStateProps} props 属性
  */
 export function State(props: IStateProps) {
-  const { validation, results, bind, when, alias, children, rules } = props;
+  const {
+    validation,
+    results,
+    bind,
+    when,
+    alias,
+    children,
+    rules,
+    type,
+    className
+  } = props;
   if (!validation) return toElement();
   if (rules) validation.setRule(bind, rules, alias);
   const result = results.items[bind];
@@ -22,5 +33,5 @@ export function State(props: IStateProps) {
   const { state } = result;
   const whenStates: states[] = isArray(when) ? <states[]>when : [<states>when];
   if (whenStates.indexOf(state) < 0) return toElement();
-  return toElement(children);
+  return toElement(children, { className }, type);
 }

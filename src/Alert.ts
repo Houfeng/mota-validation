@@ -4,6 +4,7 @@ import { states } from "./states";
 import { toElement } from "./utils";
 
 export interface IAlertPorps extends IValidationPorps {
+  type?: string;
   children?: IRule[];
 }
 
@@ -18,7 +19,9 @@ export function Alert(props: IAlertPorps): any {
     bind,
     alias,
     children,
-    rules = children
+    rules = children,
+    type,
+    className
   } = props;
   if (!validation) return toElement();
   if (rules) validation.setRule(bind, rules, alias);
@@ -26,5 +29,5 @@ export function Alert(props: IAlertPorps): any {
   if (!result) return toElement();
   const { state, message } = result;
   if (state !== states.failed || !message) return toElement();
-  return toElement(message);
+  return toElement(message, { className }, type);
 }

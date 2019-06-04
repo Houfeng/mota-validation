@@ -7,4 +7,5 @@ export interface IValidationPorps {
   bind: string;
   rules?: IRule[];
   alias?: string;
+  className?: string;
 }

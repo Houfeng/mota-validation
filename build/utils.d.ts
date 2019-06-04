@@ -1,1 +1,1 @@
-export declare function toElement(content?: any): any;
+export declare function toElement(content?: any, props?: any, type?: string): any;

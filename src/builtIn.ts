@@ -11,9 +11,9 @@ export const builtIn: ITestMap = {
   any: () => true,
 
   /**
-   * 非空值（包括空字符串）
+   * 非空值（包括不能是空字符串）
    */
-  required: (value: any) => !!value,
+  required: (value: any) => !!value || value === 0,
 
   /**
    * 非空白字符（可视字符）

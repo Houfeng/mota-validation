@@ -974,14 +974,25 @@ var states;
 
 "use strict";
 
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(3);
 var isString = __webpack_require__(0).isString;
-function toElement(content) {
+function toElement(content, props, type) {
     if (!content)
         content = "";
     return isString(content)
-        ? React.createElement("span", { children: content })
+        ? React.createElement(type || "span", __assign({}, props), content)
         : content;
 }
 exports.toElement = toElement;
@@ -1013,7 +1024,7 @@ var utils_1 = __webpack_require__(2);
  * @param {IAlertPorps} props 属性
  */
 function Alert(props) {
-    var validation = props.validation, results = props.results, bind = props.bind, alias = props.alias, children = props.children, _a = props.rules, rules = _a === void 0 ? children : _a;
+    var validation = props.validation, results = props.results, bind = props.bind, alias = props.alias, children = props.children, _a = props.rules, rules = _a === void 0 ? children : _a, type = props.type, className = props.className;
     if (!validation)
         return utils_1.toElement();
     if (rules)
@@ -1024,7 +1035,7 @@ function Alert(props) {
     var state = result.state, message = result.message;
     if (state !== states_1.states.failed || !message)
         return utils_1.toElement();
-    return utils_1.toElement(message);
+    return utils_1.toElement(message, { className: className }, type);
 }
 exports.Alert = Alert;
 
@@ -1046,9 +1057,9 @@ exports.builtIn = {
     // tslint-disable-next-line
     any: function () { return true; },
     /**
-     * 非空值（包括空字符串）
+     * 非空值（包括不能是空字符串）
      */
-    required: function (value) { return !!value; },
+    required: function (value) { return !!value || value === 0; },
     /**
      * 非空白字符（可视字符）
      */
@@ -2094,7 +2105,7 @@ var isArray = __webpack_require__(0).isArray;
  * @param {IStateProps} props 属性
  */
 function State(props) {
-    var validation = props.validation, results = props.results, bind = props.bind, when = props.when, alias = props.alias, children = props.children, rules = props.rules;
+    var validation = props.validation, results = props.results, bind = props.bind, when = props.when, alias = props.alias, children = props.children, rules = props.rules, type = props.type, className = props.className;
     if (!validation)
         return utils_1.toElement();
     if (rules)
@@ -2106,7 +2117,7 @@ function State(props) {
     var whenStates = isArray(when) ? when : [when];
     if (whenStates.indexOf(state) < 0)
         return utils_1.toElement();
-    return utils_1.toElement(children);
+    return utils_1.toElement(children, { className: className }, type);
 }
 exports.State = State;
 
