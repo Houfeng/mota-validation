@@ -7,7 +7,7 @@
 		exports["MotaValidation"] = factory(require("react"), require("mota"), require("react-dom"));
 	else
 		root["MotaValidation"] = factory(root["React"], root["mota"], root["ReactDOM"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_17__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_15__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -970,30 +970,28 @@ var states;
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
-
-/***/ }),
-/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(4);
+var React = __webpack_require__(3);
 var isString = __webpack_require__(0).isString;
 function toElement(content) {
     if (!content)
         content = "";
     return isString(content)
-        ? React.createElement("span", {
-            children: content
-        })
+        ? React.createElement("span", { children: content })
         : content;
 }
 exports.toElement = toElement;
 
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
 /***/ }),
 /* 4 */
@@ -1003,6 +1001,190 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_4__;
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var states_1 = __webpack_require__(1);
+var utils_1 = __webpack_require__(2);
+/**
+ * 验证失败提示信息组件
+ * @param {IAlertPorps} props 属性
+ */
+function Alert(props) {
+    var validation = props.validation, results = props.results, bind = props.bind, alias = props.alias, children = props.children, _a = props.rules, rules = _a === void 0 ? children : _a;
+    if (!validation)
+        return utils_1.toElement();
+    if (rules)
+        validation.setRule(bind, rules, alias);
+    var result = results.items[bind];
+    if (!result)
+        return utils_1.toElement();
+    var state = result.state, message = result.message;
+    if (state !== states_1.states.failed || !message)
+        return utils_1.toElement();
+    return utils_1.toElement(message);
+}
+exports.Alert = Alert;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * 内建验证函数集
+ */
+exports.builtIn = {
+    /**
+     * 任意值
+     */
+    // tslint-disable-next-line
+    any: function () { return true; },
+    /**
+     * 非空值（包括空字符串）
+     */
+    required: function (value) { return !!value; },
+    /**
+     * 非空白字符（可视字符）
+     */
+    nonblank: function (value) { return !/[\s]+/.test(value); },
+    /**
+     * 数值
+     */
+    number: function (value) { return !value || !isNaN(value); },
+    /**
+     * 非数值
+     */
+    nan: function (value) { return !value || isNaN(value); },
+    /**
+     * 数值区间
+     */
+    range: function (min, max) { return function (value) {
+        return !value || (value >= min && value <= max);
+    }; },
+    /**
+     * 字符串长度
+     */
+    len: function (min, max, trim) { return function (value) {
+        if (trim)
+            value = value.trim();
+        return value.length >= min && value.length <= max;
+    }; },
+    /**
+     * 邮箱
+     */
+    email: function (value) { return !value || /[\S]+\@[\S]+/gi.test(value); },
+    /**
+     * 中文
+     */
+    zh: function (value) { return !value || /^[\u4e00-\u9fa5\s]{0,}$/.test(value); },
+    /**
+     * 英文
+     */
+    en: function (value) { return !value || /^[a-z\s]+$/.test(value); },
+    /**
+     * IP v4
+     */
+    ipv4: function (value) { return !value || /\d+\.\d+\.\d+\.\d+/.test(value); },
+    /**
+     * URL
+     */
+    url: function (value) { return !value || /^[\S]+\:\/\//.test(value); }
+};
+
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {
+Object.defineProperty(exports, "__esModule", { value: true });
+var React = __webpack_require__(3);
+var ReactDOM = __webpack_require__(15);
+var states_1 = __webpack_require__(1);
+var utils_1 = __webpack_require__(2);
+var ATTR_KEY = "data-state";
+var STYLE_ID = "mota-validation";
+var _a = __webpack_require__(0), isArray = _a.isArray, isNull = _a.isNull;
+function createStyle(global) {
+    var document = global.document;
+    if (!document || document.getElementById(STYLE_ID))
+        return;
+    var style = document.createElement("style");
+    style.id = STYLE_ID;
+    style.innerHTML = "\n  [" + ATTR_KEY + "]{transition-duration:.2s;transition-property:box-shadow;}\n  [" + ATTR_KEY + "=\"0\"]{ outline:none;box-shadow:0 0 2px 1px rgba(255,0,0,.8);}";
+    var container = document.head || document.body;
+    container.appendChild(style);
+}
+createStyle(global);
+/**
+ * 表单组件容器
+ * @param {IFieldPorps} props 属性
+ */
+exports.Field = FieldComponent;
+function FieldComponent(props) {
+    var validation = props.validation, results = props.results, bind = props.bind, rules = props.rules, alias = props.alias, children = props.children;
+    if (children && isArray(children) && children.length > 0) {
+        throw Error("The State(" + bind + ") can only have a sub element");
+    }
+    if (!validation)
+        return utils_1.toElement(children);
+    if (rules)
+        validation.setRule(bind, rules, alias);
+    var result = results.items[bind] || {};
+    if (!result)
+        return utils_1.toElement(children);
+    var state = result.state;
+    if (isNull(state))
+        state = states_1.states.unknown;
+    return React.cloneElement(utils_1.toElement(children), {
+        ref: function (ref) { return setState(ref, state); }
+    });
+}
+function setState(ref, state) {
+    var element = ReactDOM.findDOMNode(ref);
+    if (!element)
+        return;
+    if (exports.Field.applyToElement)
+        return exports.Field.applyToElement(element, state);
+    element.setAttribute(ATTR_KEY, String(state));
+}
+
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var states_1 = __webpack_require__(1);
+var TestItem = /** @class */ (function () {
+    function TestItem(bind, rules, state, message, pending) {
+        if (rules === void 0) { rules = []; }
+        if (state === void 0) { state = states_1.states.untested; }
+        if (message === void 0) { message = ""; }
+        if (pending === void 0) { pending = null; }
+        this.bind = bind;
+        this.rules = rules;
+        this.state = state;
+        this.message = message;
+        this.pending = pending;
+    }
+    return TestItem;
+}());
+exports.TestItem = TestItem;
+
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1067,16 +1249,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var promise_boost_1 = __webpack_require__(14);
-var TestItem_1 = __webpack_require__(7);
-var builtIn_1 = __webpack_require__(8);
-var Alert_1 = __webpack_require__(9);
+var promise_boost_1 = __webpack_require__(16);
+var Alert_1 = __webpack_require__(5);
 exports.Alert = Alert_1.Alert;
-var Field_1 = __webpack_require__(10);
-var State_1 = __webpack_require__(18);
+var builtIn_1 = __webpack_require__(6);
+var EventEmitter_1 = __webpack_require__(18);
+var Field_1 = __webpack_require__(7);
+var State_1 = __webpack_require__(20);
 var states_1 = __webpack_require__(1);
-var EventEmitter_1 = __webpack_require__(19);
-var mota_1 = __webpack_require__(2);
+var TestItem_1 = __webpack_require__(8);
+var mota_1 = __webpack_require__(4);
 var _a = __webpack_require__(0), getByPath = _a.getByPath, isFunction = _a.isFunction, isString = _a.isString;
 var DY_TEST_FUNC_CACHE = {};
 var Validation = /** @class */ (function (_super) {
@@ -1518,7 +1700,7 @@ exports.Validation = Validation;
 
 
 /***/ }),
-/* 6 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1541,188 +1723,6 @@ function abortable(promise) {
 }
 exports.abortable = abortable;
 //# sourceMappingURL=abortable.js.map
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var states_1 = __webpack_require__(1);
-var TestItem = /** @class */ (function () {
-    function TestItem(bind, rules, state, message, pending) {
-        if (rules === void 0) { rules = []; }
-        if (state === void 0) { state = states_1.states.untested; }
-        if (message === void 0) { message = ""; }
-        if (pending === void 0) { pending = null; }
-        this.bind = bind;
-        this.rules = rules;
-        this.state = state;
-        this.message = message;
-        this.pending = pending;
-    }
-    return TestItem;
-}());
-exports.TestItem = TestItem;
-
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * 内建验证函数集
- */
-exports.builtIn = {
-    /**
-     * 任意值
-     */
-    // tslint-disable-next-line
-    any: function () { return true; },
-    /**
-     * 非空值（包括空字符串）
-     */
-    required: function (value) { return !!value; },
-    /**
-     * 非空白字符（可视字符）
-     */
-    nonblank: function (value) { return !/[\s]+/.test(value); },
-    /**
-     * 数值
-     */
-    number: function (value) { return !value || !isNaN(value); },
-    /**
-     * 非数值
-     */
-    nan: function (value) { return !value || isNaN(value); },
-    /**
-     * 数值区间
-     */
-    range: function (min, max) { return function (value) {
-        return !value || (value >= min && value <= max);
-    }; },
-    /**
-     * 字符串长度
-     */
-    len: function (min, max, trim) { return function (value) {
-        if (trim)
-            value = value.trim();
-        return value.length >= min && value.length <= max;
-    }; },
-    /**
-     * 邮箱
-     */
-    email: function (value) { return !value || /[\S]+\@[\S]+/gi.test(value); },
-    /**
-     * 中文
-     */
-    zh: function (value) { return !value || /^[\u4e00-\u9fa5\s]{0,}$/.test(value); },
-    /**
-     * 英文
-     */
-    en: function (value) { return !value || /^[a-z\s]+$/.test(value); },
-    /**
-     * IP v4
-     */
-    ipv4: function (value) { return !value || /\d+\.\d+\.\d+\.\d+/.test(value); },
-    /**
-     * URL
-     */
-    url: function (value) { return !value || /^[\S]+\:\/\//.test(value); }
-};
-
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = __webpack_require__(3);
-var states_1 = __webpack_require__(1);
-/**
- * 验证失败提示信息组件
- * @param {IAlertPorps} props 属性
- */
-function Alert(props) {
-    var validation = props.validation, results = props.results, bind = props.bind, alias = props.alias, children = props.children, _a = props.rules, rules = _a === void 0 ? children : _a;
-    if (!validation)
-        return utils_1.toElement();
-    if (rules)
-        validation.setRule(bind, rules, alias);
-    var result = results.items[bind];
-    if (!result)
-        return utils_1.toElement();
-    var state = result.state, message = result.message;
-    if (state !== states_1.states.failed || !message)
-        return utils_1.toElement();
-    return utils_1.toElement(message);
-}
-exports.Alert = Alert;
-
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {
-Object.defineProperty(exports, "__esModule", { value: true });
-var React = __webpack_require__(4);
-var ReactDOM = __webpack_require__(17);
-var utils_1 = __webpack_require__(3);
-var states_1 = __webpack_require__(1);
-var ATTR_KEY = "data-state";
-var STYLE_ID = "mota-validation";
-var _a = __webpack_require__(0), isArray = _a.isArray, isNull = _a.isNull;
-function createStyle(global) {
-    var document = global.document;
-    if (!document || document.getElementById(STYLE_ID))
-        return;
-    var style = document.createElement("style");
-    style.id = STYLE_ID;
-    style.innerHTML = "\n  [" + ATTR_KEY + "]{transition-duration:.2s;transition-property:box-shadow;}\n  [" + ATTR_KEY + "=\"0\"]{ outline:none;box-shadow:0 0 2px 1px rgba(255,0,0,.8);}";
-    var container = document.head || document.body;
-    container.appendChild(style);
-}
-createStyle(global);
-function setState(ref, state) {
-    var element = ReactDOM.findDOMNode(ref);
-    if (!element)
-        return;
-    element.setAttribute(ATTR_KEY, String(state));
-}
-/**
- * 表单组件容器
- * @param {IFieldPorps} props 属性
- */
-function Field(props) {
-    var validation = props.validation, results = props.results, bind = props.bind, rules = props.rules, alias = props.alias, children = props.children;
-    if (children && isArray(children) && children.length > 0) {
-        throw Error("The State(" + bind + ") can only have a sub element");
-    }
-    if (!validation)
-        return utils_1.toElement(children);
-    if (rules)
-        validation.setRule(bind, rules, alias);
-    var result = results.items[bind] || {};
-    if (!result)
-        return utils_1.toElement(children);
-    var state = result.state;
-    if (isNull(state))
-        state = states_1.states.unknown;
-    return React.cloneElement(utils_1.toElement(children), {
-        ref: function (ref) { return setState(ref, state); }
-    });
-}
-exports.Field = Field;
-
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(16)))
 
 /***/ }),
 /* 11 */
@@ -1763,20 +1763,20 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var mota_1 = __webpack_require__(2);
-var Validation_1 = __webpack_require__(5);
-exports.Validation = Validation_1.Validation;
-var builtIn_1 = __webpack_require__(8);
+var Alert_1 = __webpack_require__(5);
+exports.Alert = Alert_1.Alert;
+var builtIn_1 = __webpack_require__(6);
 exports.builtIn = builtIn_1.builtIn;
 exports.tests = builtIn_1.builtIn;
-var TestItem_1 = __webpack_require__(7);
-exports.TestItem = TestItem_1.TestItem;
-var Alert_1 = __webpack_require__(9);
-exports.Alert = Alert_1.Alert;
-var Field_1 = __webpack_require__(10);
+var Field_1 = __webpack_require__(7);
 exports.Field = Field_1.Field;
+var mota_1 = __webpack_require__(4);
 var states_1 = __webpack_require__(1);
 exports.states = states_1.states;
+var TestItem_1 = __webpack_require__(8);
+exports.TestItem = TestItem_1.TestItem;
+var Validation_1 = __webpack_require__(9);
+exports.Validation = Validation_1.Validation;
 var isFunction = __webpack_require__(0).isFunction;
 function createValidation(com, options) {
     if (options === void 0) { options = {}; }
@@ -1822,45 +1822,6 @@ exports.validation = validation;
 
 /***/ }),
 /* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var abortable_1 = __webpack_require__(6);
-exports.abortable = abortable_1.abortable;
-exports.revokeable = abortable_1.abortable;
-var Defer_1 = __webpack_require__(15);
-exports.Defer = Defer_1.Defer;
-//# sourceMappingURL=index.js.map
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var abortable_1 = __webpack_require__(6);
-var Defer = /** @class */ (function () {
-    /**
-     * Defer 构造函数
-     */
-    function Defer() {
-        var _this = this;
-        this.promise = abortable_1.abortable(new Promise(function (resolve, reject) {
-            _this.resolve = resolve;
-            _this.reject = reject;
-        }));
-        this.abort = this.promise.abort;
-    }
-    return Defer;
-}());
-exports.Defer = Defer;
-//# sourceMappingURL=Defer.js.map
-
-/***/ }),
-/* 16 */
 /***/ (function(module, exports) {
 
 var g;
@@ -1887,10 +1848,49 @@ module.exports = g;
 
 
 /***/ }),
-/* 17 */
+/* 15 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_17__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_15__;
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var abortable_1 = __webpack_require__(10);
+exports.abortable = abortable_1.abortable;
+exports.revokeable = abortable_1.abortable;
+var Defer_1 = __webpack_require__(17);
+exports.Defer = Defer_1.Defer;
+//# sourceMappingURL=index.js.map
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var abortable_1 = __webpack_require__(10);
+var Defer = /** @class */ (function () {
+    /**
+     * Defer 构造函数
+     */
+    function Defer() {
+        var _this = this;
+        this.promise = abortable_1.abortable(new Promise(function (resolve, reject) {
+            _this.resolve = resolve;
+            _this.reject = reject;
+        }));
+        this.abort = this.promise.abort;
+    }
+    return Defer;
+}());
+exports.Defer = Defer;
+//# sourceMappingURL=Defer.js.map
 
 /***/ }),
 /* 18 */
@@ -1899,42 +1899,11 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_17__;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = __webpack_require__(3);
-var isArray = __webpack_require__(0).isArray;
-/**
- * 状态组件（状态符合时显示）
- * @param {IStateProps} props 属性
- */
-function State(props) {
-    var validation = props.validation, results = props.results, bind = props.bind, when = props.when, alias = props.alias, children = props.children, rules = props.rules;
-    if (!validation)
-        return utils_1.toElement();
-    if (rules)
-        validation.setRule(bind, rules, alias);
-    var result = results.items[bind];
-    if (!result)
-        return utils_1.toElement();
-    var state = result.state;
-    var whenStates = isArray(when) ? when : [when];
-    if (whenStates.indexOf(state) < 0)
-        return utils_1.toElement();
-    return utils_1.toElement(children);
-}
-exports.State = State;
+exports.EventEmitter = __webpack_require__(19);
 
 
 /***/ }),
 /* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.EventEmitter = __webpack_require__(20);
-
-
-/***/ }),
-/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _a = __webpack_require__(0), final = _a.final, isArray = _a.isArray, copy = _a.copy, each = _a.each;
@@ -2112,6 +2081,37 @@ module.exports = EventEmitter;
 //# sourceMappingURL=index.js.map
 
 /***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var utils_1 = __webpack_require__(2);
+var isArray = __webpack_require__(0).isArray;
+/**
+ * 状态组件（状态符合时显示）
+ * @param {IStateProps} props 属性
+ */
+function State(props) {
+    var validation = props.validation, results = props.results, bind = props.bind, when = props.when, alias = props.alias, children = props.children, rules = props.rules;
+    if (!validation)
+        return utils_1.toElement();
+    if (rules)
+        validation.setRule(bind, rules, alias);
+    var result = results.items[bind];
+    if (!result)
+        return utils_1.toElement();
+    var state = result.state;
+    var whenStates = isArray(when) ? when : [when];
+    if (whenStates.indexOf(state) < 0)
+        return utils_1.toElement();
+    return utils_1.toElement(children);
+}
+exports.State = State;
+
+
+/***/ }),
 /* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2129,9 +2129,9 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var react_1 = __webpack_require__(4);
-var mota_1 = __webpack_require__(2);
-var Validation_1 = __webpack_require__(5);
+var react_1 = __webpack_require__(3);
+var mota_1 = __webpack_require__(4);
+var Validation_1 = __webpack_require__(9);
 function useValidation(model, options) {
     var owner = react_1.useState({})[0];
     if (!owner.validation) {

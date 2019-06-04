@@ -1,14 +1,14 @@
-import { IRule } from "./IRule";
-import { ITestItemMap } from "./ItestItemMap";
-import { IValidationPorps } from "./IValidationPorps";
 import { Alert, IAlertPorps } from "./Alert";
-import { IFieldPorps } from "./Field";
-import { IStateProps } from "./State";
-import { states } from "./states";
-import { ITestItem } from "./ITestItem";
-import { IValidationOptions } from "./IValidationOptions";
 import { EventEmitter } from "./EventEmitter";
+import { IFieldPorps } from "./Field";
 import { IResults } from "./IResults";
+import { IRule } from "./IRule";
+import { IStateProps } from "./State";
+import { ITestItem } from "./ITestItem";
+import { ITestItemMap } from "./ItestItemMap";
+import { IValidationOptions } from "./IValidationOptions";
+import { IValidationPorps } from "./IValidationPorps";
+import { states } from "./states";
 export { IValidationPorps, Alert };
 export declare class Validation extends EventEmitter {
     private __options;

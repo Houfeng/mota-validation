@@ -1,7 +1,7 @@
-import { ITestItem } from "./ITestItem";
-import { states } from "./states";
 import { IRule } from "./IRule";
+import { ITestItem } from "./ITestItem";
 import { ITestResult } from "./ITestResult";
+import { states } from "./states";
 
 export class TestItem implements ITestItem {
   constructor(

@@ -1,15 +1,15 @@
-import { Component } from "react";
-import { lifecycle } from "mota";
-import { Validation } from "./Validation";
+import { Alert } from "./Alert";
 import { builtIn } from "./builtIn";
+import { Component } from "react";
+import { Field } from "./Field";
 import { IRule } from "./IRule";
 import { ITestItemMap } from "./ItestItemMap";
-import { TestItem } from "./TestItem";
-import { Alert } from "./Alert";
-import { Field } from "./Field";
-import { IValidationPorps } from "./IValidationPorps";
 import { IValidationOptions } from "./IValidationOptions";
+import { IValidationPorps } from "./IValidationPorps";
+import { lifecycle } from "mota";
 import { states } from "./states";
+import { TestItem } from "./TestItem";
+import { Validation } from "./Validation";
 
 export {
   Validation,

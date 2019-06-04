@@ -1,5 +1,5 @@
-import { IValidationPorps } from "./IValidationPorps";
 import { IRule } from "./IRule";
+import { IValidationPorps } from "./IValidationPorps";
 export interface IAlertPorps extends IValidationPorps {
     children?: IRule[];
 }

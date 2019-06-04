@@ -1,7 +1,7 @@
-import { useState, useEffect, useLayoutEffect } from "react";
+import { IValidationOptions } from "./IValidationOptions";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { utils } from "mota";
 import { Validation } from "./Validation";
-import { IValidationOptions } from "./IValidationOptions";
 
 export function useValidation(model: any, options?: IValidationOptions) {
   const [owner] = useState<{ validation?: Validation }>({});

@@ -1,8 +1,8 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { IValidationPorps } from "./IValidationPorps";
-import { toElement } from "./utils";
 import { states } from "./states";
+import { toElement } from "./utils";
 
 const ATTR_KEY = "data-state";
 const STYLE_ID = "mota-validation";
@@ -10,7 +10,6 @@ const { isArray, isNull } = require("ntils");
 
 function createStyle(global: any) {
   const { document } = global;
-
   if (!document || document.getElementById(STYLE_ID)) return;
   const style = document.createElement("style");
   style.id = STYLE_ID;
@@ -22,21 +21,28 @@ function createStyle(global: any) {
 }
 createStyle(global as any);
 
-function setState(ref: any, state: states) {
-  const element = ReactDOM.findDOMNode(ref) as HTMLElement;
-  if (!element) return;
-  element.setAttribute(ATTR_KEY, String(state));
-}
-
+/**
+ * Field 组件属性接口定义
+ */
 export interface IFieldPorps extends IValidationPorps {
   children?: any;
+}
+
+/**
+ * Field 函数式组件类型定义
+ */
+export interface IFieldComponent {
+  (props: IFieldPorps): any;
+  applyToElement?: (element: HTMLElement, state: states) => any;
 }
 
 /**
  * 表单组件容器
  * @param {IFieldPorps} props 属性
  */
-export function Field(props: IFieldPorps): any {
+export const Field: IFieldComponent = FieldComponent;
+
+function FieldComponent(props: IFieldPorps): any {
   const { validation, results, bind, rules, alias, children } = props;
   if (children && isArray(children) && children.length > 0) {
     throw Error(`The State(${bind}) can only have a sub element`);
@@ -50,4 +56,11 @@ export function Field(props: IFieldPorps): any {
   return React.cloneElement(toElement(children), {
     ref: (ref: any) => setState(ref, state)
   });
+}
+
+function setState(ref: any, state: states) {
+  const element = ReactDOM.findDOMNode(ref) as HTMLElement;
+  if (!element) return;
+  if (Field.applyToElement) return Field.applyToElement(element, state);
+  element.setAttribute(ATTR_KEY, String(state));
 }

@@ -1,6 +1,6 @@
 import { IValidationPorps } from "./IValidationPorps";
-import { toElement } from "./utils";
 import { states } from "./states";
+import { toElement } from "./utils";
 
 const { isArray } = require("ntils");
 

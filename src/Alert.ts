@@ -1,7 +1,7 @@
-import { IValidationPorps } from "./IValidationPorps";
 import { IRule } from "./IRule";
-import { toElement } from "./utils";
+import { IValidationPorps } from "./IValidationPorps";
 import { states } from "./states";
+import { toElement } from "./utils";
 
 export interface IAlertPorps extends IValidationPorps {
   children?: IRule[];
