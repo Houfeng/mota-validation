@@ -1128,10 +1128,12 @@ function createStyle(global) {
     var document = global.document;
     if (!document || document.getElementById(STYLE_ID))
         return;
+    var container = document.head || document.body;
+    if (!container)
+        return;
     var style = document.createElement("style");
     style.id = STYLE_ID;
-    style.innerHTML = "\n  [" + ATTR_KEY + "]{transition-duration:.2s;transition-property:box-shadow;}\n  [" + ATTR_KEY + "=\"0\"]{ outline:none;box-shadow:0 0 2px 1px rgba(255,0,0,.8);}";
-    var container = document.head || document.body;
+    style.innerHTML = "\n  [" + ATTR_KEY + "]{transition-duration:.2s;transition-property:all;}\n  [" + ATTR_KEY + "=\"0\"]{outline:none;border-color:#f5222d;}\n  [" + ATTR_KEY + "=\"0\"]:focus{box-shadow:0 0 0 2px rgba(245, 34, 45, 0.2);}";
     container.appendChild(style);
 }
 createStyle(global);

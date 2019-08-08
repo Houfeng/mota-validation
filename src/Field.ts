@@ -11,12 +11,14 @@ const { isArray, isNull } = require("ntils");
 function createStyle(global: any) {
   const { document } = global;
   if (!document || document.getElementById(STYLE_ID)) return;
+  const container = document.head || document.body;
+  if (!container) return;
   const style = document.createElement("style");
   style.id = STYLE_ID;
   style.innerHTML = `
-  [${ATTR_KEY}]{transition-duration:.2s;transition-property:box-shadow;}
-  [${ATTR_KEY}="0"]{ outline:none;box-shadow:0 0 2px 1px rgba(255,0,0,.8);}`;
-  const container = document.head || document.body;
+  [${ATTR_KEY}]{transition-duration:.2s;transition-property:all;}
+  [${ATTR_KEY}="0"]{outline:none;border-color:#f5222d;}
+  [${ATTR_KEY}="0"]:focus{box-shadow:0 0 0 2px rgba(245, 34, 45, 0.2);}`;
   container.appendChild(style);
 }
 createStyle(global as any);

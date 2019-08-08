@@ -11,7 +11,7 @@ dev:
     template: ./assets/*.html
     watch: true
   - name: server
-    port: 7007
+    port: 7008
   - name: browser-sync
 
 build:
