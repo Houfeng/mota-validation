@@ -122,7 +122,7 @@ export class Validation extends EventEmitter {
     return this.__aliases;
   }
 
-  private get model() {
+  public get model() {
     return this.__model;
   }
 

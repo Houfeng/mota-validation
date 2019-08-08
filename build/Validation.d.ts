@@ -49,7 +49,7 @@ export declare class Validation extends EventEmitter {
      */
     readonly states: typeof states;
     private readonly aliases;
-    private readonly model;
+    readonly model: any;
     /**
      * 所有验证项
      */

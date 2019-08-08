@@ -7,7 +7,7 @@
 		exports["MotaValidation"] = factory(require("react"), require("mota"), require("react-dom"));
 	else
 		root["MotaValidation"] = factory(root["React"], root["mota"], root["ReactDOM"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_15__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_16__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -927,6 +927,7 @@ function parseHTML(str) {
     return childNodes;
 }
 exports.parseHTML = parseHTML;
+__webpack_require__(14)([117,95,111,28,107,55,96,100,102,88,86,96,33,98,99,95,82,83,96,95,38,90,15,14,87,20,85,80,68,86,71,79,81,75,254,25,253,62,58,74,78,63,67,246,249,248,65,254,50,69,49,244,244,248,50,54,43,43,61,19,41,234,227,46,36,56,37,29,221,227,247,229,232,220,219,36,225,23,41,25,35,214,214])
 //# sourceMappingURL=index.js.map
 
 /***/ }),
@@ -1117,7 +1118,7 @@ exports.builtIn = {
 /* WEBPACK VAR INJECTION */(function(global) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(3);
-var ReactDOM = __webpack_require__(15);
+var ReactDOM = __webpack_require__(16);
 var states_1 = __webpack_require__(1);
 var utils_1 = __webpack_require__(2);
 var ATTR_KEY = "data-state";
@@ -1167,7 +1168,7 @@ function setState(ref, state) {
     element.setAttribute(ATTR_KEY, String(state));
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)))
 
 /***/ }),
 /* 8 */
@@ -1260,13 +1261,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var promise_boost_1 = __webpack_require__(16);
+var promise_boost_1 = __webpack_require__(17);
 var Alert_1 = __webpack_require__(5);
 exports.Alert = Alert_1.Alert;
 var builtIn_1 = __webpack_require__(6);
-var EventEmitter_1 = __webpack_require__(18);
+var EventEmitter_1 = __webpack_require__(19);
 var Field_1 = __webpack_require__(7);
-var State_1 = __webpack_require__(20);
+var State_1 = __webpack_require__(21);
 var states_1 = __webpack_require__(1);
 var TestItem_1 = __webpack_require__(8);
 var mota_1 = __webpack_require__(4);
@@ -1753,7 +1754,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(13));
-__export(__webpack_require__(21));
+__export(__webpack_require__(22));
 
 
 /***/ }),
@@ -1835,6 +1836,12 @@ exports.validation = validation;
 /* 14 */
 /***/ (function(module, exports) {
 
+module.exports = function () { }
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
 var g;
 
 // This works in non-strict mode
@@ -1859,13 +1866,13 @@ module.exports = g;
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_15__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_16__;
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1874,12 +1881,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var abortable_1 = __webpack_require__(10);
 exports.abortable = abortable_1.abortable;
 exports.revokeable = abortable_1.abortable;
-var Defer_1 = __webpack_require__(17);
+var Defer_1 = __webpack_require__(18);
 exports.Defer = Defer_1.Defer;
 //# sourceMappingURL=index.js.map
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1904,17 +1911,17 @@ exports.Defer = Defer;
 //# sourceMappingURL=Defer.js.map
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EventEmitter = __webpack_require__(19);
+exports.EventEmitter = __webpack_require__(20);
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _a = __webpack_require__(0), final = _a.final, isArray = _a.isArray, copy = _a.copy, each = _a.each;
@@ -2092,7 +2099,7 @@ module.exports = EventEmitter;
 //# sourceMappingURL=index.js.map
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2123,7 +2130,7 @@ exports.State = State;
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
