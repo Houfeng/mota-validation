@@ -1320,7 +1320,7 @@ var Validation = /** @class */ (function (_super) {
             _this.items[bind].message = message;
             _this.results.items[bind].state = state;
             _this.results.items[bind].message = message;
-            _this.results = __assign({}, _this.results, { time: _this.time, state: _this.state() });
+            _this.results = __assign({}, _this.results, { time: _this.time, state: _this.getState() });
         };
         /**
          * 触发验证，传入 bind 时验证指定数据项，省略参数时验证整个表单
@@ -1343,7 +1343,7 @@ var Validation = /** @class */ (function (_super) {
                         _a.label = 4;
                     case 4:
                         this.emit("test", this);
-                        return [2 /*return*/, this.state(bind)];
+                        return [2 /*return*/, this.getState(bind)];
                 }
             });
         }); };
@@ -1352,7 +1352,7 @@ var Validation = /** @class */ (function (_super) {
          * @param {string} bind 要验证的数据
          * @returns {Promise<states>} 验证结果
          */
-        _this.state = function (bind) {
+        _this.getState = function (bind) {
             bind = _this.aliases[bind] || bind;
             if (bind && isString(bind)) {
                 var item = _this.items[bind];
@@ -1361,13 +1361,13 @@ var Validation = /** @class */ (function (_super) {
             var binds = Object.keys(_this.items);
             if (binds.length < 1)
                 return states_1.states.unknown;
-            if (binds.some(function (bind) { return _this.state(bind) === states_1.states.failed; })) {
+            if (binds.some(function (bind) { return _this.getState(bind) === states_1.states.failed; })) {
                 return states_1.states.failed;
             }
-            if (binds.some(function (bind) { return _this.state(bind) === states_1.states.testing; })) {
+            if (binds.some(function (bind) { return _this.getState(bind) === states_1.states.testing; })) {
                 return states_1.states.testing;
             }
-            if (binds.some(function (bind) { return _this.state(bind) === states_1.states.untested; })) {
+            if (binds.some(function (bind) { return _this.getState(bind) === states_1.states.untested; })) {
                 return states_1.states.untested;
             }
             return states_1.states.succeed;
@@ -1431,10 +1431,16 @@ var Validation = /** @class */ (function (_super) {
         this.__model._observer_.set(stateKey, { state: state, time: time, items: items });
     };
     Object.defineProperty(Validation.prototype, "results", {
+        /**
+         * 验证结果
+         */
         get: function () {
             var stateKey = this.options.stateKey;
             return this.model[stateKey];
         },
+        /**
+         * 验证结果
+         */
         set: function (value) {
             var stateKey = this.options.stateKey;
             this.model[stateKey] = value;
@@ -1442,6 +1448,15 @@ var Validation = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    /**
+     * 查询验证结果的 state 值
+     * @param bind 绑定表达式，bind 省略时查询整体 state
+     */
+    Validation.prototype.state = function (bind) {
+        if (!bind)
+            return this.results.state;
+        return this.results.items[bind].state;
+    };
     Object.defineProperty(Validation.prototype, "options", {
         /**
          * 选项
@@ -1524,6 +1539,9 @@ var Validation = /** @class */ (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "aliases", {
+        /**
+         * 别名表
+         */
         get: function () {
             return this.__aliases;
         },
@@ -1531,6 +1549,9 @@ var Validation = /** @class */ (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "model", {
+        /**
+         * 当前模型
+         */
         get: function () {
             return this.__model;
         },
@@ -1573,7 +1594,7 @@ var Validation = /** @class */ (function (_super) {
      * @param bind 指定的数据
      * @returns {ITestItem}
      */
-    Validation.prototype.item = function (bind) {
+    Validation.prototype.getItem = function (bind) {
         bind = this.aliases[bind] || bind;
         if (!bind)
             return;
@@ -1666,7 +1687,7 @@ var Validation = /** @class */ (function (_super) {
                         bind = this.aliases[bind] || bind;
                         if (!bind || !this.model)
                             return [2 /*return*/];
-                        item = this.item(bind);
+                        item = this.getItem(bind);
                         if (!item || !item.rules || item.rules.length < 1)
                             return [2 /*return*/];
                         if (item.pending)

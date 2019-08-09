@@ -51,14 +51,29 @@ export class Validation extends EventEmitter {
     this.__model._observer_.set(stateKey, { state, time, items });
   }
 
+  /**
+   * 验证结果
+   */
   public get results() {
     const { stateKey } = this.options;
     return this.model[stateKey] as IResults;
   }
 
+  /**
+   * 验证结果
+   */
   public set results(value) {
     const { stateKey } = this.options;
     this.model[stateKey] = value;
+  }
+
+  /**
+   * 查询验证结果的 state 值
+   * @param bind 绑定表达式，bind 省略时查询整体 state
+   */
+  public state(bind?: string) {
+    if (!bind) return this.results.state;
+    return this.results.items[bind].state;
   }
 
   /**
@@ -118,10 +133,16 @@ export class Validation extends EventEmitter {
     return states;
   }
 
+  /**
+   * 别名表
+   */
   private get aliases() {
     return this.__aliases;
   }
 
+  /**
+   * 当前模型
+   */
   public get model() {
     return this.__model;
   }
@@ -153,7 +174,7 @@ export class Validation extends EventEmitter {
    * @param bind 指定的数据
    * @returns {ITestItem}
    */
-  public item(bind: string) {
+  public getItem(bind: string) {
     bind = this.aliases[bind] || bind;
     if (!bind) return;
     return this.items[bind];
@@ -210,7 +231,7 @@ export class Validation extends EventEmitter {
     this.items[bind].message = message;
     this.results.items[bind].state = state;
     this.results.items[bind].message = message;
-    this.results = { ...this.results, time: this.time, state: this.state() };
+    this.results = { ...this.results, time: this.time, state: this.getState() };
   };
 
   private getTestFuncForString(test: string): ITestFunction {
@@ -255,7 +276,7 @@ export class Validation extends EventEmitter {
   private async testOne(bind: string) {
     bind = this.aliases[bind] || bind;
     if (!bind || !this.model) return;
-    const item = this.item(bind);
+    const item = this.getItem(bind);
     if (!item || !item.rules || item.rules.length < 1) return;
     if (item.pending) item.pending.abort();
     const value = getByPath(this.model, bind);
@@ -284,7 +305,7 @@ export class Validation extends EventEmitter {
       await this.testAll();
     }
     this.emit("test", this);
-    return this.state(bind);
+    return this.getState(bind);
   };
 
   /**
@@ -292,7 +313,7 @@ export class Validation extends EventEmitter {
    * @param {string} bind 要验证的数据
    * @returns {Promise<states>} 验证结果
    */
-  public state = (bind?: string) => {
+  private getState = (bind?: string) => {
     bind = this.aliases[bind] || bind;
     if (bind && isString(bind)) {
       const item = this.items[bind];
@@ -300,13 +321,13 @@ export class Validation extends EventEmitter {
     }
     const binds = Object.keys(this.items);
     if (binds.length < 1) return states.unknown;
-    if (binds.some(bind => this.state(bind) === states.failed)) {
+    if (binds.some(bind => this.getState(bind) === states.failed)) {
       return states.failed;
     }
-    if (binds.some(bind => this.state(bind) === states.testing)) {
+    if (binds.some(bind => this.getState(bind) === states.testing)) {
       return states.testing;
     }
-    if (binds.some(bind => this.state(bind) === states.untested)) {
+    if (binds.some(bind => this.getState(bind) === states.untested)) {
       return states.untested;
     }
     return states.succeed;

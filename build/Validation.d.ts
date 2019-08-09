@@ -23,7 +23,18 @@ export declare class Validation extends EventEmitter {
     private __state;
     constructor(model: any, options: IValidationOptions);
     private initResults;
+    /**
+     * 验证结果
+     */
+    /**
+    * 验证结果
+    */
     results: IResults;
+    /**
+     * 查询验证结果的 state 值
+     * @param bind 绑定表达式，bind 省略时查询整体 state
+     */
+    state(bind?: string): states;
     /**
      * 选项
      */
@@ -48,7 +59,13 @@ export declare class Validation extends EventEmitter {
      * 验证状态枚举
      */
     readonly states: typeof states;
+    /**
+     * 别名表
+     */
     private readonly aliases;
+    /**
+     * 当前模型
+     */
     readonly model: any;
     /**
      * 所有验证项
@@ -68,7 +85,7 @@ export declare class Validation extends EventEmitter {
      * @param bind 指定的数据
      * @returns {ITestItem}
      */
-    item(bind: string): ITestItem;
+    getItem(bind: string): ITestItem;
     /**
      * 设定验证规则
      * @param {string} bind 要验证的数据
@@ -109,7 +126,7 @@ export declare class Validation extends EventEmitter {
      * @param {string} bind 要验证的数据
      * @returns {Promise<states>} 验证结果
      */
-    state: (bind?: string) => states.unknown | states.unknown | states.untested | states.untested | states | states.succeed;
+    private getState;
     pauseWatch: () => void;
     resumeWatch: () => void;
     private watch;
