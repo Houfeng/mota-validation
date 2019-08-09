@@ -5,8 +5,4 @@ export interface IStateProps extends IValidationPorps {
     children?: any;
     type?: string;
 }
-/**
- * 状态组件（状态符合时显示）
- * @param {IStateProps} props 属性
- */
 export declare function State(props: IStateProps): any;

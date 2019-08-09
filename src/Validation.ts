@@ -71,10 +71,11 @@ export class Validation extends EventEmitter {
    * 查询验证结果的 state 值
    * @param bind 绑定表达式，bind 省略时查询整体 state
    */
-  public state(bind?: string) {
+  public state = (bind?: string) => {
+    if (!this.results) return states.unknown;
     if (!bind) return this.results.state;
     return this.results.items[bind].state;
-  }
+  };
 
   /**
    * 选项
