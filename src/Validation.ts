@@ -182,20 +182,28 @@ export class Validation extends EventEmitter {
   }
 
   /**
+   * 所有防抖 timers
+   */
+  private watchTimers: { [name: string]: NodeJS.Timeout } = {};
+
+  private clearWatchTimer(bind: string) {
+    if (this.watchTimers[bind]) clearTimeout(this.watchTimers[bind]);
+  }
+
+  /**
    * 监听一个数据（表达式）
    */
   private watch = (bind: string) => {
     if (this.__watchers[bind]) return;
-    let watchTimer: any = null;
     const watcher = this.model._observer_.watch(
       () => getByPath(this.model, bind),
       () => {
         if (this.__watchPaused) return;
-        if (watchTimer) clearTimeout(watchTimer);
-        watchTimer = setTimeout(() => {
-          if (!watchTimer) return;
+        this.clearWatchTimer(bind);
+        this.watchTimers[bind] = setTimeout(() => {
+          if (this.__watchPaused || !this.watchTimers[bind]) return;
           this.test(bind);
-          watchTimer = null;
+          this.watchTimers[bind] = null;
         }, this.options.debounce);
       }
     );

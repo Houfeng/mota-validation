@@ -1222,20 +1222,19 @@ var Validation = (function (_super) {
                 return _this.results.state;
             return _this.results.items[bind].state;
         };
+        _this.watchTimers = {};
         _this.watch = function (bind) {
             if (_this.__watchers[bind])
                 return;
-            var watchTimer = null;
             var watcher = _this.model._observer_.watch(function () { return getByPath(_this.model, bind); }, function () {
                 if (_this.__watchPaused)
                     return;
-                if (watchTimer)
-                    clearTimeout(watchTimer);
-                watchTimer = setTimeout(function () {
-                    if (!watchTimer)
+                _this.clearWatchTimer(bind);
+                _this.watchTimers[bind] = setTimeout(function () {
+                    if (_this.__watchPaused || !_this.watchTimers[bind])
                         return;
                     _this.test(bind);
-                    watchTimer = null;
+                    _this.watchTimers[bind] = null;
                 }, _this.options.debounce);
             });
             watcher.calc(false);
@@ -1470,6 +1469,10 @@ var Validation = (function (_super) {
         if (!bind)
             return;
         return this.items[bind];
+    };
+    Validation.prototype.clearWatchTimer = function (bind) {
+        if (this.watchTimers[bind])
+            clearTimeout(this.watchTimers[bind]);
     };
     Validation.prototype.unWatch = function (bind) {
         var watcher = this.__watchers[bind];

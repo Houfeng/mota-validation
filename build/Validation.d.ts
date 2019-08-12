@@ -37,6 +37,8 @@ export declare class Validation extends EventEmitter {
     readonly testCount: number;
     readonly time: number;
     getItem(bind: string): ITestItem;
+    private watchTimers;
+    private clearWatchTimer;
     private watch;
     private unWatch;
     setRule: (bind: string, rules: IRule | IRule[], alias?: string) => void;
