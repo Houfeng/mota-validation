@@ -182,6 +182,39 @@ export class Validation extends EventEmitter {
   }
 
   /**
+   * 监听一个数据（表达式）
+   */
+  private watch = (bind: string) => {
+    if (this.__watchers[bind]) return;
+    let watchTimer: any = null;
+    const watcher = this.model._observer_.watch(
+      () => getByPath(this.model, bind),
+      () => {
+        if (this.__watchPaused) return;
+        if (watchTimer) clearTimeout(watchTimer);
+        watchTimer = setTimeout(() => {
+          if (!watchTimer) return;
+          this.test(bind);
+          watchTimer = null;
+        }, this.options.debounce);
+      }
+    );
+    watcher.calc(false);
+    this.__watchers[bind] = watcher;
+  };
+
+  /**
+   * 移除一个监听表达式
+   * @param bind 表达式
+   */
+  private unWatch(bind: string) {
+    const watcher = this.__watchers[bind];
+    if (!watcher) return;
+    this.model._observer_.unWatch(watcher);
+    this.__watchers[bind] = null;
+  }
+
+  /**
    * 设定验证规则
    * @param {string} bind 要验证的数据
    * @param {IRule | Array<IRule>} rules 规则
@@ -334,52 +367,41 @@ export class Validation extends EventEmitter {
     return states.succeed;
   };
 
+  /**
+   * 暂停验证监听
+   */
   public pauseWatch = () => {
     this.__watchPaused = true;
   };
 
+  /**
+   * 恢复验证监听
+   */
   public resumeWatch = () => {
     this.__watchPaused = false;
   };
 
-  private watch = (bind: string) => {
-    if (this.__watchers[bind]) return;
-    let watchTimer: any = null;
-    const watcher = this.model._observer_.watch(
-      () => getByPath(this.model, bind),
-      () => {
-        if (this.__watchPaused) return;
-        if (watchTimer) clearTimeout(watchTimer);
-        watchTimer = setTimeout(() => {
-          if (!watchTimer) return;
-          this.test(bind);
-          watchTimer = null;
-        }, this.options.debounce);
-      }
-    );
-    watcher.calc(false);
-    this.__watchers[bind] = watcher;
-  };
-
-  private unWatch(bind: string) {
-    const watcher = this.__watchers[bind];
-    if (!watcher) return;
-    this.model._observer_.unWatch(watcher);
-    this.__watchers[bind] = null;
-  }
-
+  /**
+   * 启动所有验证监听
+   */
   public sartWatch = () => {
     const binds = Object.keys(this.items);
     binds.forEach(bind => this.watch(bind));
     this.resumeWatch();
   };
 
+  /**
+   * 停止所有验证监听
+   */
   public stopWatch = () => {
     this.pauseWatch();
     const binds = Object.keys(this.items);
     binds.forEach(bind => this.unWatch(bind));
   };
 
+  /**
+   * 重置验证状态
+   */
   public reset = () => {
     Object.keys(this.items).forEach((bind: string) => {
       this.setState(bind, states.untested, "");
@@ -387,9 +409,26 @@ export class Validation extends EventEmitter {
   };
 
   /**
-   * 销毁
+   * 避开验证，希望暂时避开验证进行数据更改，可使用此方法
+   * @param {Function} handler 处理函数
+   */
+  public avoid = (handler: Function) => {
+    if (!handler) return;
+    const { debounce } = this.options;
+    this.pauseWatch();
+    handler();
+    return new Promise(resolve => {
+      setTimeout(() => {
+        this.resumeWatch();
+        resolve();
+      }, debounce + 16);
+    });
+  };
+
+  /**
+   * 销毁验证对象
    */
   public distory = () => {
-    this.stopWatch();
+    return this.stopWatch();
   };
 }

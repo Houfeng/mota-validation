@@ -37,6 +37,8 @@ export declare class Validation extends EventEmitter {
     readonly testCount: number;
     readonly time: number;
     getItem(bind: string): ITestItem;
+    private watch;
+    private unWatch;
     setRule: (bind: string, rules: IRule | IRule[], alias?: string) => void;
     removeRule(bind: string): void;
     clearRules(): void;
@@ -50,10 +52,9 @@ export declare class Validation extends EventEmitter {
     private getState;
     pauseWatch: () => void;
     resumeWatch: () => void;
-    private watch;
-    private unWatch;
     sartWatch: () => void;
     stopWatch: () => void;
     reset: () => void;
+    avoid: (handler: Function) => Promise<unknown>;
     distory: () => void;
 }

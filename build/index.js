@@ -1222,6 +1222,25 @@ var Validation = (function (_super) {
                 return _this.results.state;
             return _this.results.items[bind].state;
         };
+        _this.watch = function (bind) {
+            if (_this.__watchers[bind])
+                return;
+            var watchTimer = null;
+            var watcher = _this.model._observer_.watch(function () { return getByPath(_this.model, bind); }, function () {
+                if (_this.__watchPaused)
+                    return;
+                if (watchTimer)
+                    clearTimeout(watchTimer);
+                watchTimer = setTimeout(function () {
+                    if (!watchTimer)
+                        return;
+                    _this.test(bind);
+                    watchTimer = null;
+                }, _this.options.debounce);
+            });
+            watcher.calc(false);
+            _this.__watchers[bind] = watcher;
+        };
         _this.setRule = function (bind, rules, alias) {
             if (!bind)
                 return;
@@ -1293,25 +1312,6 @@ var Validation = (function (_super) {
         _this.resumeWatch = function () {
             _this.__watchPaused = false;
         };
-        _this.watch = function (bind) {
-            if (_this.__watchers[bind])
-                return;
-            var watchTimer = null;
-            var watcher = _this.model._observer_.watch(function () { return getByPath(_this.model, bind); }, function () {
-                if (_this.__watchPaused)
-                    return;
-                if (watchTimer)
-                    clearTimeout(watchTimer);
-                watchTimer = setTimeout(function () {
-                    if (!watchTimer)
-                        return;
-                    _this.test(bind);
-                    watchTimer = null;
-                }, _this.options.debounce);
-            });
-            watcher.calc(false);
-            _this.__watchers[bind] = watcher;
-        };
         _this.sartWatch = function () {
             var binds = Object.keys(_this.items);
             binds.forEach(function (bind) { return _this.watch(bind); });
@@ -1327,8 +1327,21 @@ var Validation = (function (_super) {
                 _this.setState(bind, states_1.states.untested, "");
             });
         };
+        _this.avoid = function (handler) {
+            if (!handler)
+                return;
+            var debounce = _this.options.debounce;
+            _this.pauseWatch();
+            handler();
+            return new Promise(function (resolve) {
+                setTimeout(function () {
+                    _this.resumeWatch();
+                    resolve();
+                }, debounce + 16);
+            });
+        };
         _this.distory = function () {
-            _this.stopWatch();
+            return _this.stopWatch();
         };
         options = __assign({ stateKey: "results", debounce: 300 }, options);
         _this.__options = options;
@@ -1458,6 +1471,13 @@ var Validation = (function (_super) {
             return;
         return this.items[bind];
     };
+    Validation.prototype.unWatch = function (bind) {
+        var watcher = this.__watchers[bind];
+        if (!watcher)
+            return;
+        this.model._observer_.unWatch(watcher);
+        this.__watchers[bind] = null;
+    };
     Validation.prototype.removeRule = function (bind) {
         bind = this.aliases[bind] || bind;
         if (!bind)
@@ -1570,13 +1590,6 @@ var Validation = (function (_super) {
                 }
             });
         });
-    };
-    Validation.prototype.unWatch = function (bind) {
-        var watcher = this.__watchers[bind];
-        if (!watcher)
-            return;
-        this.model._observer_.unWatch(watcher);
-        this.__watchers[bind] = null;
     };
     return Validation;
 }(EventEmitter_1.EventEmitter));
