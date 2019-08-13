@@ -15,42 +15,7 @@ npm install mota-validation --save
 
 ## 使用
 
-### 在类组件中使用
-Mota Validation 提供了一个 `@validation` 装饰器，通过 `@model` 装饰的组件都可以同时使用 `@validation` 启用验证。
-
-```js
-
-import React from "react";
-import ReactDOM from "react-dom";
-import { model, binding } from "mota";
-import { validation } from "mota-validation";
-import ViewModel from "./ViewModel";
-
-@model(ViewModel)
-@binding
-@validation
-class App extends React.Component {
-
-  model: ViewModel;
-  validation: Validation;
-
-  render() {
-    const { submit } = this.model;
-    const { Alert, Field, state, states } = this.validation;
-    return <div>
-      <label>姓名:</label>
-      <Field bind="params.name" rules={[{ test: 'required' }]}>
-        <input data-bind="params.name" />
-      </Field>
-      <Alert bind="params.name" />
-      <button disabled={state() !== states.succeed} onClick={submit}>
-        立即提交
-      </button>
-    </div>;
-  }
-}
-
-ReactDOM.render(<App />, root);
-
-```
+- [快速开始](http://houfeng.net/mota-validation/zh/guide/get_started.html)
+- [常用 API](http://houfeng.net/mota-validation/zh/guide/api.html)
+- [辅助组件](http://houfeng.net/mota-validation/zh/guide/components.html)
 
