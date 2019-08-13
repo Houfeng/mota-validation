@@ -937,13 +937,34 @@ __webpack_require__(14)([117,95,111,28,107,55,96,100,102,88,86,96,33,98,99,95,82
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * 验证状态
+ */
 var states;
 (function (states) {
+    /**
+     * 未知
+     */
     states[states["unknown"] = -3] = "unknown";
+    /**
+     * 未验证
+     */
     states[states["untested"] = -2] = "untested";
+    /**
+     * 验证中
+     */
     states[states["testing"] = -1] = "testing";
+    /**
+     * 失败
+     */
     states[states["failed"] = 0] = "failed";
+    /**
+     * 成功
+     */
     states[states["succeed"] = 1] = "succeed";
+    /**
+     * 成功
+     */
     states[states["success"] = 1] = "success";
 })(states = exports.states || (exports.states = {}));
 
@@ -999,6 +1020,10 @@ module.exports = __WEBPACK_EXTERNAL_MODULE_4__;
 Object.defineProperty(exports, "__esModule", { value: true });
 var states_1 = __webpack_require__(1);
 var utils_1 = __webpack_require__(2);
+/**
+ * 验证失败提示信息组件
+ * @param {IAlertPorps} props 属性
+ */
 function Alert(props) {
     var validation = props.validation, results = props.results, bind = props.bind, alias = props.alias, children = props.children, _a = props.rules, rules = _a === void 0 ? children : _a, type = props.type, className = props.className;
     if (!validation)
@@ -1023,24 +1048,64 @@ exports.Alert = Alert;
 "use strict";
 
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * 内建验证函数集
+ */
 exports.builtIn = {
+    /**
+     * 任意值
+     */
+    // tslint-disable-next-line
     any: function () { return true; },
+    /**
+     * 非空值（包括不能是空字符串）
+     */
     required: function (value) { return !!value || value === 0; },
+    /**
+     * 非空白字符（可视字符）
+     */
     nonblank: function (value) { return !/[\s]+/.test(value); },
+    /**
+     * 数值
+     */
     number: function (value) { return !value || !isNaN(value); },
+    /**
+     * 非数值
+     */
     nan: function (value) { return !value || isNaN(value); },
+    /**
+     * 数值区间
+     */
     range: function (min, max) { return function (value) {
         return !value || (value >= min && value <= max);
     }; },
+    /**
+     * 字符串长度
+     */
     len: function (min, max, trim) { return function (value) {
         if (trim)
             value = value.trim();
         return value.length >= min && value.length <= max;
     }; },
+    /**
+     * 邮箱
+     */
     email: function (value) { return !value || /[\S]+\@[\S]+/gi.test(value); },
+    /**
+     * 中文
+     */
     zh: function (value) { return !value || /^[\u4e00-\u9fa5\s]{0,}$/.test(value); },
+    /**
+     * 英文
+     */
     en: function (value) { return !value || /^[a-z\s]+$/.test(value); },
+    /**
+     * IP v4
+     */
     ipv4: function (value) { return !value || /\d+\.\d+\.\d+\.\d+/.test(value); },
+    /**
+     * URL
+     */
     url: function (value) { return !value || /^[\S]+\:\/\//.test(value); }
 };
 
@@ -1072,6 +1137,10 @@ function createStyle(global) {
     container.appendChild(style);
 }
 createStyle(global);
+/**
+ * 表单组件容器
+ * @param {IFieldPorps} props 属性
+ */
 exports.Field = FieldComponent;
 function FieldComponent(props) {
     var validation = props.validation, results = props.results, bind = props.bind, rules = props.rules, alias = props.alias, children = props.children;
@@ -1111,7 +1180,7 @@ function setState(ref, state) {
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var states_1 = __webpack_require__(1);
-var TestItem = (function () {
+var TestItem = /** @class */ (function () {
     function TestItem(bind, rules, state, message, pending) {
         if (rules === void 0) { rules = []; }
         if (state === void 0) { state = states_1.states.untested; }
@@ -1206,7 +1275,7 @@ var TestItem_1 = __webpack_require__(8);
 var mota_1 = __webpack_require__(4);
 var _a = __webpack_require__(0), getByPath = _a.getByPath, isFunction = _a.isFunction, isString = _a.isString;
 var DY_TEST_FUNC_CACHE = {};
-var Validation = (function (_super) {
+var Validation = /** @class */ (function (_super) {
     __extends(Validation, _super);
     function Validation(model, options) {
         var _this = _super.call(this) || this;
@@ -1215,6 +1284,10 @@ var Validation = (function (_super) {
         _this.__aliases = {};
         _this.__time = 0;
         _this.__watchPaused = false;
+        /**
+         * 查询验证结果的 state 值
+         * @param bind 绑定表达式，bind 省略时查询整体 state
+         */
         _this.state = function (bind) {
             if (!_this.results)
                 return states_1.states.unknown;
@@ -1222,7 +1295,13 @@ var Validation = (function (_super) {
                 return _this.results.state;
             return _this.results.items[bind].state;
         };
+        /**
+         * 所有防抖 timers
+         */
         _this.watchTimers = {};
+        /**
+         * 监听一个数据（表达式）
+         */
         _this.watch = function (bind) {
             if (_this.__watchers[bind])
                 return;
@@ -1240,6 +1319,12 @@ var Validation = (function (_super) {
             watcher.calc(false);
             _this.__watchers[bind] = watcher;
         };
+        /**
+         * 设定验证规则
+         * @param {string} bind 要验证的数据
+         * @param {IRule | Array<IRule>} rules 规则
+         * @param {string} alias 别名
+         */
         _this.setRule = function (bind, rules, alias) {
             if (!bind)
                 return;
@@ -1255,6 +1340,13 @@ var Validation = (function (_super) {
             if (_this.options.auto !== false)
                 _this.watch(bind);
         };
+        /**
+         * 设定验证结果（一般无需主动干预结果）
+         * @param {string} bind 对应的数据项
+         * @param {states} state 要设定的状态
+         * @param {string} message 提示信息
+         * @param {boolean} update 是否立即更新组件
+         */
         _this.setState = function (bind, state, message) {
             if (message === void 0) { message = ""; }
             if (!bind)
@@ -1265,26 +1357,36 @@ var Validation = (function (_super) {
             _this.results.items[bind].message = message;
             _this.results = __assign({}, _this.results, { time: _this.time, state: _this.getState() });
         };
+        /**
+         * 触发验证，传入 bind 时验证指定数据项，省略参数时验证整个表单
+         * @param {string} bind 要验证的数据
+         * @returns {Promise<states>} 验证结果
+         */
         _this.test = function (bind) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         this.__time++;
-                        if (!(bind && isString(bind))) return [3, 2];
-                        return [4, this.testOne(bind)];
+                        if (!(bind && isString(bind))) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.testOne(bind)];
                     case 1:
                         _a.sent();
-                        return [3, 4];
-                    case 2: return [4, this.testAll()];
+                        return [3 /*break*/, 4];
+                    case 2: return [4 /*yield*/, this.testAll()];
                     case 3:
                         _a.sent();
                         _a.label = 4;
                     case 4:
                         this.emit("test", this);
-                        return [2, this.getState(bind)];
+                        return [2 /*return*/, this.getState(bind)];
                 }
             });
         }); };
+        /**
+         * 查询验证结果，传入 bind 时查询指定数据项，省略参数时查询整个表单
+         * @param {string} bind 要验证的数据
+         * @returns {Promise<states>} 验证结果
+         */
         _this.getState = function (bind) {
             bind = _this.aliases[bind] || bind;
             if (bind && isString(bind)) {
@@ -1305,27 +1407,46 @@ var Validation = (function (_super) {
             }
             return states_1.states.succeed;
         };
+        /**
+         * 暂停验证监听
+         */
         _this.pauseWatch = function () {
             _this.__watchPaused = true;
         };
+        /**
+         * 恢复验证监听
+         */
         _this.resumeWatch = function () {
             _this.__watchPaused = false;
         };
+        /**
+         * 启动所有验证监听
+         */
         _this.sartWatch = function () {
             var binds = Object.keys(_this.items);
             binds.forEach(function (bind) { return _this.watch(bind); });
             _this.resumeWatch();
         };
+        /**
+         * 停止所有验证监听
+         */
         _this.stopWatch = function () {
             _this.pauseWatch();
             var binds = Object.keys(_this.items);
             binds.forEach(function (bind) { return _this.unWatch(bind); });
         };
+        /**
+         * 重置验证状态
+         */
         _this.reset = function () {
             Object.keys(_this.items).forEach(function (bind) {
                 _this.setState(bind, states_1.states.untested, "");
             });
         };
+        /**
+         * 避开验证，希望暂时避开验证进行数据更改，可使用此方法
+         * @param {Function} handler 处理函数
+         */
         _this.avoid = function (handler) {
             if (!handler)
                 return;
@@ -1339,6 +1460,9 @@ var Validation = (function (_super) {
                 }, debounce + 16);
             });
         };
+        /**
+         * 销毁验证对象
+         */
         _this.distory = function () {
             return _this.stopWatch();
         };
@@ -1355,10 +1479,16 @@ var Validation = (function (_super) {
         this.__model._observer_.set(stateKey, { state: state, time: time, items: items });
     };
     Object.defineProperty(Validation.prototype, "results", {
+        /**
+         * 验证结果
+         */
         get: function () {
             var stateKey = this.options.stateKey;
             return this.model[stateKey];
         },
+        /**
+         * 验证结果
+         */
         set: function (value) {
             var stateKey = this.options.stateKey;
             this.model[stateKey] = value;
@@ -1367,6 +1497,9 @@ var Validation = (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "options", {
+        /**
+         * 选项
+         */
         get: function () {
             return this.__options;
         },
@@ -1374,6 +1507,9 @@ var Validation = (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "Alert", {
+        /**
+         * 错误提示组件
+         */
         get: function () {
             var _this = this;
             if (!this.__alert) {
@@ -1388,6 +1524,9 @@ var Validation = (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "Field", {
+        /**
+         * 表单组件容器
+         */
         get: function () {
             var _this = this;
             if (!this.__field) {
@@ -1402,6 +1541,9 @@ var Validation = (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "State", {
+        /**
+         * 状态组件（状态符合时显示）
+         */
         get: function () {
             var _this = this;
             if (!this.__state) {
@@ -1416,6 +1558,9 @@ var Validation = (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "tests", {
+        /**
+         * 所有内建验证函数
+         */
         get: function () {
             return builtIn_1.builtIn;
         },
@@ -1423,6 +1568,9 @@ var Validation = (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "states", {
+        /**
+         * 验证状态枚举
+         */
         get: function () {
             return states_1.states;
         },
@@ -1430,6 +1578,9 @@ var Validation = (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "aliases", {
+        /**
+         * 别名表
+         */
         get: function () {
             return this.__aliases;
         },
@@ -1437,6 +1588,9 @@ var Validation = (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "model", {
+        /**
+         * 当前模型
+         */
         get: function () {
             return this.__model;
         },
@@ -1444,6 +1598,9 @@ var Validation = (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "items", {
+        /**
+         * 所有验证项
+         */
         get: function () {
             return this.__items;
         },
@@ -1451,6 +1608,10 @@ var Validation = (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "testCount", {
+        /**
+         * 验证次数（将要废弃，请使用 time 属性替代）
+         * @deprecated
+         */
         get: function () {
             return this.__time;
         },
@@ -1458,12 +1619,20 @@ var Validation = (function (_super) {
         configurable: true
     });
     Object.defineProperty(Validation.prototype, "time", {
+        /**
+         * 验证次数
+         */
         get: function () {
             return this.__time;
         },
         enumerable: true,
         configurable: true
     });
+    /**
+     * 获取验证项
+     * @param bind 指定的数据
+     * @returns {ITestItem}
+     */
     Validation.prototype.getItem = function (bind) {
         bind = this.aliases[bind] || bind;
         if (!bind)
@@ -1474,6 +1643,10 @@ var Validation = (function (_super) {
         if (this.watchTimers[bind])
             clearTimeout(this.watchTimers[bind]);
     };
+    /**
+     * 移除一个监听表达式
+     * @param bind 表达式
+     */
     Validation.prototype.unWatch = function (bind) {
         var watcher = this.__watchers[bind];
         if (!watcher)
@@ -1481,6 +1654,10 @@ var Validation = (function (_super) {
         this.model._observer_.unWatch(watcher);
         this.__watchers[bind] = null;
     };
+    /**
+     * 移除验证规则
+     * @param bind 绑定的数据
+     */
     Validation.prototype.removeRule = function (bind) {
         bind = this.aliases[bind] || bind;
         if (!bind)
@@ -1489,6 +1666,9 @@ var Validation = (function (_super) {
         delete this.items[bind];
         delete this.results.items[bind];
     };
+    /**
+     * 清理规测
+     */
     Validation.prototype.clearRules = function () {
         var _this = this;
         Object.keys(this.items).forEach(function (bind) {
@@ -1501,9 +1681,11 @@ var Validation = (function (_super) {
         if (DY_TEST_FUNC_CACHE[test])
             return DY_TEST_FUNC_CACHE[test];
         try {
+            // tslint:disable
             var func = /^\./.test(test)
                 ? new Function("$", "return $" + test)(this.model)
                 : new Function("$", "return $." + test)(builtIn_1.builtIn);
+            // tslint:enable
             DY_TEST_FUNC_CACHE[test] = func;
             return DY_TEST_FUNC_CACHE[test];
         }
@@ -1530,22 +1712,22 @@ var Validation = (function (_super) {
                         _i = 0, _a = item.rules;
                         _b.label = 1;
                     case 1:
-                        if (!(_i < _a.length)) return [3, 4];
+                        if (!(_i < _a.length)) return [3 /*break*/, 4];
                         rule = _a[_i];
                         test_1 = this.getTestFunc(rule.test);
                         if (!isFunction(test_1))
                             throw new Error("Invalid test: " + test_1);
-                        return [4, test_1(value, this.model)];
+                        return [4 /*yield*/, test_1(value, this.model)];
                     case 2:
                         state = _b.sent();
                         message = state ? "" : rule.message;
                         if (!state)
-                            return [3, 4];
+                            return [3 /*break*/, 4];
                         _b.label = 3;
                     case 3:
                         _i++;
-                        return [3, 1];
-                    case 4: return [2, { state: state, message: message }];
+                        return [3 /*break*/, 1];
+                    case 4: return [2 /*return*/, { state: state, message: message }];
                 }
             });
         });
@@ -1558,20 +1740,20 @@ var Validation = (function (_super) {
                     case 0:
                         bind = this.aliases[bind] || bind;
                         if (!bind || !this.model)
-                            return [2];
+                            return [2 /*return*/];
                         item = this.getItem(bind);
                         if (!item || !item.rules || item.rules.length < 1)
-                            return [2];
+                            return [2 /*return*/];
                         if (item.pending)
                             item.pending.abort();
                         value = getByPath(this.model, bind);
                         this.setState(bind, states_1.states.testing, "");
                         item.pending = promise_boost_1.abortable(this.createTestPending(item, value));
-                        return [4, item.pending];
+                        return [4 /*yield*/, item.pending];
                     case 1:
                         _a = _b.sent(), state = _a.state, message = _a.message;
                         this.setState(bind, state ? states_1.states.succeed : states_1.states.failed, message);
-                        return [2];
+                        return [2 /*return*/];
                 }
             });
         });
@@ -1584,12 +1766,12 @@ var Validation = (function (_super) {
                 switch (_a.label) {
                     case 0:
                         if (!this.model)
-                            return [2];
+                            return [2 /*return*/];
                         keys = Object.keys(this.items);
-                        return [4, Promise.all(keys.map(function (bind) { return _this.testOne(bind); }))];
+                        return [4 /*yield*/, Promise.all(keys.map(function (bind) { return _this.testOne(bind); }))];
                     case 1:
                         _a.sent();
-                        return [2];
+                        return [2 /*return*/];
                 }
             });
         });
@@ -1686,6 +1868,7 @@ function createValidation(com, options) {
         var validation_1 = new Validation_1.Validation(com.model, options);
         com.__validation = validation_1;
     }
+    // 不要动下方这一行
     com.__results = com.model.results;
     return com.__validation;
 }
@@ -1994,6 +2177,10 @@ module.exports = EventEmitter;
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = __webpack_require__(2);
 var isArray = __webpack_require__(0).isArray;
+/**
+ * 状态组件（状态符合时显示）
+ * @param {IStateProps} props 属性
+ */
 function State(props) {
     var validation = props.validation, results = props.results, bind = props.bind, when = props.when, alias = props.alias, children = props.children, rules = props.rules, type = props.type, className = props.className;
     if (!validation)

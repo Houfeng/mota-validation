@@ -1,0 +1,20 @@
+output: ./docs
+
+mode: static
+
+locales:
+  - name: zh
+    text: 中文
+    title: Mota Validation
+    groups:
+      - name: guide
+        text: 使用指南
+    links:
+      - text: 文档
+        url: //houfeng.net/mota/
+      - text: GitHub
+        url: //github.com/Houfeng/mota-validation
+
+    docs:
+      - ./**/*.md
+      - '!./node_modules/**/*.md'

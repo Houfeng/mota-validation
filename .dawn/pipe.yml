@@ -42,6 +42,7 @@ build:
         commonjs: mota
         commonjs2: mota
         root: mota        
+  - name: doc
 
 # build:
 #   - name: clean
@@ -49,8 +50,6 @@ build:
 #     script:
 #       - tsc --locale zh-cn -d --esModuleInterop
 
-add:
-  - name: react-component-creator
 
 test:
   - name: clean
