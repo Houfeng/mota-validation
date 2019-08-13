@@ -10,12 +10,14 @@ locales:
       - name: guide
         text: 使用指南
     links:
-      - text: GitHub
-        url: //github.com/Houfeng/mota-validation
-      - text: Mota
+      - text: 状态管理 (Mota)
         url: //houfeng.net/mota/
-      - text: Mota Form
-        url: //houfeng.net/mota-form/
+      - text: 数据验证 (Validation)
+        url: //houfeng.net/mota-validation/
+      - text: 表单组件 (Form)
+        url: //houfeng.net/mota-form/    
+      - text: 源码 (GitHub)
+        url: //github.com/Houfeng/mota-validation
 
     docs:
       - ./**/*.md
