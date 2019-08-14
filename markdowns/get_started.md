@@ -26,7 +26,6 @@ npm install mota-validation --save
 Mota Validation 提供了一个 `@validation` 装饰器，通过 `@model` 装饰的组件都可以同时使用 `@validation` 启用验证。
 
 ```tsx
-
 import React from "react";
 import ReactDOM from "react-dom";
 import { model, binding } from "mota";
@@ -58,7 +57,6 @@ class App extends React.Component {
 }
 
 ReactDOM.render(<App />, root);
-
 ```
 
 ### 在函数组件中使用
@@ -67,7 +65,6 @@ ReactDOM.render(<App />, root);
 通过 Hook 风格的 API 即可在函数组件中使用 Mota 和 Mota Validation，参考如下代码：
 
 ```tsx
-
 import React from "react";
 import ReactDOM from "react-dom";
 import { useModel, binding, model } from 'mota';
@@ -94,7 +91,6 @@ function App() {
 }
 
 ReactDOM.render(<App />, root);
-
 ```
 
 ## 特别说明
