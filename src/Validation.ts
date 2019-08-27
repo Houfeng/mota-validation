@@ -249,11 +249,14 @@ export class Validation extends EventEmitter {
   public removeRule(bind: string) {
     bind = this.aliases[bind] || bind;
     if (!bind || !this.items[bind]) return;
-    delete this.items[bind];
     this.unWatch(bind);
-    nextTick(() => {
-      this.setState(bind, states.success);
-      nextTick(() => delete this.results.items[bind]);
+    delete this.items[bind];
+    return new Promise(resolve => {
+      nextTick(() => {
+        this.setState(bind, states.success);
+        delete this.results.items[bind];
+        resolve();
+      });
     });
   }
 
@@ -261,9 +264,7 @@ export class Validation extends EventEmitter {
    * 清理规测
    */
   public clearRules() {
-    Object.keys(this.items).forEach((bind: string) => {
-      this.removeRule(bind);
-    });
+    return Object.keys(this.items).map((bind: string) => this.removeRule(bind));
   }
 
   /**
@@ -274,11 +275,15 @@ export class Validation extends EventEmitter {
    * @param {boolean} update 是否立即更新组件
    */
   public setState = (bind: string, state: states, message = "") => {
-    if (!bind || !this.items[bind]) return;
-    this.items[bind].state = state;
-    this.items[bind].message = message;
-    this.results.items[bind].state = state;
-    this.results.items[bind].message = message;
+    if (!bind) return;
+    if (this.items[bind]) {
+      this.items[bind].state = state;
+      this.items[bind].message = message;
+    }
+    if (this.results.items[bind]) {
+      this.results.items[bind].state = state;
+      this.results.items[bind].message = message;
+    }
     this.results = { ...this.results, time: this.time, state: this.getState() };
   };
 

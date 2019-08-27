@@ -106,16 +106,16 @@ export declare class Validation extends EventEmitter {
      * @param {IRule | Array<IRule>} rules 规则，当 rules===null 时相当于 removeRule
      * @param {string} alias 别名
      */
-    setRule: (bind: string, rules: IRule | IRule[], alias?: string) => void;
+    setRule: (bind: string, rules: IRule | IRule[], alias?: string) => Promise<unknown>;
     /**
      * 移除验证规则
      * @param bind 绑定的数据
      */
-    removeRule(bind: string): void;
+    removeRule(bind: string): Promise<unknown>;
     /**
      * 清理规测
      */
-    clearRules(): void;
+    clearRules(): Promise<unknown>[];
     /**
      * 设定验证结果（一般无需主动干预结果）
      * @param {string} bind 对应的数据项

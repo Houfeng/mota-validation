@@ -1350,12 +1350,16 @@ var Validation = /** @class */ (function (_super) {
          */
         _this.setState = function (bind, state, message) {
             if (message === void 0) { message = ""; }
-            if (!bind || !_this.items[bind])
+            if (!bind)
                 return;
-            _this.items[bind].state = state;
-            _this.items[bind].message = message;
-            _this.results.items[bind].state = state;
-            _this.results.items[bind].message = message;
+            if (_this.items[bind]) {
+                _this.items[bind].state = state;
+                _this.items[bind].message = message;
+            }
+            if (_this.results.items[bind]) {
+                _this.results.items[bind].state = state;
+                _this.results.items[bind].message = message;
+            }
             _this.results = __assign({}, _this.results, { time: _this.time, state: _this.getState() });
         };
         /**
@@ -1664,11 +1668,14 @@ var Validation = /** @class */ (function (_super) {
         bind = this.aliases[bind] || bind;
         if (!bind || !this.items[bind])
             return;
-        delete this.items[bind];
         this.unWatch(bind);
-        mota_1.nextTick(function () {
-            _this.setState(bind, states_1.states.success);
-            mota_1.nextTick(function () { return delete _this.results.items[bind]; });
+        delete this.items[bind];
+        return new Promise(function (resolve) {
+            mota_1.nextTick(function () {
+                _this.setState(bind, states_1.states.success);
+                delete _this.results.items[bind];
+                resolve();
+            });
         });
     };
     /**
@@ -1676,9 +1683,7 @@ var Validation = /** @class */ (function (_super) {
      */
     Validation.prototype.clearRules = function () {
         var _this = this;
-        Object.keys(this.items).forEach(function (bind) {
-            _this.removeRule(bind);
-        });
+        return Object.keys(this.items).map(function (bind) { return _this.removeRule(bind); });
     };
     Validation.prototype.getTestFuncForString = function (test) {
         if (builtIn_1.builtIn[test])
