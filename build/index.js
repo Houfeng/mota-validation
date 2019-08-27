@@ -1663,8 +1663,7 @@ var Validation = /** @class */ (function (_super) {
         bind = this.aliases[bind] || bind;
         if (!bind)
             return;
-        this.items[bind] = null;
-        this.results.items[bind] = null;
+        this.setState(bind, states_1.states.success);
         delete this.items[bind];
         delete this.results.items[bind];
         this.unWatch(bind);

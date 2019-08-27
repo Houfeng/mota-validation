@@ -247,8 +247,7 @@ export class Validation extends EventEmitter {
   public removeRule(bind: string) {
     bind = this.aliases[bind] || bind;
     if (!bind) return;
-    this.items[bind] = null;
-    this.results.items[bind] = null;
+    this.setState(bind, states.success);
     delete this.items[bind];
     delete this.results.items[bind];
     this.unWatch(bind);
