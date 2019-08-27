@@ -1,6 +1,6 @@
 {
   "name": "mota-validation",
-  "version": "5.2.1",
+  "version": "5.2.3",
   "description": "",
   "main": "./build/index.js",
   "typings": "./build/index.d.ts",

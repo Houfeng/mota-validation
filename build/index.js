@@ -1028,8 +1028,7 @@ function Alert(props) {
     var validation = props.validation, results = props.results, bind = props.bind, alias = props.alias, children = props.children, _a = props.rules, rules = _a === void 0 ? children : _a, type = props.type, className = props.className;
     if (!validation)
         return utils_1.toElement();
-    if (rules)
-        validation.setRule(bind, rules, alias);
+    validation.setRule(bind, rules, alias);
     var result = results.items[bind];
     if (!result)
         return utils_1.toElement();
@@ -1149,8 +1148,7 @@ function FieldComponent(props) {
     }
     if (!validation)
         return utils_1.toElement(children);
-    if (rules)
-        validation.setRule(bind, rules, alias);
+    validation.setRule(bind, rules, alias);
     var result = results.items[bind] || {};
     if (!result)
         return utils_1.toElement(children);
@@ -1322,23 +1320,24 @@ var Validation = /** @class */ (function (_super) {
         /**
          * 设定验证规则
          * @param {string} bind 要验证的数据
-         * @param {IRule | Array<IRule>} rules 规则
+         * @param {IRule | Array<IRule>} rules 规则，当 rules===null 时相当于 removeRule
          * @param {string} alias 别名
          */
         _this.setRule = function (bind, rules, alias) {
             if (!bind)
                 return;
-            if (!rules)
+            if (rules === null)
                 return _this.removeRule(bind);
             if (!_this.items[bind])
                 _this.items[bind] = new TestItem_1.TestItem(bind);
-            _this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
+            if (rules)
+                _this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
             if (alias)
                 _this.aliases[alias] = bind;
-            if (!_this.results.items[bind]) {
+            if (!_this.results.items[bind] && rules) {
                 _this.results.items[bind] = { state: states_1.states.untested, message: "" };
             }
-            if (_this.options.auto !== false)
+            if (_this.options.auto !== false && rules)
                 _this.watch(bind);
         };
         /**
@@ -1350,7 +1349,7 @@ var Validation = /** @class */ (function (_super) {
          */
         _this.setState = function (bind, state, message) {
             if (message === void 0) { message = ""; }
-            if (!bind)
+            if (!bind || !_this.items[bind])
                 return;
             _this.items[bind].state = state;
             _this.items[bind].message = message;
@@ -1660,13 +1659,16 @@ var Validation = /** @class */ (function (_super) {
      * @param bind 绑定的数据
      */
     Validation.prototype.removeRule = function (bind) {
+        var _this = this;
         bind = this.aliases[bind] || bind;
-        if (!bind)
+        if (!bind || !this.items[bind])
             return;
-        this.setState(bind, states_1.states.success);
         delete this.items[bind];
-        delete this.results.items[bind];
         this.unWatch(bind);
+        mota_1.nextTick(function () {
+            _this.setState(bind, states_1.states.success);
+            delete _this.results.items[bind];
+        });
     };
     /**
      * 清理规测
@@ -2187,8 +2189,7 @@ function State(props) {
     var validation = props.validation, results = props.results, bind = props.bind, when = props.when, alias = props.alias, children = props.children, rules = props.rules, type = props.type, className = props.className;
     if (!validation)
         return utils_1.toElement();
-    if (rules)
-        validation.setRule(bind, rules, alias);
+    validation.setRule(bind, rules, alias);
     var result = results.items[bind];
     if (!result)
         return utils_1.toElement();

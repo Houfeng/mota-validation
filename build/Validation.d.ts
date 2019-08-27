@@ -103,7 +103,7 @@ export declare class Validation extends EventEmitter {
     /**
      * 设定验证规则
      * @param {string} bind 要验证的数据
-     * @param {IRule | Array<IRule>} rules 规则
+     * @param {IRule | Array<IRule>} rules 规则，当 rules===null 时相当于 removeRule
      * @param {string} alias 别名
      */
     setRule: (bind: string, rules: IRule | IRule[], alias?: string) => void;

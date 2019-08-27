@@ -13,15 +13,15 @@ function App() {
   const { Field, Alert } = useValidation(model);
   return binding(
     <div>
-      <Field bind="params.name">
-        <input data-bind="params.name" />
-      </Field>
       <Alert bind="params.name">
         {[
           { test: "required", message: "不能为空" },
           { test: "nan", message: "不能为数字" }
         ]}
       </Alert>
+      <Field bind="params.name">
+        <input data-bind="params.name" />
+      </Field>
     </div>,
     model
   );

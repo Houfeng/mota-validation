@@ -24,7 +24,7 @@ export function Alert(props: IAlertPorps): any {
     className
   } = props;
   if (!validation) return toElement();
-  if (rules) validation.setRule(bind, rules, alias);
+  validation.setRule(bind, rules, alias);
   const result = results.items[bind];
   if (!result) return toElement();
   const { state, message } = result;

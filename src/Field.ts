@@ -50,7 +50,7 @@ function FieldComponent(props: IFieldPorps): any {
     throw Error(`The State(${bind}) can only have a sub element`);
   }
   if (!validation) return toElement(children);
-  if (rules) validation.setRule(bind, rules, alias);
+  validation.setRule(bind, rules, alias);
   const result = results.items[bind] || {};
   if (!result) return toElement(children);
   let { state } = result;

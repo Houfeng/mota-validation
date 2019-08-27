@@ -14,7 +14,7 @@ import { IValidationOptions } from "./IValidationOptions";
 import { IValidationPorps } from "./IValidationPorps";
 import { states } from "./states";
 import { TestItem } from "./TestItem";
-import { utils } from "mota";
+import { utils, nextTick } from "mota";
 
 export { IValidationPorps, Alert };
 
@@ -225,19 +225,19 @@ export class Validation extends EventEmitter {
   /**
    * 设定验证规则
    * @param {string} bind 要验证的数据
-   * @param {IRule | Array<IRule>} rules 规则
+   * @param {IRule | Array<IRule>} rules 规则，当 rules===null 时相当于 removeRule
    * @param {string} alias 别名
    */
   public setRule = (bind: string, rules: IRule | IRule[], alias?: string) => {
     if (!bind) return;
-    if (!rules) return this.removeRule(bind);
+    if (rules === null) return this.removeRule(bind);
     if (!this.items[bind]) this.items[bind] = new TestItem(bind);
-    this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
+    if (rules) this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
     if (alias) this.aliases[alias] = bind;
-    if (!this.results.items[bind]) {
+    if (!this.results.items[bind] && rules) {
       this.results.items[bind] = { state: states.untested, message: "" };
     }
-    if (this.options.auto !== false) this.watch(bind);
+    if (this.options.auto !== false && rules) this.watch(bind);
   };
 
   /**
@@ -246,11 +246,13 @@ export class Validation extends EventEmitter {
    */
   public removeRule(bind: string) {
     bind = this.aliases[bind] || bind;
-    if (!bind) return;
-    this.setState(bind, states.success);
+    if (!bind || !this.items[bind]) return;
     delete this.items[bind];
-    delete this.results.items[bind];
     this.unWatch(bind);
+    nextTick(() => {
+      this.setState(bind, states.success);
+      delete this.results.items[bind];
+    });
   }
 
   /**
@@ -270,7 +272,7 @@ export class Validation extends EventEmitter {
    * @param {boolean} update 是否立即更新组件
    */
   public setState = (bind: string, state: states, message = "") => {
-    if (!bind) return;
+    if (!bind || !this.items[bind]) return;
     this.items[bind].state = state;
     this.items[bind].message = message;
     this.results.items[bind].state = state;
