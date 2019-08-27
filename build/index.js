@@ -1328,10 +1328,11 @@ var Validation = /** @class */ (function (_super) {
         _this.setRule = function (bind, rules, alias) {
             if (!bind)
                 return;
+            if (!rules)
+                return _this.removeRule(bind);
             if (!_this.items[bind])
                 _this.items[bind] = new TestItem_1.TestItem(bind);
-            if (rules)
-                _this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
+            _this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
             if (alias)
                 _this.aliases[alias] = bind;
             if (!_this.results.items[bind]) {
@@ -1663,8 +1664,10 @@ var Validation = /** @class */ (function (_super) {
         if (!bind)
             return;
         this.items[bind] = null;
+        this.results.items[bind] = null;
         delete this.items[bind];
         delete this.results.items[bind];
+        this.unWatch(bind);
     };
     /**
      * 清理规测

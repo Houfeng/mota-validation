@@ -230,8 +230,9 @@ export class Validation extends EventEmitter {
    */
   public setRule = (bind: string, rules: IRule | IRule[], alias?: string) => {
     if (!bind) return;
+    if (!rules) return this.removeRule(bind);
     if (!this.items[bind]) this.items[bind] = new TestItem(bind);
-    if (rules) this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
+    this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
     if (alias) this.aliases[alias] = bind;
     if (!this.results.items[bind]) {
       this.results.items[bind] = { state: states.untested, message: "" };
@@ -247,8 +248,10 @@ export class Validation extends EventEmitter {
     bind = this.aliases[bind] || bind;
     if (!bind) return;
     this.items[bind] = null;
+    this.results.items[bind] = null;
     delete this.items[bind];
     delete this.results.items[bind];
+    this.unWatch(bind);
   }
 
   /**
