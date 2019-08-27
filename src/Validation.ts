@@ -231,13 +231,15 @@ export class Validation extends EventEmitter {
   public setRule = (bind: string, rules: IRule | IRule[], alias?: string) => {
     if (!bind) return;
     if (rules === null) return this.removeRule(bind);
-    if (!this.items[bind]) this.items[bind] = new TestItem(bind);
-    if (rules) this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
-    if (alias) this.aliases[alias] = bind;
-    if (!this.results.items[bind] && rules) {
+    if (rules && !this.items[bind]) this.items[bind] = new TestItem(bind);
+    if (rules && this.items[bind]) {
+      this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
+    }
+    if (rules && !this.results.items[bind]) {
       this.results.items[bind] = { state: states.untested, message: "" };
     }
-    if (this.options.auto !== false && rules) this.watch(bind);
+    if (rules && this.options.auto !== false) this.watch(bind);
+    if (alias) this.aliases[alias] = bind;
   };
 
   /**
@@ -251,7 +253,7 @@ export class Validation extends EventEmitter {
     this.unWatch(bind);
     nextTick(() => {
       this.setState(bind, states.success);
-      delete this.results.items[bind];
+      nextTick(() => delete this.results.items[bind]);
     });
   }
 
@@ -323,7 +325,7 @@ export class Validation extends EventEmitter {
     bind = this.aliases[bind] || bind;
     if (!bind || !this.model) return;
     const item = this.getItem(bind);
-    if (!item || !item.rules || item.rules.length < 1) return;
+    if (!item || !item.rules) return;
     if (item.pending) item.pending.abort();
     const value = getByPath(this.model, bind);
     this.setState(bind, states.testing, "");

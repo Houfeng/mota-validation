@@ -1328,17 +1328,18 @@ var Validation = /** @class */ (function (_super) {
                 return;
             if (rules === null)
                 return _this.removeRule(bind);
-            if (!_this.items[bind])
+            if (rules && !_this.items[bind])
                 _this.items[bind] = new TestItem_1.TestItem(bind);
-            if (rules)
+            if (rules && _this.items[bind]) {
                 _this.items[bind].rules = Array.isArray(rules) ? rules : [rules];
-            if (alias)
-                _this.aliases[alias] = bind;
-            if (!_this.results.items[bind] && rules) {
+            }
+            if (rules && !_this.results.items[bind]) {
                 _this.results.items[bind] = { state: states_1.states.untested, message: "" };
             }
-            if (_this.options.auto !== false && rules)
+            if (rules && _this.options.auto !== false)
                 _this.watch(bind);
+            if (alias)
+                _this.aliases[alias] = bind;
         };
         /**
          * 设定验证结果（一般无需主动干预结果）
@@ -1667,7 +1668,7 @@ var Validation = /** @class */ (function (_super) {
         this.unWatch(bind);
         mota_1.nextTick(function () {
             _this.setState(bind, states_1.states.success);
-            delete _this.results.items[bind];
+            mota_1.nextTick(function () { return delete _this.results.items[bind]; });
         });
     };
     /**
@@ -1746,7 +1747,7 @@ var Validation = /** @class */ (function (_super) {
                         if (!bind || !this.model)
                             return [2 /*return*/];
                         item = this.getItem(bind);
-                        if (!item || !item.rules || item.rules.length < 1)
+                        if (!item || !item.rules)
                             return [2 /*return*/];
                         if (item.pending)
                             item.pending.abort();
