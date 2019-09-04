@@ -74,6 +74,9 @@ export class Validation extends EventEmitter {
   public state = (bind?: string) => {
     if (!this.results) return states.unknown;
     if (!bind) return this.results.state;
+    if (!this.results.items || !this.results.items[bind]) {
+      return states.unknown;
+    }
     return this.results.items[bind].state;
   };
 

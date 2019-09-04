@@ -1291,6 +1291,9 @@ var Validation = /** @class */ (function (_super) {
                 return states_1.states.unknown;
             if (!bind)
                 return _this.results.state;
+            if (!_this.results.items || !_this.results.items[bind]) {
+                return states_1.states.unknown;
+            }
             return _this.results.items[bind].state;
         };
         /**
