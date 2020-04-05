@@ -1,5 +1,5 @@
 import { Alert, IAlertPorps } from "./Alert";
-import { EventEmitter } from "./EventEmitter";
+import { EventEmitter } from "eify";
 import { IFieldPorps } from "./Field";
 import { IResults } from "./IResults";
 import { IRule } from "./IRule";
@@ -26,10 +26,11 @@ export declare class Validation extends EventEmitter {
     /**
      * 验证结果
      */
+    get results(): IResults;
     /**
-    * 验证结果
-    */
-    results: IResults;
+     * 验证结果
+     */
+    set results(value: IResults);
     /**
      * 查询验证结果的 state 值
      * @param bind 绑定表达式，bind 省略时查询整体 state
@@ -38,48 +39,48 @@ export declare class Validation extends EventEmitter {
     /**
      * 选项
      */
-    readonly options: IValidationOptions;
+    get options(): IValidationOptions;
     /**
      * 错误提示组件
      */
-    readonly Alert: (props: IAlertPorps) => any;
+    get Alert(): (props: IAlertPorps) => any;
     /**
      * 表单组件容器
      */
-    readonly Field: (props: IFieldPorps) => any;
+    get Field(): (props: IFieldPorps) => any;
     /**
      * 状态组件（状态符合时显示）
      */
-    readonly State: (props: IStateProps) => any;
+    get State(): (props: IStateProps) => any;
     /**
      * 所有内建验证函数
      */
-    readonly tests: import("./ITestMap").ITestMap;
+    get tests(): import("./ITestMap").ITestMap;
     /**
      * 验证状态枚举
      */
-    readonly states: typeof states;
+    get states(): typeof states;
     /**
      * 别名表
      */
-    private readonly aliases;
+    private get aliases();
     /**
      * 当前模型
      */
-    readonly model: any;
+    get model(): any;
     /**
      * 所有验证项
      */
-    readonly items: ITestItemMap;
+    get items(): ITestItemMap;
     /**
      * 验证次数（将要废弃，请使用 time 属性替代）
      * @deprecated
      */
-    readonly testCount: number;
+    get testCount(): number;
     /**
      * 验证次数
      */
-    readonly time: number;
+    get time(): number;
     /**
      * 获取验证项
      * @param bind 指定的数据

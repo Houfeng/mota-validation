@@ -1,7 +1,7 @@
 import { abortable } from "promise-boost";
 import { Alert, IAlertPorps } from "./Alert";
 import { builtIn } from "./builtIn";
-import { EventEmitter } from "./EventEmitter";
+import { EventEmitter } from "eify";
 import { Field, IFieldPorps } from "./Field";
 import { IResults } from "./IResults";
 import { IRule } from "./IRule";

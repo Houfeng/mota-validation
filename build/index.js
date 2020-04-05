@@ -7,7 +7,7 @@
 		exports["MotaValidation"] = factory(require("react"), require("mota"), require("react-dom"));
 	else
 		root["MotaValidation"] = factory(root["React"], root["mota"], root["ReactDOM"]);
-})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_16__) {
+})(typeof self !== 'undefined' ? self : this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_15__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -75,322 +75,150 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * 空函数
- */
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony export (immutable) */ __webpack_exports__["noop"] = noop;
+/* harmony export (immutable) */ __webpack_exports__["toString"] = toString;
+/* harmony export (immutable) */ __webpack_exports__["getType"] = getType;
+/* harmony export (immutable) */ __webpack_exports__["isNull"] = isNull;
+/* harmony export (immutable) */ __webpack_exports__["isFunction"] = isFunction;
+/* harmony export (immutable) */ __webpack_exports__["isAsyncFunction"] = isAsyncFunction;
+/* harmony export (immutable) */ __webpack_exports__["isGeneratorFunction"] = isGeneratorFunction;
+/* harmony export (immutable) */ __webpack_exports__["isString"] = isString;
+/* harmony export (immutable) */ __webpack_exports__["isNumber"] = isNumber;
+/* harmony export (immutable) */ __webpack_exports__["isBoolean"] = isBoolean;
+/* harmony export (immutable) */ __webpack_exports__["isElement"] = isElement;
+/* harmony export (immutable) */ __webpack_exports__["isText"] = isText;
+/* harmony export (immutable) */ __webpack_exports__["isObject"] = isObject;
+/* harmony export (immutable) */ __webpack_exports__["isArray"] = isArray;
+/* harmony export (immutable) */ __webpack_exports__["isTypedArray"] = isTypedArray;
+/* harmony export (immutable) */ __webpack_exports__["isDate"] = isDate;
+/* harmony export (immutable) */ __webpack_exports__["isRegExp"] = isRegExp;
+/* harmony export (immutable) */ __webpack_exports__["toArray"] = toArray;
+/* harmony export (immutable) */ __webpack_exports__["toDate"] = toDate;
+/* harmony export (immutable) */ __webpack_exports__["replace"] = replace;
+/* harmony export (immutable) */ __webpack_exports__["formatDate"] = formatDate;
+/* harmony export (immutable) */ __webpack_exports__["each"] = each;
+/* harmony export (immutable) */ __webpack_exports__["copy"] = copy;
+/* harmony export (immutable) */ __webpack_exports__["clone"] = clone;
+/* harmony export (immutable) */ __webpack_exports__["mix"] = mix;
+/* harmony export (immutable) */ __webpack_exports__["final"] = final;
+/* harmony export (immutable) */ __webpack_exports__["deepEqual"] = deepEqual;
+/* harmony export (immutable) */ __webpack_exports__["fromTo"] = fromTo;
+/* harmony export (immutable) */ __webpack_exports__["newGuid"] = newGuid;
+/* harmony export (immutable) */ __webpack_exports__["setByPath"] = setByPath;
+/* harmony export (immutable) */ __webpack_exports__["getByPath"] = getByPath;
+/* harmony export (immutable) */ __webpack_exports__["getFunctionArgumentNames"] = getFunctionArgumentNames;
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FUNC_REGEXP", function() { return FUNC_REGEXP; });
+/* harmony export (immutable) */ __webpack_exports__["isFunctionString"] = isFunctionString;
+/* harmony export (immutable) */ __webpack_exports__["toFunction"] = toFunction;
+/* harmony export (immutable) */ __webpack_exports__["short"] = short;
+/* harmony export (immutable) */ __webpack_exports__["firstUpper"] = firstUpper;
+/* harmony export (immutable) */ __webpack_exports__["escapeRegExp"] = escapeRegExp;
+/* harmony export (immutable) */ __webpack_exports__["toCamelCase"] = toCamelCase;
+/* harmony export (immutable) */ __webpack_exports__["toSplitCase"] = toSplitCase;
+/* harmony export (immutable) */ __webpack_exports__["htmlPrefilter"] = htmlPrefilter;
+/* harmony export (immutable) */ __webpack_exports__["parseHTML"] = parseHTML;
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 function noop() { }
-exports.noop = noop;
 function toString(obj) {
     return Object.prototype.toString.call(obj);
 }
-exports.toString = toString;
 function getType(obj) {
     var str = toString(obj);
-    return (/^\[object (.+)\]$/i.exec(str))[1];
+    return /^\[object (.+)\]$/i.exec(str)[1];
 }
-exports.getType = getType;
-/**
- * 验证一个对象是否为NULL
- * @method isNull
- * @param  {Object}  obj 要验证的对象
- * @return {Boolean}     结果
- * @static
- */
 function isNull(obj) {
     return obj === undefined || obj === null;
 }
-exports.isNull = isNull;
-/**
- * 除去字符串两端的空格
- * @method trim
- * @param  {String} str 源字符串
- * @return {String}     结果字符串
- * @static
- */
-function trim(str) {
-    if (isNull(str))
-        return str;
-    if (str.trim) {
-        return str.trim();
-    }
-    else {
-        return str.replace(/(^[\\s]*)|([\\s]*$)/g, '');
-    }
-}
-exports.trim = trim;
-/**
- * 替换所有
- * @method replace
- * @param {String} str 源字符串
- * @param {String} str1 要替换的字符串
- * @param {String} str2 替换为的字符串
- * @static
- */
-function replace(str, str1, str2) {
-    if (isNull(str))
-        return str;
-    return str.replace(new RegExp(str1, 'g'), str2);
-}
-exports.replace = replace;
-/**
- * 从字符串开头匹配
- * @method startWith
- * @param {String} str1 源字符串
- * @param {String} str2 要匹配的字符串
- * @return {Boolean} 匹配结果
- * @static
- */
-function startWith(str1, str2) {
-    if (isNull(str1) || isNull(str2))
-        return false;
-    return str1.indexOf(str2) === 0;
-}
-exports.startWith = startWith;
-/**
- * 是否包含
- * @method contains
- * @param {String} str1 源字符串
- * @param {String} str2 检查包括字符串
- * @return {Boolean} 结果
- * @static
- */
-function contains(str1, str2) {
-    if (isNull(str1) || isNull(str2))
-        return false;
-    return str1.indexOf(str2) > -1;
-}
-exports.contains = contains;
-/**
- * 从字符串结束匹配
- * @method endWidth
- * @param {String} str1 源字符串
- * @param {String} str2 匹配字符串
- * @return {Boolean} 匹配结果
- * @static
- */
-function endWith(str1, str2) {
-    if (isNull(str1) || isNull(str2))
-        return false;
-    return str1.indexOf(str2) === (str1.length - str2.length);
-}
-exports.endWith = endWith;
-/**
- * 是否包含属性
- * @method hasProperty
- * @param  {Object}  obj  对象
- * @param  {String}  name 属性名
- * @return {Boolean}      结果
- * @static
- */
-function has(obj, name) {
-    if (isNull(obj) || isNull(name))
-        return false;
-    return (name in obj) || (obj.hasOwnProperty(name));
-}
-exports.has = has;
-exports.hasProperty = has;
-/**
- * 验证一个对象是否为Function
- * @method isFunction
- * @param  {Object}  obj 要验证的对象
- * @return {Boolean}     结果
- * @static
- */
 function isFunction(obj) {
     if (isNull(obj))
         return false;
-    return typeof obj === 'function';
+    return typeof obj === "function";
 }
-exports.isFunction = isFunction;
-/**
- * 验证一个对象是否为 AsyncFunction
- * @method isAsyncFunction
- * @param  {Object}  obj 要验证的对象
- * @return {Boolean}     结果
- * @static
- */
 function isAsyncFunction(obj) {
     if (isNull(obj))
         return false;
-    return getType(obj) === 'AsyncFunction';
+    return getType(obj) === "AsyncFunction";
 }
-exports.isAsyncFunction = isAsyncFunction;
-/**
- * 验证一个对象是否为 GeneratorFunction
- * @method isGeneratorFunction
- * @param  {Object}  obj 要验证的对象
- * @return {Boolean}     结果
- * @static
- */
 function isGeneratorFunction(obj) {
     if (isNull(obj))
         return false;
-    return getType(obj) === 'GeneratorFunction';
+    return getType(obj) === "GeneratorFunction";
 }
-exports.isGeneratorFunction = isGeneratorFunction;
-/**
- * 验证一个对象是否为String
- * @method isString
- * @param  {Object}  obj 要验证的对象
- * @return {Boolean}     结果
- * @static
- */
 function isString(obj) {
     if (isNull(obj))
         return false;
-    return getType(obj) === 'String';
+    return getType(obj) === "String";
 }
-exports.isString = isString;
-/**
- * 验证一个对象是否为Number
- * @method isNumber
- * @param  {Object}  obj 要验证的对象
- * @return {Boolean}     结果
- * @static
- */
 function isNumber(obj) {
     if (isNull(obj))
         return false;
-    return getType(obj) === 'Number';
+    return getType(obj) === "Number";
 }
-exports.isNumber = isNumber;
-/**
- * 验证一个对象是否为Boolean
- * @method isBoolean
- * @param  {Object}  obj 要验证的对象
- * @return {Boolean}     结果
- * @static
- */
 function isBoolean(obj) {
     if (isNull(obj))
         return false;
-    return getType(obj) === 'Boolean';
+    return getType(obj) === "Boolean";
 }
-exports.isBoolean = isBoolean;
-/**
- * 验证一个对象是否为HTML Element
- * @method isElement
- * @param  {Object}  obj 要验证的对象
- * @return {Boolean}     结果
- * @static
- */
 function isElement(obj) {
     if (isNull(obj))
         return false;
-    if (window.Element) {
+    if (typeof Element !== "undefined") {
         return obj instanceof Element;
     }
     else {
-        return (obj.tagName && obj.nodeType &&
-            obj.nodeName && obj.attributes &&
+        return (obj.tagName &&
+            obj.nodeType &&
+            obj.nodeName &&
+            obj.attributes &&
             obj.ownerDocument);
     }
 }
-exports.isElement = isElement;
-/**
- * 验证一个对象是否为HTML Text Element
- * @method isText
- * @param  {Object}  obj 要验证的对象
- * @return {Boolean}     结果
- * @static
- */
 function isText(obj) {
     if (isNull(obj))
         return false;
     return obj instanceof Text;
 }
-exports.isText = isText;
-/**
- * 验证一个对象是否为Object
- * @method isObject
- * @param  {Object}  obj 要验证的对象
- * @return {Boolean}     结果
- * @static
- */
 function isObject(obj) {
     if (isNull(obj))
         return false;
     var type = getType(obj);
-    return type === 'Object' || type === 'Array';
+    return type === "Object" || type === "Array";
 }
-exports.isObject = isObject;
-/**
- * 验证一个对象是否为Array或伪Array
- * @method isArray
- * @param  {Object}  obj 要验证的对象
- * @return {Boolean}     结果
- * @static
- */
 function isArray(obj) {
     if (isNull(obj))
         return false;
-    var v1 = getType(obj) === 'Array';
+    var v1 = getType(obj) === "Array";
     var v2 = obj instanceof Array;
     var v3 = !isString(obj) && isNumber(obj.length) && isFunction(obj.splice);
     var v4 = !isString(obj) && isNumber(obj.length) && obj[0];
     return v1 || v2 || v3 || v4;
 }
-exports.isArray = isArray;
-/**
- * 验证一个对象是否为typed array
- * @method isTypedArray
- * @param  {Object}  obj 要验证的对象
- * @return {Boolean}     结果
- * @static
- */
 function isTypedArray(obj) {
     return ArrayBuffer.isView(obj) && !(obj instanceof DataView);
 }
-exports.isTypedArray = isTypedArray;
-/**
- * 验证是不是一个日期对象
- * @method isDate
- * @param {Object} val   要检查的对象
- * @return {Boolean}           结果
- * @static
- */
 function isDate(val) {
     if (isNull(val))
         return false;
     return val instanceof Date;
 }
-exports.isDate = isDate;
-/**
- * 验证是不是一个正则对象
- * @method isDate
- * @param {Object} val   要检查的对象
- * @return {Boolean}           结果
- * @static
- */
-function isRegexp(val) {
+function isRegExp(val) {
     return val instanceof RegExp;
 }
-exports.isRegexp = isRegexp;
-/**
- * 转换为数组
- * @method toArray
- * @param {Array|Object} array 伪数组
- * @return {Array} 转换结果数组
- * @static
- */
 function toArray(array) {
     if (isNull(array))
         return [];
     return Array.prototype.slice.call(array);
 }
-exports.toArray = toArray;
-/**
- * 转为日期格式
- * @method toDate
- * @param {Number|String} val 日期字符串或整型数值
- * @return {Date} 日期对象
- * @static
- */
 function toDate(val) {
     if (isNumber(val)) {
         return new Date(val);
@@ -398,28 +226,47 @@ function toDate(val) {
     else if (isDate(val)) {
         return val;
     }
-    else if (isFunction(val)) {
-        return new Date(val());
-    }
-    else if (isFunctionString(val)) {
-        return new Date(toFunction(val)());
-    }
     else if (isString(val)) {
-        return new Date(replace(replace(val, '-', '/'), 'T', ' '));
+        return new Date(replace(replace(val, "-", "/"), "T", " "));
     }
     else {
         return null;
     }
 }
-exports.toDate = toDate;
-/**
- * 遍历一个对像或数组
- * @method each
- * @param  {Object or Array}   obj  要遍历的数组或对象
- * @param  {Function} fn            处理函数
- * @return {void}                   无返回值
- * @static
- */
+function replace(str, from, to) {
+    if (isNull(str))
+        return str;
+    return str.replace(new RegExp(from, "g"), to);
+}
+function formatDate(value, format, dict) {
+    if (isNull(format) || isNull(value))
+        return String(value);
+    var date = toDate(value);
+    dict = dict || {};
+    var placeholder = {
+        "M+": date.getMonth() + 1,
+        "d+": date.getDate(),
+        "h+": date.getHours(),
+        "m+": date.getMinutes(),
+        "s+": date.getSeconds(),
+        "w+": date.getDay(),
+        "q+": Math.floor((date.getMonth() + 3) / 3),
+        "S": date.getMilliseconds()
+    };
+    if (/(y+)/.test(format)) {
+        format = format.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+    }
+    for (var key in placeholder) {
+        if (new RegExp("(" + key + ")").test(format)) {
+            var value_1 = placeholder[key];
+            value_1 = dict[value_1] || value_1;
+            format = format.replace(RegExp.$1, RegExp.$1.length === 1
+                ? value_1
+                : ("00" + value_1).substr(("" + value_1).length));
+        }
+    }
+    return format;
+}
 function each(list, handler, scope) {
     if (isNull(list) || isNull(handler))
         return;
@@ -439,55 +286,9 @@ function each(list, handler, scope) {
         }
     }
 }
-exports.each = each;
-/**
- * 格式化日期
- * @method formatDate
- * @param {Date|String|Number} date 日期
- * @param {String} format 格式化字符串
- * @param {object} dict 反译字典
- * @return {String} 格式化结果
- * @static
- */
-function formatDate(date, format, dict) {
-    if (isNull(format) || isNull(date))
-        return date;
-    date = toDate(date);
-    dict = dict || {};
-    var placeholder = {
-        'M+': date.getMonth() + 1,
-        'd+': date.getDate(),
-        'h+': date.getHours(),
-        'm+': date.getMinutes(),
-        's+': date.getSeconds(),
-        'w+': date.getDay(),
-        'q+': Math.floor((date.getMonth() + 3) / 3),
-        'S': date.getMilliseconds() //millisecond
-    };
-    if (/(y+)/.test(format)) {
-        format = format.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
-    }
-    for (var key in placeholder) {
-        if (new RegExp('(' + key + ')').test(format)) {
-            var value = placeholder[key];
-            value = dict[value] || value;
-            format = format.replace(RegExp.$1, RegExp.$1.length == 1
-                ? value : ('00' + value).substr(('' + value).length));
-        }
-    }
-    return format;
-}
-exports.formatDate = formatDate;
-/**
- * 拷贝对象
- * @method copy
- * @param {Object} src 源对象
- * @param {Object} dst 目标对象
- * @static
- */
 function copy(src, dst, igonres) {
     dst = dst || (isArray(src) ? [] : {});
-    each(src, function (key) {
+    Object.keys(src).forEach(function (key) {
         if (igonres && igonres.indexOf(key) > -1)
             return;
         delete dst[key];
@@ -505,14 +306,6 @@ function copy(src, dst, igonres) {
     });
     return dst;
 }
-exports.copy = copy;
-/**
- * 深度克隆对象
- * @method clone
- * @param {Object} src 源对象
- * @return {Object} 新对象
- * @static
- */
 function clone(src, igonres) {
     if (isNull(src) ||
         isString(src) ||
@@ -524,13 +317,16 @@ function clone(src, igonres) {
     if (isTypedArray(src)) {
         return src.slice();
     }
-    var objClone = src;
+    var objClone;
     try {
         objClone = new src.constructor();
     }
-    catch (ex) { }
-    each(src, function (key, value) {
-        if (objClone[key] != value && !contains(igonres, key)) {
+    catch (_a) {
+        objClone = {};
+    }
+    Object.keys(src).forEach(function (key) {
+        var value = src[key];
+        if (objClone[key] !== value && !igonres.includes(key)) {
             if (isObject(value)) {
                 objClone[key] = clone(value, igonres);
             }
@@ -539,51 +335,39 @@ function clone(src, igonres) {
             }
         }
     });
-    ['toString', 'valueOf'].forEach(function (key) {
-        if (contains(igonres, key))
+    ["toString", "valueOf"].forEach(function (key) {
+        if (igonres.includes(key))
             return;
         final(objClone, key, src[key]);
     });
     return objClone;
 }
-exports.clone = clone;
-/**
- * 合并对象
- * @method mix
- * @return 合并后的对象
- * @param {Object} dst 目标对象
- * @param {Object} src 源对象
- * @param {Array} igonres 忽略的属性名,
- * @param {Number} mode 模式
- */
 function mix(dst, src, igonres, mode, igonreNull) {
-    //根据模式来判断，默认是Obj to Obj的  
     if (mode) {
         switch (mode) {
-            case 1: // proto to proto  
+            case 1:
                 return mix(dst.prototype, src.prototype, igonres, 0);
-            case 2: // object to object and proto to proto  
+            case 2:
                 mix(dst.prototype, src.prototype, igonres, 0);
-                break; // pass through  
-            case 3: // proto to static  
+                break;
+            case 3:
                 return mix(dst, src.prototype, igonres, 0);
-            case 4: // static to proto  
+            case 4:
                 return mix(dst.prototype, src, igonres, 0);
-            default: // object to object is what happens below  
+            default:
         }
     }
-    //---
     src = src || {};
     dst = dst || (isArray(src) ? [] : {});
-    keys(src).forEach(function (key) {
-        if (contains(igonres, key))
+    Object.keys(src).forEach(function (key) {
+        if (igonres.includes(key))
             return;
         if (igonreNull && isNull(src[key]))
             return;
         if (isObject(src[key]) &&
-            (src[key].constructor == Object ||
-                src[key].constructor == Array ||
-                src[key].constructor == null)) {
+            (src[key].constructor === Object ||
+                src[key].constructor === Array ||
+                src[key].constructor === null)) {
             dst[key] = mix(dst[key], src[key], igonres, 0, igonreNull);
         }
         else {
@@ -592,19 +376,16 @@ function mix(dst, src, igonres, mode, igonreNull) {
     });
     return dst;
 }
-exports.mix = mix;
-/**
- * 定义不可遍历的属性
- **/
 function final(obj, name, value) {
-    if (arguments.length < 1)
-        throw new Error('Parameter missing');
-    if (arguments.length < 2) {
-        return each(obj, function (name, value) {
+    if (arguments.length === 0)
+        throw new Error("Parameter missing");
+    if (arguments.length === 1) {
+        return Object.keys(obj).forEach(function (name) {
+            var value = obj[name];
             final(obj, name, value);
         });
     }
-    if (arguments.length < 3)
+    if (arguments.length === 2)
         return final(obj, name, obj[name]);
     try {
         Object.defineProperty(obj, name, {
@@ -612,155 +393,68 @@ function final(obj, name, value) {
                 return value;
             },
             set: function () {
-                throw new Error('Cannot assign to final property:' + name);
+                throw new Error("Cannot assign to final property:" + name);
             },
             enumerable: false,
-            configurable: false //不能重写定义
+            configurable: false
         });
     }
     catch (err) {
         obj[name] = value;
     }
 }
-exports.final = final;
-/**
- * 获取所有 key
- */
-function keys(obj) {
-    if (Object.keys)
-        return Object.keys(obj);
-    var keys = [];
-    each(obj, function (key) {
-        keys.push(key);
-    });
-    return keys;
-}
-exports.keys = keys;
-/**
- * 创建一个对象
- */
-function create(proto, props) {
-    if (Object.create)
-        return Object.create(proto, props);
-    function Cotr() { }
-    Cotr.prototype = proto;
-    var obj = new Cotr();
-    if (props)
-        copy(props, obj);
-    return obj;
-}
-exports.create = create;
-/**
- * 设置 proto
- * 在不支持 setPrototypeOf 也不支持 __proto__ 的浏览器
- * 中，会采用 copy 方式
- */
-function setPrototypeOf(obj, proto) {
-    if (Object.setPrototypeOf) {
-        return Object.setPrototypeOf(obj, proto || create(null));
-    }
-    else {
-        if (!('__proto__' in Object))
-            copy(proto, obj);
-        obj.__proto__ = proto;
-    }
-}
-exports.setPrototypeOf = setPrototypeOf;
-/**
- * 获取 proto
- */
-function getPrototypeOf(obj) {
-    if (obj.__proto__)
-        return obj.__proto__;
-    if (Object.getPrototypeOf)
-        return Object.getPrototypeOf(obj);
-    if (obj.constructor)
-        return obj.constructor.prototype;
-}
-exports.getPrototypeOf = getPrototypeOf;
-/**
- * 是否深度相等
- */
 function deepEqual(a, b) {
     if (a === b)
         return true;
     if (!isObject(a) || !isObject(b))
         return false;
-    var aKeys = keys(a);
-    var bKeys = keys(b);
+    var aKeys = Object.keys(a);
+    var bKeys = Object.keys(b);
     if (aKeys.length !== bKeys.length)
         return false;
     var allKeys = aKeys.concat(bKeys);
-    var checkedMap = create(null);
-    var result = true;
-    each(allKeys, function (i, key) {
-        if (checkedMap[key])
-            return;
-        if (!deepEqual(a[key], b[key]))
-            result = false;
-        checkedMap[key] = true;
-    });
-    return result;
+    return !allKeys.some(function (key) { return !deepEqual(a[key], b[key]); });
 }
-exports.deepEqual = deepEqual;
-/**
- * 从一个数值循环到别一个数
- * @param {number} fromNum 开始数值
- * @param {Number} toNum 结束数值
- * @param {Number} step 步长值
- * @param {function} handler 执行函数
- * @returns {void} 无返回
- */
-function fromTo(fromNum, toNum, step, handler) {
-    if (!handler)
-        handler = [step, step = handler][0];
+function fromTo(from, to, handler, step) {
+    if (step === void 0) { step = 1; }
     step = Math.abs(step || 1);
-    if (fromNum < toNum) {
-        for (var i = fromNum; i <= toNum; i += step)
+    if (from < to) {
+        for (var i = from; i <= to; i += step)
             handler(i);
     }
     else {
-        for (var i = fromNum; i >= toNum; i -= step)
+        for (var i = from; i >= to; i -= step)
             handler(i);
     }
 }
-exports.fromTo = fromTo;
-/**
- * 生成一个Guid
- * @method newGuid
- * @return {String} GUID字符串
- * @static
- */
 function newGuid() {
-    function s4() {
+    var s4 = function () {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-    }
-    return (s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-        s4() + '-' + s4() + s4() + s4());
+    };
+    return (s4() +
+        s4() +
+        "-" +
+        s4() +
+        "-" +
+        s4() +
+        "-" +
+        s4() +
+        "-" +
+        s4() +
+        s4() +
+        s4());
 }
-exports.newGuid = newGuid;
-/**
- * 对象变换
- **/
-function map(list, fn) {
-    var buffer = isArray(list) ? [] : {};
-    each(list, function (name, value) {
-        buffer[name] = fn(name, value);
-    });
-    return buffer;
-}
-exports.map = map;
-/**
- * 通过路径设置属性值
- */
 function setByPath(obj, path, value) {
-    if (isNull(obj) || isNull(path) || path === '') {
+    if (isNull(obj) || isNull(path) || path === "") {
         return;
     }
     if (!isArray(path)) {
-        path = path.replace(/\[/, '.').replace(/\]/, '.').split('.');
+        path = path
+            .replace(/\[/, ".")
+            .replace(/\]/, ".")
+            .split(".");
     }
-    each(path, function (index, name) {
+    path.forEach(function (name, index) {
         if (isNull(name) || name.length < 1)
             return;
         if (index === path.length - 1) {
@@ -772,109 +466,73 @@ function setByPath(obj, path, value) {
         }
     });
 }
-exports.setByPath = setByPath;
-/**
- * 通过路径获取属性值
- */
 function getByPath(obj, path, filter) {
-    if (isNull(obj) || isNull(path) || path === '')
+    if (isNull(obj) || isNull(path) || path === "")
         return obj;
     if (!isArray(path)) {
-        path = path.replace(/\[/, '.').replace(/\]/, '.').split('.');
+        path = path
+            .replace(/\[/, ".")
+            .replace(/\]/, ".")
+            .split(".");
     }
-    each(path, function (index, name) {
+    path.forEach(function (name) {
         if (isNull(obj) || isNull(name) || name.length < 1)
             return;
         obj = filter ? filter(obj[name], name, obj) : obj[name];
     });
     return obj;
 }
-exports.getByPath = getByPath;
-/**
- * 数组去重
- **/
-function unique(array) {
-    if (isNull(array))
-        return array;
-    var newArray = [];
-    each(array, function (i, value) {
-        if (newArray.indexOf(value) > -1)
-            return;
-        newArray.push(value);
-    });
-    return newArray;
-}
-exports.unique = unique;
-/**
- * 解析 function 的参数列表
- **/
 function getFunctionArgumentNames(fn) {
     if (!fn)
         return [];
     var src = fn.toString();
-    var parts = src.split(')')[0].split('=>')[0].split('(');
-    return (parts[1] || parts[0]).split(',').map(function (name) {
-        return trim(name);
-    }).filter(function (name) {
-        return name != 'function';
-    });
+    var parts = src
+        .split(")")[0]
+        .split("=>")[0]
+        .split("(");
+    return (parts[1] || parts[0])
+        .split(",")
+        .map(function (name) { return (name || "").trim(); })
+        .filter(function (name) { return name !== "function"; });
 }
-exports.getFunctionArgumentNames = getFunctionArgumentNames;
 var FUNC_REGEXP = /^function\s*\(([\s\S]*?)\)\s*\{([\s\S]*?)\}$/i;
 function isFunctionString(str) {
     return FUNC_REGEXP.test(str);
 }
-exports.isFunctionString = isFunctionString;
 function toFunction(str) {
     var info = FUNC_REGEXP.exec(str);
     if (!info || info.length < 3)
         return;
-    var params = info[1].split(',').filter(function (p) { return !!p; }).map(function (p) { return p.trim(); });
+    var params = info[1]
+        .split(",")
+        .filter(function (p) { return !!p; })
+        .map(function (p) { return p.trim(); });
     var body = info[2];
-    return new (Function.bind.apply(Function, [void 0].concat(params, [body])))();
+    return new (Function.bind.apply(Function, __spreadArrays([void 0], params, [body])))();
 }
-exports.toFunction = toFunction;
-/**
- * 缩短字符串
- */
 function short(str, maxLength) {
     if (!str)
         return str;
     maxLength = maxLength || 40;
     var strLength = str.length;
     var trimLength = maxLength / 2;
-    return strLength > maxLength ?
-        str.substr(0, trimLength) + '...' + str.substr(strLength - trimLength) :
-        str;
+    return strLength > maxLength
+        ? str.substr(0, trimLength) + "..." + str.substr(strLength - trimLength)
+        : str;
 }
-exports.short = short;
-/**
- * 首字母大写
- */
 function firstUpper(str) {
     if (!isString(str))
-        return '';
+        return "";
     return str.substring(0, 1).toUpperCase() + str.substring(1);
 }
-exports.firstUpper = firstUpper;
-/**
- * 编码正则字符串
- */
 function escapeRegExp(str) {
     if (!isString(str))
-        return '';
-    return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        return "";
+    return str.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&");
 }
-exports.escapeRegExp = escapeRegExp;
-/**
-  * 将字符串转成「驼峰」式
-  * @param {string} str 原始字符串
-  * @param {number} mode 1 大驼峰，0 小驼峰
-  * @return {string} 转换后的字符串
-  */
 function toCamelCase(str, mode) {
     if (!isString(str))
-        return '';
+        return "";
     if (str) {
         str = str.replace(/\-[a-z0-9]/g, function ($1) {
             return $1.slice(1).toUpperCase();
@@ -885,50 +543,31 @@ function toCamelCase(str, mode) {
     }
     return str;
 }
-exports.toCamelCase = toCamelCase;
-/**
- * 将字符串转成分隔形式
- * @param {string} str 原始字符串
- * @return {string} 转换后的字符串
- */
 function toSplitCase(str) {
     if (!isString(str))
-        return '';
+        return "";
     if (str) {
-        str = str.replace(/([A-Z])/g, '-$1');
-        if (str[0] == '-')
+        str = str.replace(/([A-Z])/g, "-$1");
+        if (str[0] === "-")
             str = str.slice(1);
     }
     return str.toLowerCase();
 }
-exports.toSplitCase = toSplitCase;
 function htmlPrefilter(html) {
+    if (!html)
+        return "";
     var rxhtmlTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([a-z][^\/\0>\x20\t\r\n\f]*)[^>]*)\/>/gi;
-    return html.replace(rxhtmlTag, '<$1></$2>');
+    return html.replace(rxhtmlTag, "<$1></$2>");
 }
-exports.htmlPrefilter = htmlPrefilter;
-/**
- * 解析字符串为 dom
- * @param {string} str 字符串
- * @returns {HTMLNode} 解析后的 DOM
- */
 function parseHTML(str) {
-    str = str || ' ';
-    var parent = document.createElement('div');
-    parent.innerHTML = htmlPrefilter(trim(str));
+    str = str || " ";
+    var parent = document.createElement("div");
+    parent.innerHTML = htmlPrefilter(str);
     var childNodes = toArray(parent.childNodes);
-    //先 clone 一份再通过 innerHTML 清空
-    //否则 IE9 下，清空时会导不通过返回的 DOM 没有子结点
-    // if (firstNode) firstNode = firstNode.cloneNode(true);
-    // window._NPH_.innerHTML = '';
-    each(childNodes, function (index, childNode) {
-        parent.removeChild(childNode);
-    });
+    childNodes.forEach(function (childNode) { return parent.removeChild(childNode); });
     return childNodes;
 }
-exports.parseHTML = parseHTML;
-__webpack_require__(14)([117,95,111,28,107,55,96,100,102,88,86,96,33,98,99,95,82,83,96,95,38,90,15,14,87,20,85,80,68,86,71,79,81,75,254,25,253,62,58,74,78,63,67,246,249,248,65,254,50,69,49,244,244,248,50,54,43,43,61,19,41,234,227,46,36,56,37,29,221,227,247,229,232,220,219,36,225,23,41,25,35,214,214])
-//# sourceMappingURL=index.js.map
+
 
 /***/ }),
 /* 1 */
@@ -1117,7 +756,7 @@ exports.builtIn = {
 /* WEBPACK VAR INJECTION */(function(global) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var React = __webpack_require__(3);
-var ReactDOM = __webpack_require__(16);
+var ReactDOM = __webpack_require__(15);
 var states_1 = __webpack_require__(1);
 var utils_1 = __webpack_require__(2);
 var ATTR_KEY = "data-state";
@@ -1168,7 +807,7 @@ function setState(ref, state) {
     element.setAttribute(ATTR_KEY, String(state));
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14)))
 
 /***/ }),
 /* 8 */
@@ -1226,10 +865,11 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -1261,13 +901,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var promise_boost_1 = __webpack_require__(17);
+var promise_boost_1 = __webpack_require__(16);
 var Alert_1 = __webpack_require__(5);
 exports.Alert = Alert_1.Alert;
 var builtIn_1 = __webpack_require__(6);
-var EventEmitter_1 = __webpack_require__(19);
+var eify_1 = __webpack_require__(18);
 var Field_1 = __webpack_require__(7);
-var State_1 = __webpack_require__(21);
+var State_1 = __webpack_require__(20);
 var states_1 = __webpack_require__(1);
 var TestItem_1 = __webpack_require__(8);
 var mota_1 = __webpack_require__(4);
@@ -1363,7 +1003,7 @@ var Validation = /** @class */ (function (_super) {
                 _this.results.items[bind].state = state;
                 _this.results.items[bind].message = message;
             }
-            _this.results = __assign({}, _this.results, { time: _this.time, state: _this.getState() });
+            _this.results = __assign(__assign({}, _this.results), { time: _this.time, state: _this.getState() });
         };
         /**
          * 触发验证，传入 bind 时验证指定数据项，省略参数时验证整个表单
@@ -1522,7 +1162,7 @@ var Validation = /** @class */ (function (_super) {
             var _this = this;
             if (!this.__alert) {
                 this.__alert = function (props) {
-                    return Alert_1.Alert(__assign({}, props, { results: _this.results, validation: _this }));
+                    return Alert_1.Alert(__assign(__assign({}, props), { results: _this.results, validation: _this }));
                 };
                 mota_1.utils.defineGetter(this.__alert, "name", "Alert");
             }
@@ -1539,7 +1179,7 @@ var Validation = /** @class */ (function (_super) {
             var _this = this;
             if (!this.__field) {
                 this.__field = function (props) {
-                    return Field_1.Field(__assign({}, props, { results: _this.results, validation: _this }));
+                    return Field_1.Field(__assign(__assign({}, props), { results: _this.results, validation: _this }));
                 };
                 mota_1.utils.defineGetter(this.__field, "name", "Field");
             }
@@ -1556,7 +1196,7 @@ var Validation = /** @class */ (function (_super) {
             var _this = this;
             if (!this.__state) {
                 this.__state = function (props) {
-                    return State_1.State(__assign({}, props, { results: _this.results, validation: _this }));
+                    return State_1.State(__assign(__assign({}, props), { results: _this.results, validation: _this }));
                 };
                 mota_1.utils.defineGetter(this.__state, "name", "State");
             }
@@ -1790,7 +1430,7 @@ var Validation = /** @class */ (function (_super) {
         });
     };
     return Validation;
-}(EventEmitter_1.EventEmitter));
+}(eify_1.EventEmitter));
 exports.Validation = Validation;
 
 
@@ -1837,7 +1477,7 @@ function __export(m) {
 }
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(__webpack_require__(13));
-__export(__webpack_require__(22));
+__export(__webpack_require__(21));
 
 
 /***/ }),
@@ -1919,12 +1559,6 @@ exports.validation = validation;
 /* 14 */
 /***/ (function(module, exports) {
 
-module.exports = function () { }
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports) {
-
 var g;
 
 // This works in non-strict mode
@@ -1949,13 +1583,13 @@ module.exports = g;
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE_16__;
+module.exports = __WEBPACK_EXTERNAL_MODULE_15__;
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1964,12 +1598,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var abortable_1 = __webpack_require__(10);
 exports.abortable = abortable_1.abortable;
 exports.revokeable = abortable_1.abortable;
-var Defer_1 = __webpack_require__(18);
+var Defer_1 = __webpack_require__(17);
 exports.Defer = Defer_1.Defer;
 //# sourceMappingURL=index.js.map
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1994,58 +1628,79 @@ exports.Defer = Defer;
 //# sourceMappingURL=Defer.js.map
 
 /***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 18 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__EventEmitter__ = __webpack_require__(19);
+/* harmony namespace reexport (by provided) */ __webpack_require__.d(__webpack_exports__, "EventEmitter", function() { return __WEBPACK_IMPORTED_MODULE_0__EventEmitter__["a"]; });
 
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.EventEmitter = __webpack_require__(20);
 
 
 /***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 19 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-var _a = __webpack_require__(0), final = _a.final, isArray = _a.isArray, copy = _a.copy, each = _a.each;
-/**
- * 事件触发器基类
- */
-var EventEmitter = /** @class */ (function () {
-    /**
-     * 构建一个一个事修的触发器对象
-     * @param {object} target 将代理的目标对象可以省略
-     * @returns {void} 无返回
-     */
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EventEmitter; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_ntils__ = __webpack_require__(0);
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+
+var EventEmitter = (function () {
     function EventEmitter(target) {
+        this._listeners_ = {};
+        this.on = this.addListener;
+        this.off = this.removeListener;
         target = target || this;
         var emitter = target._emitter_;
         if (emitter)
             return emitter;
-        final(this, '_target_', target);
-        final(target, '_emitter_', this);
+        Object(__WEBPACK_IMPORTED_MODULE_0_ntils__["final"])(this, "_target_", target);
+        Object(__WEBPACK_IMPORTED_MODULE_0_ntils__["final"])(target, "_emitter_", this);
         this._isNative_ = this._isNativeObject(this._target_);
         this._listeners_ = this._listeners_ || {};
-        this.on = this.$on = this.$addListener = this.addListener;
-        this.off = this.$off = this.$removeListener = this.removeListener;
-        this.$emit = this.emit;
     }
-    /**
-     * 检查是否原生支持事件
-     * @param {object} obj 对象
-     * @returns {void} 检查结果
-     */
     EventEmitter.prototype._isNativeObject = function (obj) {
         return obj.addEventListener && obj.removeEventListener && obj.dispatchEvent;
     };
-    /**
-     * 添加一个事件监听函数
-     * @param {string} name 事件名称
-     * @param {function} listener 事件处理函数
-     * @param {capture} capture 是否是捕获阶段事件(只在代理 dom 对象时有效)
-     * @returns {void} 无返回
-     */
     EventEmitter.prototype.addListener = function (name, listener, capture) {
+        if (capture === void 0) { capture = false; }
         if (this._isNative_) {
             this._addNativeEventListener(name, listener, capture);
         }
@@ -2053,17 +1708,12 @@ var EventEmitter = /** @class */ (function () {
         this._listeners_[name].push(listener);
         var maxListeners = EventEmitter._maxListeners;
         if (this._listeners_[name].length > maxListeners) {
-            console.warn("The '" + name + "' event listener is not more than " + maxListeners);
+            console.warn("The '" + name + "' event listener is not more than " + maxListeners, this);
         }
     };
-    /**
-     * 移除「一个/一组/所有」事件监听函数
-     * @param {string} name 事件名称
-     * @param {function} listener 事件处理函数
-     * @param {capture} capture 是否是捕获阶段事件(只在代理 dom 对象时有效)
-     * @returns {void} 无返回
-     */
     EventEmitter.prototype.removeListener = function (name, listener, capture) {
+        var _this = this;
+        if (capture === void 0) { capture = false; }
         if (name && listener) {
             if (this._isNative_) {
                 this._removeNativeEventListener(name, listener, capture);
@@ -2071,118 +1721,113 @@ var EventEmitter = /** @class */ (function () {
             if (!this._listeners_[name])
                 return;
             var index = this._listeners_[name].indexOf(listener);
-            this._listeners_[name].splice(index, 1);
+            if (index > -1)
+                this._listeners_[name].splice(index, 1);
         }
         else if (name) {
             if (this._isNative_ && this._listeners_[name]) {
                 this._listeners_[name].forEach(function (_listener) {
-                    this.removeListener(name, _listener, capture);
-                }, this);
+                    _this.removeListener(name, _listener, capture);
+                });
             }
             delete this._listeners_[name];
         }
         else {
-            each(this._listeners_, function (name) {
-                this.removeListener(name, null, capture);
-            }, this);
+            Object.keys(this._listeners_).forEach(function (name) {
+                _this.removeListener(name, null, capture);
+            });
             this._listeners_ = {};
         }
     };
-    /**
-     * 触发自身的一个事件
-     * @param {string} name 事件名称
-     * @param {object} data 传递的对象
-     * @param {string} canBubble 能否冒泡(只在代理 dom 对象时有效)
-     * @param {object} cancelAble 能否取消(只在代理 dom 对象时有效)
-     * @returns {void} 无返回
-     */
     EventEmitter.prototype.emit = function (name, data, canBubble, cancelAble) {
+        var _this = this;
+        if (canBubble === void 0) { canBubble = false; }
+        if (cancelAble === void 0) { cancelAble = false; }
         if (this._isNative_) {
             return this._emitNativeEvent(name, data, canBubble, cancelAble);
         }
         if (!this._listeners_[name])
             return;
-        var stopPropagation = false;
-        this._listeners_[name].forEach(function (handler) {
-            var rs = handler.call(this._target_, data);
-            if (rs === false)
-                stopPropagation = true;
-        }, this);
-        return stopPropagation;
+        var handlers = this._listeners_[name].slice(0);
+        handlers.forEach(function (handler) { return handler.call(_this._target_, data); });
     };
-    /**
-     * 添加 DOM 元素事件
-     * @param {string} name 事件名称
-     * @param {function} listener 事件处理函数
-     * @param {capture} capture 是否是捕获阶段事件
-     * @returns {void} 无返回
-     */
-    EventEmitter.prototype._addNativeEventListener = function (name, listener, capture) {
-        this._target_.addEventListener(name, listener, capture);
-        //如果存在已注册的自定义 “组合事件”
-        var descriptor = EventEmitter._events[name];
-        if (descriptor) {
-            descriptor.addListener = descriptor.addListener || descriptor.on;
-            descriptor.addListener(this, name, listener, capture);
+    EventEmitter.prototype.emitAsync = function (name, data, canBubble, cancelAble) {
+        var _this = this;
+        if (canBubble === void 0) { canBubble = false; }
+        if (cancelAble === void 0) { cancelAble = false; }
+        if (this._isNative_) {
+            return this._emitNativeEvent(name, data, canBubble, cancelAble);
         }
+        if (!this._listeners_[name])
+            return;
+        var handlers = this._listeners_[name].slice(0);
+        return handlers.reduce(function (result, handler) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, result];
+                    case 1:
+                        if ((_a.sent()) === false)
+                            return [2, false];
+                        return [2, handler.call(this._target_, data)];
+                }
+            });
+        }); }, null);
     };
-    /**
-     * 移除 DOM 元素事件
-     * @param {string} name 事件名称
-     * @param {function} listener 事件处理函数
-     * @param {capture} capture 是否是捕获阶段事件
-     * @returns {void} 无返回
-     */
-    EventEmitter.prototype._removeNativeEventListener = function (name, listener, capture) {
-        this._target_.removeEventListener(name, listener, capture);
-        //如果存在已注册的自定义 “组合事件”
-        var descriptor = EventEmitter._events[name];
-        if (descriptor) {
-            descriptor.removeListener = descriptor.removeListener || descriptor.off;
-            descriptor.removeListener(this, name, listener, capture);
+    EventEmitter.prototype.emitParallel = function (name, data, canBubble, cancelAble) {
+        var _this = this;
+        if (canBubble === void 0) { canBubble = false; }
+        if (cancelAble === void 0) { cancelAble = false; }
+        if (this._isNative_) {
+            return this._emitNativeEvent(name, data, canBubble, cancelAble);
         }
+        if (!this._listeners_[name])
+            return;
+        var handlers = this._listeners_[name].slice(0);
+        return Promise.all(handlers.map(function (handler) {
+            return handler.call(_this._target_, data);
+        }));
     };
-    /**
-     * 触发 DOM 元素事件
-     * @param {string} name 事件名称
-     * @param {object} data 传递的对象
-     * @param {string} canBubble 能否冒泡
-     * @param {object} cancelAble 能否取消
-     * @returns {void} 无返回
-     */
+    EventEmitter.prototype._addNativeEventListener = function (name, handler, capture) {
+        if (capture === void 0) { capture = false; }
+        this._target_.addEventListener(name, handler, capture);
+        var descriptor = EventEmitter._events[name];
+        if (descriptor)
+            descriptor.addListener(this, name, handler, capture);
+    };
+    EventEmitter.prototype._removeNativeEventListener = function (name, handler, capture) {
+        if (capture === void 0) { capture = false; }
+        this._target_.removeEventListener(name, handler, capture);
+        var descriptor = EventEmitter._events[name];
+        if (descriptor)
+            descriptor.removeListener(this, name, handler, capture);
+    };
     EventEmitter.prototype._emitNativeEvent = function (name, data, canBubble, cancelAble) {
-        var event = document.createEvent('HTMLEvents');
+        if (canBubble === void 0) { canBubble = false; }
+        if (cancelAble === void 0) { cancelAble = false; }
+        if (typeof document === "undefined")
+            return;
+        var event = document.createEvent("HTMLEvents");
         event.initEvent(name, canBubble, cancelAble);
-        copy(data, event, ['data']);
+        Object(__WEBPACK_IMPORTED_MODULE_0_ntils__["copy"])(data, event, ["data"]);
         event.data = data;
         return this._target_.dispatchEvent(event);
     };
+    EventEmitter._maxListeners = 1024;
+    EventEmitter._events = {};
+    EventEmitter.register = function (descriptor) {
+        var name = descriptor && descriptor.name;
+        if (!name)
+            return;
+        var names = (Object(__WEBPACK_IMPORTED_MODULE_0_ntils__["isArray"])(name) ? name : [name]);
+        names.forEach(function (name) { return (EventEmitter._events[name] = descriptor); });
+    };
     return EventEmitter;
 }());
-//最多添加多少个 listener
-EventEmitter._maxListeners = 1024;
-//所有自定义事件
-EventEmitter._events = [];
-/**
- * 注册自定义事件(只在代理 dom 对象时有效)
- * @param {object} descriptor 事件定义
- * @returns {void} 无返回
- */
-EventEmitter.register = function (descriptor) {
-    var names = descriptor.name;
-    if (!names)
-        return;
-    if (!isArray(names))
-        names = names.split(',');
-    names.forEach(function (name) {
-        this._events[name] = descriptor;
-    }, this);
-};
-module.exports = EventEmitter;
-//# sourceMappingURL=index.js.map
+
+
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2212,7 +1857,7 @@ exports.State = State;
 
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

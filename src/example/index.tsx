@@ -10,6 +10,7 @@ const root = document.getElementById("root");
 
 function App() {
   const model = useModel(ViewModel);
+  (window as any).model = model;
   const { Field, Alert } = useValidation(model);
   return binding(
     <div>

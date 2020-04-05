@@ -4,9 +4,9 @@ export default class ViewModel {
   results: IResults;
 
   params = {
-    name: "",
-    age: "",
-    email: ""
+    name: "a",
+    age: "1",
+    email: "a@b.com"
   };
 
   submit = () => {
